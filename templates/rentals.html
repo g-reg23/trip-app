@@ -1,0 +1,14 @@
+{% extends 'bootstrap/layout.html' %}
+
+{% block body %}
+
+  <body>
+    <h1 class="h3 mb-3 font-weight-normal">Rentals</h1>
+    <ul class="list-group">
+    {% for rental in rentals %}
+      <li class="list-group-item"><a href="rental/{{rental.id}}">{{rental.title}}</a></li>
+    {% endfor %}
+  </body>
+
+
+{% endblock %}

@@ -1,0 +1,165 @@
+// const heading = document.querySelector('.groupHeading');
+// const body = document.querySelector('.groupDiv');
+// body.addEventListener('mousemove', runEvent);
+//
+// function runEvent(e) {
+//   heading.textContent = 'Mouse X: ' + e.offsetX + ' Mouse Y: ' + e.offsetY;
+// }
+
+//variables
+const expenseList = document.querySelector('.resultList');
+const totalExpense = document.querySelector('.totalResult');
+const grandTotal = document.querySelector('.grandTotal')
+const results = document.querySelector('.results');
+const res = document.querySelector('.resultList');
+const name = document.querySelector('.calcName');
+const price = document.querySelector('#calcPrice');
+const divisor = document.querySelector('#calcDivideBy');
+const type = document.querySelector('#calcSelect');
+const multiple = document.querySelector('#calcDays');
+
+//load event listeners
+function loadEventListeners() {
+  document.querySelector('#calcSubmit').addEventListener('click', calculateResults);
+  document.addEventListener('DOMContentLoaded', getExpenses);
+  document.querySelector('.expenseDelete').addEventListener('click', deleteExpenses);
+  document.querySelector('.resultList').addEventListener('click', deleteIndExp)
+}
+
+loadEventListeners();
+
+function deleteExpenses(e) {
+  if (confirm('Are you sure you want to clear all Expenses?')) {
+    localStorage.clear();
+    while (expenseList.firstChild) {
+      expenseList.removeChild(expenseList.firstChild);
+    }
+    while (totalExpense.firstChild) {
+      totalExpense.removeChild(totalExpense.firstChild);
+    }
+  }
+  e.preventDefault();
+}
+
+function deleteIndExp(e) {
+  if (e.target.parentElement.classList.contains('calculatorResults')) {
+    if (confirm('Are you sure you want to clear this expense?')) {
+      e.target.parentElement.remove();
+      let list = document.querySelectorAll('.calculatorResults');
+      for (i=0;i<list.length;i++) {
+        if (e.target === list[i]) {
+          let expos = JSON.parse(localStorage.getItem('expenses'));
+          let typos = JSON.parse(localStorage.getItem('types'));
+          let price = parseFloat(expos[i]);
+          expos.splice(i, 1);
+          typos.splice(i, 1);
+
+          localStorage.setItem('expenses', JSON.stringify(expos));
+          localStorage.setItem('types', JSON.stringify(typos));
+          let total = parseFloat(localStorage.getItem('total'));
+          total -= price;
+          localStorage.setItem('total', JSON.stringify(total));        }
+      }
+    }
+  }
+  e.preventDefault();
+}
+function getExpenses() {
+  // const item = document.querySelector('#expenseResults');
+  if (localStorage.getItem('expenses') === null){
+    results.style.display = 'none'
+  } else {
+    results.style.display = 'block';
+    let expenseStorage = JSON.parse(localStorage.getItem('expenses'));
+    let typeStorage = JSON.parse(localStorage.getItem('types'));
+    for (i=0;i<expenseStorage.length;i++){
+      let li = document.createElement('li');
+      li.className = 'calculatorResults';
+      let textNode = document.createTextNode("$" + expenseStorage[i] + " " + typeStorage[i] + " expense.");
+      li.appendChild(textNode);
+      document.querySelector('.resultList').appendChild(li);
+      let link = document.createElement('a');
+      let xnode = document.createTextNode('Clear');
+      link.appendChild(xnode);
+      li.appendChild(link);
+      link.className = 'deleteX';
+      link.href = '#';
+    }
+    getTotal();
+  }
+}
+
+function calculateResults(e){
+  if (price.value < 1 || divisor.value < 1 || multiple.value < 1 || type.value === '') {
+    alert("Please check your inputs.")
+    return
+  }
+  let expense = price.value * multiple.value / divisor.value;
+  document.querySelector('.results').style.display = 'block';
+  //Create the title and result element
+  // let title = document.createElement('h5');
+  let li = document.createElement('li');
+  // title.className = 'nameExpense';
+  li.className = 'calculatorResults';
+  // let nameNode = document.createTextNode(name.value);
+  let node = document.createTextNode("$" + expense.toFixed(2) + " " + type.value + " expense.");
+  // title.appendChild(nameNode);
+  li.appendChild(node);
+  // res.appendChild(title);
+  res.appendChild(li);
+  //Create delete X
+  let link = document.createElement('a');
+  let xnode = document.createTextNode('Clear');
+  link.appendChild(xnode);
+  li.appendChild(link);
+  link.className = 'deleteX';
+  link.href = '#';
+  price.value = '';
+  divisor.value = '';
+  multiple.value = '';
+  // name.value = '';
+  let total;
+  if (localStorage.getItem('total') === null) {
+    total = 0;
+  }else {
+    total = parseFloat(JSON.parse(localStorage.getItem('total')).toFixed(2));
+  }
+  total += +(parseFloat(expense)).toFixed(2);
+  localStorage.setItem('total', JSON.stringify(total));
+  storeExpenseInLocalStorage(expense, type.value);
+  getTotal();
+  e.preventDefault();
+};
+
+function getTotal() {
+  document.querySelector('.totalResult').style.display = 'block';
+  let totalDiv = document.createElement('div');
+  if (document.querySelector('.grandTotal') != null) {
+    document.querySelector('.grandTotal').remove();
+  }
+  totalDiv.className = 'grandTotal';
+  let node = document.createTextNode("$" + localStorage.getItem('total'));
+  totalDiv.appendChild(node);
+  document.querySelector('.totalResult').appendChild(totalDiv);
+}
+
+function storeExpenseInLocalStorage(cost, type2) {
+  let expenses;
+  let types;
+  // let names;
+  if (localStorage.getItem('expenses') === null) {
+    expenses = [];
+    types = [];
+    // names = [];
+  }else {
+    expenses = JSON.parse(localStorage.getItem('expenses'));
+    types = JSON.parse(localStorage.getItem('types'));
+    // names = JSON.parse(localStorage.getItem('names'));
+  }
+  expenses.push(cost.toFixed(2));
+  types.push(type2);
+  // names.push(title);
+  localStorage.setItem('expenses', JSON.stringify(expenses));
+  localStorage.setItem('types', JSON.stringify(types));
+  // localStorage.setItem('names', title);
+}

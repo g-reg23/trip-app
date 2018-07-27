@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block body %}
+  <div class="pageContainer">
+    <h3 class="loginHeader">{{session.username}}'s Groups:</h3>
+    {% if groups %}
+      <ul class="groupList">
+        {% for group in groups %}
+          <li><a class="groupButton" href="group/{{ group.groupId }}">{{ group.name }}</a></li><br />
+        {% endfor %}
+      </ul>
+    {% else %}
+      <h5 class="noGroups">You are not a member of any groups!</h5>
+    {% endif %}
+    <div class="new-joinGroup">
+      <a href="/newGroup" class="groupButton"alt="Make a group">Make A New Group!</a>
+      <a href="/joinGroup" class="groupButton" alt="Join a group">Join A Group!</a>
+    </div>
+  </div>
+
+{% endblock %}

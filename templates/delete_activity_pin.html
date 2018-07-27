@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  <div class="pageContainer">
+    <div class="loginHeader"><h3>Delete Rental Pin</h3></div.
+    <p><strong>Are you sure you would like to delete this?</strong></p>
+      <form method='POST' action=''>
+        <div>
+            {{ form.passwordUser(class="sign-logInput") }}
+        </div>
+        <div>
+            {{ form.passwordGroup(class="sign-logInput") }}
+        </div>
+        <br />
+        <div>
+            {{ form.yes(class="finalDeleteButtons") }}
+            <a href="/dashboard" class="noButton">No</a>
+        </div>
+      </form>
+    </div.
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+
+<hr>
+  <form action="" method="POST">
+    <div class="form-group">
+      <input type="text" name="link" class="form-control" placeholder='Link to this rental:' value={{ request.form.link }}>
+    </div>
+    <p>Type:</p>
+  <div class="form-group">
+    <input type="radio" class="form-control"
+     name="type" value="{{ request.form.rental }}">
+    <label for="type_1">Rental</label>
+
+    <input type="radio" class="form-control"
+     name="type" value="{{ request.form.restaurant }}">
+    <label for="type_2">Restaurant</label>
+
+    <input type="radio" class="form-control"
+     name="type" value="{{ request.form.other }}">
+    <label for="type_3">Other</label>
+  </div>
+  {% if request.form.rental %}
+    <div>
+      <input type="text" name="price" class="form-control" placeholder="Price:" value="{{ request.form.price}}">
+    </div>
+    <div>
+      <input type="text" name="rooms" class="form-control" placeholder="Rooms:" value="{{ request.form.rooms}}">
+    </div>
+    <hr>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+
+{% endblock %}

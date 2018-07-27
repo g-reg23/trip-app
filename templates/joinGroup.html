@@ -1,0 +1,17 @@
+{% extends 'layout.html'%}
+
+{% block body%}
+  <div class="pageContainer">
+    <h1 class="loginHeader">Join A Group!!</h1>
+    <form action="" method="POST">
+      <div>{{ form.hidden_tag() }}</div>
+      <div>{{ form.name(class="sign-logInput") }}</div>
+      <div>{{ form.password(class="sign-logInput") }}</div>
+      <div>{{ form.submit(class="sign-logSubmit") }}</div>
+    </form>
+    <footer>
+      No group made yet?
+      <a href="/newGroup" alt="Sign-up">Make one!</a>
+    </footer>
+  </div>
+{% endblock%}

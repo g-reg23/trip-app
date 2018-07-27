@@ -1,0 +1,32 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  <div class="pageContainer">
+    <h1 class="loginHeader">Create A New Group:</h1><hr />
+      {% from "includes/_formHelpers.html" import render_field %}
+      <form method='POST' action=''>
+        <div>{{ form.hidden_tag() }}</div>
+        <div>
+          {{ form.groupName(class="sign-logInput") }}
+        </div><br />
+        <div>
+          {{ form.location(class="sign-logInput") }}
+        </div><br />
+        <div>
+          {{ form.dates(class="sign-logInput") }}
+        </div><br />
+        <div>
+          {{ form.password(class="sign-logInput") }}
+        </div><br />
+        <div>
+          {{ form.confirm(class="sign-logInput") }}
+        </div><br />
+        <div>
+          {{ form.description(class="sign-logInput", id="newGroupDescription") }}
+        </div><br />
+        <div>
+          {{ form.submit(class="sign-logSubmit") }}
+        </div>
+      </form>
+    </div>
+{% endblock %}

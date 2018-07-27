@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  <div class="pageContainer">
+    <div class="loginHeader"><h3>Edit Group</h3></div>
+    <form method='POST' action='' class="editForm">
+      <div class="editInfo">{{ form.hidden_tag() }}</div>
+      <div class="editInfo"><strong><strong> Current group name:</strong> {{ group.title }}</strong></div>{{ form.name(class="sign-logInput") }}
+      <div class="editInfo"><strong><strong>Current trip location:</strong> {{ group.location }}</strong></div>{{ form.location(class="sign-logInput") }}
+      <div class="editInfo"><strong><strong>Current dates:</strong> {{ group.dates }}</strong></div>{{ form.dates(class="sign-logInput") }}
+      <div class="editInfo"> <strong><strong>Current description:</strong> {{ group.description }}</strong></div>{{ form.description(class="sign-logInput") }}
+      <div>{{ form.groupPassword(class="sign-logInput") }}</div>
+      <div>{{ form.password(class="sign-logInput") }}</div>
+      <div>{{ form.submit(class="sign-logSubmit") }}</div>
+    </form>
+  </div>
+{% endblock %}
