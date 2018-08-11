@@ -2,10 +2,11 @@
 
 {% block body %}
   <div class="pageContainer">
-    <h3 class="loginHeader">Edit Restaurant/Nightclub</h3>
+    <h3 class="loginHeader">Edit Activity Pin</h3>
     <form method='POST' action=''>
       <div>{{ form.hidden_tag() }}</div>
       <div>{{ form.name(class="sign-logInput") }}</div>
+      <div>{{ form.price(class="sign-logInput") }}</div>
       <div>{{ form.description(class="sign-logInput") }}</div>
       <div>{{ form.link(class="sign-logInput") }}</div>
       <div>{{ form.type(class="sign-logInput") }}</div>

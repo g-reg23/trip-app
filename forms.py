@@ -29,10 +29,9 @@ class EditRestaurantPin(FlaskForm):
 
 class EditTransportationPin(FlaskForm):
     name = StringField([validators.Length(min=2, max=35)], render_kw={"placeholder": "Name"})
-    date = StringField([validators.Length(min=4, max=35)], render_kw={"placeholder": "Dates"})
     price = IntegerField([validators.NumberRange(min=0, max=100000)], render_kw={"placeholder": "Price"})
     description = TextAreaField([validators.Length(min=10)], render_kw={"placeholder": "Decription"})
-    link = StringField([validators.Length(min=4, max=355)], render_kw={"placeholder": "Link"})
+    link = StringField([validators.Length(min=4, max=555)], render_kw={"placeholder": "Link"})
     type = SelectField("Type", choices=[('Flight', 'Flight'), ('Train', 'Train'), ('Bus', 'Bus'), ('Other', 'Other')])
     passwordUser = PasswordField([validators.InputRequired()], render_kw={"placeholder": "User Password"})
     passwordGroup = PasswordField([validators.InputRequired()], render_kw={"placeholder": "Group Password"})
@@ -40,6 +39,7 @@ class EditTransportationPin(FlaskForm):
 
 class EditActivityPin(FlaskForm):
     name = StringField([validators.Length(min=2, max=35)], render_kw={"placeholder": "Name"})
+    price = IntegerField([validators.NumberRange(min=0, max=100000)], render_kw={"placeholder": "Price"})
     description = TextAreaField([validators.Length(min=10)], render_kw={"placeholder": "Decription"})
     link = StringField([validators.Length(min=4, max=355)], render_kw={"placeholder": "Link"})
     type = SelectField("Type", choices=[('Indoor', 'Indoor'), ('Outdoor', 'Outdoor')])

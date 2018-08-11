@@ -315,33 +315,8 @@ def delete_group(id):
     profile = User.query.filter(User.username==user).first()
     group = Group.query.filter(Group.id==id).first()
     if form.yes.data:
-
-        #set both password attempts (user, and group), as well as user
-        # user_pass_candidate = form.passwordUser.data
-        # group_pass_candidate = form.passwordGroup.data
-        # user = session['username']
-        #
-        # cur = mysql.connection.cursor()
-        # # Get user, and group info, as well as all memmbers of group
-        # cur.execute("SELECT * FROM users WHERE username = %s", [user])
-        # profile = cur.fetchone()
-        #
-        # cur.execute("SELECT * FROM groups WHERE groupId = %s", [id])
-        # group = cur.fetchone()
-        #
-        # #close connection
-        # cur.close()
-        # Set both actual passwords
         if sha256_crypt.verify(form.passwordUser.data, profile.password):
             if sha256_crypt.verify(form.passwordGroup.data, group.password):
-                #Reopen connection if passes both Passwords
-                # cur = mysql.connection.cursor()
-                # # Delete group
-                # cur.execute("DELETE FROM groups WHERE groupId = %s", [id])
-                # #Commit to db
-                # mysql.connection.commit()
-                # # Cascading delete MySQL deletes user_group, chats, and all pins with groupId!
-                # cur.close()
                 db.session.delete(group)
                 db.session.commit()
                 flash("Group Deleted")
@@ -444,15 +419,10 @@ def group(id):
         @socketio.on('send message', namespace='/chat')
         def handle_my_custom_event(msg, id):
             user = session['username']
-            # cur = mysql.connection.cursor()
-            # cur.execute("INSERT INTO chats(groupId, user, message) VALUES(%s,%s,%s)", [id, user, msg])
-            # cur.connection.commit()
-            # cur.close()
             chat_mess = Chat(groupId=id, username=user, message=msg)
             db.session.add(chat_mess)
             db.session.commit()
             emit('new message', {'msg': msg, 'user': user}, broadcast=True)
-
     else:
         flash("You must join the group first!")
         return redirect(url_for('newGroup'))
@@ -502,225 +472,151 @@ def groups():
         flash("You are not a member of any groups yet.")
         return render_template('groups.html', groups=groups)
 
-@app.route('/edit_rental_pin/<string:name>', methods=['GET', 'POST'])
+@app.route('/edit_rental_pin/<int:id>/<string:name>', methods=['GET', 'POST'])
 @is_logged_in
-def editRentalPin(name):
+def editRentalPin(id, name):
     form = EditRentalPin(request.form)
     user = session['username']
-    cur = mysql.connection.cursor()
-
-    # Get pin info
-    cur.execute("SELECT * FROM rental_pin WHERE rental_name = %s", [name])
-    pin = cur.fetchone()
-    id = pin['groupId']
-
-    # Get group info
-    cur.execute("SELECT * FROM groups WHERE groupId = %s", [id])
-    group = cur.fetchone()
-
-    #Populate fields
-    form.rentalName.data = pin['rental_name']
-    form.price.data = pin['price']
-    form.rooms.data = pin['rooms']
-    form.description.data = pin['description']
-    form.link.data = pin['link']
-
+    pin = Lodging_Pin.query.filter(and_(Lodging_Pin.lodgeName==name), (Lodging_Pin.groupId==id)).first()
+    form.link.data, form.description.data = pin.link, pin.description
+    form.rentalName.data, form.price.data, form.rooms.data = pin.lodgeName, pin.price, pin.rooms
+    profile = User.query.filter(User.username==user).first()
+    group = Group.query.filter(Group.id==id).first()
+    userPassCandidate = form.passwordUser.data
     if form.validate_on_submit():
-        #print("Inside first if")
-        user_pass_candidate = form.passwordUser.data
-        cur.execute("SELECT * FROM users WHERE username = %s", [user])
-        profile = cur.fetchone()
-        passwordUser = profile['password']
-        # Check Passwords
-        if sha256_crypt.verify(user_pass_candidate, passwordUser):
-            group_pass_candidate = form.passwordGroup.data
-            passwordGroup = group['password']
-            if sha256_crypt.verify(group_pass_candidate, passwordGroup):
-                # Create variables with data
-                name = request.form['rentalName']
-                price = request.form['price']
-                rooms = request.form['rooms']
-                description = request.form['description']
-                link = request.form['link']
-
-                pinId = pin['pinId']
-                cur.execute("UPDATE rental_pin SET rental_name = %s, price = %s, rooms = %s, description = %s, link = %s WHERE pinId = %s", [name, price, rooms, description, link, pinId])
-                mysql.connection.commit()
-                cur.close()
-                flash("Pin succesfully updated!")
+        if sha256_crypt.verify(userPassCandidate, profile.password):
+            if sha256_crypt.verify(form.passwordGroup.data, group.password):
+                newPin = Lodging_Pin.query.filter(and_(Lodging_Pin.lodgeName==name), (Lodging_Pin.groupId==id)).update(dict(lodgeName=request.form['rentalName'], price=request.form['price'], rooms=request.form['rooms'], description=request.form['description'], link=request.form['link']))
+                db.session.commit()
+                flash("Pin updated!!")
                 return redirect(url_for('group', id=id))
-
             else:
                 flash("You got your group password twisted")
-                return render_template('edit_rental_pins.html', form=form, id=id, pin=pin, group=group, profile=profile)
+                return render_template('edit_rental_pins.html', form=form, id=id, pin=pin, group=group, profile=profile, name=name)
         else:
             flash("You got your user password twisted")
-            return render_template('edit_rental_pins.html', form=form, id=id, pin=pin, group=group, profile=profile)
+            return render_template('edit_rental_pins.html', form=form, id=id, group=group, pin=pin, profile=profile, name=name)
 
-    cur.close()
-    return render_template('edit_rental_pins.html', form=form, id=id, pin=pin, group=group)
+    # cur.close()
+    return render_template('edit_rental_pins.html', form=form, id=id, group=group, pin=pin,name=name)
 
-@app.route('/edit_restaurant_pin/<string:name>', methods=['GET', 'POST'])
+@app.route('/edit_restaurant_pin/<int:id>/<string:name>', methods=['GET', 'POST'])
 @is_logged_in
-def editRestaurantPin(name):
+def editRestaurantPin(id, name):
     form = EditRestaurantPin(request.form)
     user = session['username']
-    cur = mysql.connection.cursor()
-
-    # Get pin info
-    cur.execute("SELECT * FROM rest_pin WHERE rest_name = %s", [name])
-    pin = cur.fetchone()
-    id = pin['groupId']
-
-    # Get group info
-    cur.execute("SELECT * FROM groups WHERE groupId = %s", [id])
-    group = cur.fetchone()
-
-    #Populate fields
-    form.name.data = pin['rest_name']
-    form.description.data = pin['description']
-    form.link.data = pin['link']
-    form.type.data = pin['type']
-
+    pin = Rest_Pin.query.filter(and_(Rest_Pin.restName==name), (Rest_Pin.groupId==id)).first()
+    form.link.data, form.description.data = pin.link, pin.description
+    form.name.data, form.type.data = pin.restName, pin.types
+    profile = User.query.filter(User.username==user).first()
+    group = Group.query.filter(Group.id==id).first()
+    userPassCandidate = form.passwordUser.data
     if form.validate_on_submit():
-        #print("Inside first if")
-        user_pass_candidate = form.passwordUser.data
-        cur.execute("SELECT * FROM users WHERE username = %s", [user])
-        profile = cur.fetchone()
-        passwordUser = profile['password']
-        # Check Passwords
-        if sha256_crypt.verify(user_pass_candidate, passwordUser):
-            group_pass_candidate = form.passwordGroup.data
-            passwordGroup = group['password']
-            if sha256_crypt.verify(group_pass_candidate, passwordGroup):
-                # Create variables with data
-                name = request.form['name']
-                description = request.form['description']
-                link = request.form['link']
-                type = request.form['type']
-
-                pinId = pin['pinId']
-                cur.execute("UPDATE rest_pin SET rest_name = %s, description = %s, link = %s, type = %s WHERE pinId = %s", [name, description, link,type, pinId])
-                mysql.connection.commit()
-                cur.close()
-                flash("Pin succesfully updated!")
+        if sha256_crypt.verify(userPassCandidate, profile.password):
+            if sha256_crypt.verify(form.passwordGroup.data, group.password):
+                newPin = Rest_Pin.query.filter(and_(Rest_Pin.restName==name), (Rest_Pin.groupId==id)).update(dict(restName=request.form['name'], types=request.form['type'], description=request.form['description'], link=request.form['link']))
+                db.session.commit()
+                flash("Pin updated!!")
                 return redirect(url_for('group', id=id))
-
             else:
                 flash("You got your group password twisted")
-                return render_template('edit_restaurant_pin.html', form=form, id=id, pin=pin, group=group, profile=profile)
+                return render_template('edit_restaurant_pin.html', form=form, id=id, pin=pin, group=group, profile=profile, name=name)
         else:
             flash("You got your user password twisted")
-            return render_template('edit_restaurant_pin.html', form=form, id=id, pin=pin, group=group, profile=profile)
+            return render_template('edit_restaurant_pin.html', form=form, id=id, pin=pin, group=group, profile=profile, name=name)
 
-    cur.close()
-    return render_template('edit_restaurant_pin.html', form=form, id=id, pin=pin, group=group)
+    return render_template('edit_restaurant_pin.html', form=form, id=id, pin=pin, group=group, name=name)
 
-@app.route('/edit_transportation_pin/<string:name>', methods=['GET', 'POST'])
+@app.route('/edit_transportation_pin/<int:id>/<string:name>', methods=['GET', 'POST'])
 @is_logged_in
-def editTransportationPin(name):
+def editTransportationPin(id, name):
     form = EditTransportationPin(request.form)
     user = session['username']
-    cur = mysql.connection.cursor()
-
-    # Get pin info
-    cur.execute("SELECT * FROM transpo_pin WHERE name = %s", [name])
-    pin = cur.fetchone()
-    id = pin['groupId']
-
-    # Get group info
-    cur.execute("SELECT * FROM groups WHERE groupId = %s", [id])
-    group = cur.fetchone()
-
-    #Populate fields
-    form.name.data = pin['name']
-    form.date.data = pin['date']
-    form.price.data = pin['price']
-    form.description.data = pin['description']
-    form.link.data = pin['link']
-    form.type.data = pin['type']
-
+    pin = Transpo_Pin.query.filter(and_(Transpo_Pin.transpoName==name), (Transpo_Pin.groupId==id)).first()
+    form.name.data, form.price.data= pin.transpoName, pin.price
+    form.type.data, form.description.data, form.link.data = pin.types, pin.description, pin.link
+    profile = User.query.filter(User.username==user).first()
+    group = Group.query.filter(Group.id==id).first()
     if form.validate_on_submit():
-        #print("Inside first if")
-        user_pass_candidate = form.passwordUser.data
-        cur.execute("SELECT * FROM users WHERE username = %s", [user])
-        profile = cur.fetchone()
-        passwordUser = profile['password']
-        # Check Passwords
-        if sha256_crypt.verify(user_pass_candidate, passwordUser):
-            group_pass_candidate = form.passwordGroup.data
-            passwordGroup = group['password']
-            if sha256_crypt.verify(group_pass_candidate, passwordGroup):
-                # Create variables with data
-                name = request.form['name']
-                date = request.form['date']
-                price = request.form['price']
-                description = request.form['description']
-                link = request.form['link']
-                type = request.form['type']
+        app.logger.info('verified')
+        if sha256_crypt.verify(form.passwordUser.data, profile.password):
 
-                pinId = pin['pinId']
-                cur.execute("UPDATE transpo_pin SET name = %s, date = %s, price = %s,  description = %s, link = %s, type = %s WHERE pinId = %s", [name, date, price, description, link,type, pinId])
-                mysql.connection.commit()
-                cur.close()
-                flash("Pin succesfully updated!")
+            if sha256_crypt.verify(form.passwordGroup.data, group.password):
+                newPin = Transpo_Pin.query.filter(and_(Transpo_Pin.transpoName==name), (Transpo_Pin.groupId==id)).update(dict(transpoName=request.form['name'], price=request.form['price'], types=request.form['type'], description=request.form['description'], link=request.form['link']))
+                db.session.commit()
+                flash("Pin updated!!")
                 return redirect(url_for('group', id=id))
 
             else:
                 flash("You got your group password twisted")
-                return render_template('edit_transportation_pin.html', form=form, id=id, pin=pin, group=group, profile=profile)
+                return render_template('edit_transportation_pin.html', form=form, id=id, pin=pin, group=group, profile=profile, name=name)
         else:
             flash("You got your user password twisted")
-            return render_template('edit_transportation_pin.html', form=form, id=id, pin=pin, group=group, profile=profile)
+            return render_template('edit_transportation_pin.html', form=form, id=id, pin=pin, group=group, profile=profile, name=name)
 
-    cur.close()
-    return render_template('edit_transportation_pin.html', form=form, id=id, pin=pin, group=group)
+    app.logger.info('unverified')
+    return render_template('edit_transportation_pin.html', form=form, id=id, pin=pin, group=group, name=name)
 
-@app.route('/edit_activity_pin/<string:name>', methods=['GET', 'POST'])
+@app.route('/edit_activity_pin/<int:id>/<string:name>', methods=['GET', 'POST'])
 @is_logged_in
-def editActivityPin(name):
+def editActivityPin(id, name):
     form = EditActivityPin(request.form)
     user = session['username']
-    cur = mysql.connection.cursor()
-
-    # Get pin info
-    cur.execute("SELECT * FROM activity_pin WHERE name = %s", [name])
-    pin = cur.fetchone()
-    id = pin['groupId']
-
-    # Get group info
-    cur.execute("SELECT * FROM groups WHERE groupId = %s", [id])
-    group = cur.fetchone()
-
-    #Populate fields
-    form.name.data = pin['name']
-    form.description.data = pin['description']
-    form.link.data = pin['link']
-    form.type.data = pin['type']
-
+    pin = Activity_Pin.query.filter(and_(Activity_Pin.activityName==name), (Activity_Pin.groupId==id)).first()
+    form.name.data, form.price.data= pin.activityName, pin.price
+    form.type.data, form.description.data, form.link.data = pin.types, pin.description, pin.link
+    profile = User.query.filter(User.username==user).first()
+    group = Group.query.filter(Group.id==id).first()
     if form.validate_on_submit():
-        #print("Inside first if")
-        user_pass_candidate = form.passwordUser.data
-        cur.execute("SELECT * FROM users WHERE username = %s", [user])
-        profile = cur.fetchone()
-        passwordUser = profile['password']
-        # Check Passwords
-        if sha256_crypt.verify(user_pass_candidate, passwordUser):
-            group_pass_candidate = form.passwordGroup.data
-            passwordGroup = group['password']
-            if sha256_crypt.verify(group_pass_candidate, passwordGroup):
-                # Create variables with data
-                name = request.form['name']
-                description = request.form['description']
-                link = request.form['link']
-                type = request.form['type']
+        if sha256_crypt.verify(form.passwordUser.data, profile.password):
 
-                pinId = pin['pinId']
-                cur.execute("UPDATE activity_pin SET name = %s, description = %s, link = %s, type = %s WHERE pinId = %s", [name, description, link,type, pinId])
-                mysql.connection.commit()
-                cur.close()
-                flash("Pin succesfully updated!")
+            if sha256_crypt.verify(form.passwordGroup.data, group.password):
+                newPin = Activity_Pin.query.filter(and_(Activity_Pin.activityName==name), (Activity_Pin.groupId==id)).update(dict(activityName=request.form['name'], price=request.form['price'], types=request.form['type'], description=request.form['description'], link=request.form['link']))
+                db.session.commit()
+                flash("Pin updated!!")
                 return redirect(url_for('group', id=id))
+    # form = EditActivityPin(request.form)
+    # user = session['username']
+    # cur = mysql.connection.cursor()
+    #
+    # # Get pin info
+    # cur.execute("SELECT * FROM activity_pin WHERE name = %s", [name])
+    # pin = cur.fetchone()
+    # id = pin['groupId']
+    #
+    # # Get group info
+    # cur.execute("SELECT * FROM groups WHERE groupId = %s", [id])
+    # group = cur.fetchone()
+    #
+    # #Populate fields
+    # form.name.data = pin['name']
+    # form.description.data = pin['description']
+    # form.link.data = pin['link']
+    # form.type.data = pin['type']
+    #
+    # if form.validate_on_submit():
+    #     #print("Inside first if")
+    #     user_pass_candidate = form.passwordUser.data
+    #     cur.execute("SELECT * FROM users WHERE username = %s", [user])
+    #     profile = cur.fetchone()
+    #     passwordUser = profile['password']
+    #     # Check Passwords
+    #     if sha256_crypt.verify(user_pass_candidate, passwordUser):
+    #         group_pass_candidate = form.passwordGroup.data
+    #         passwordGroup = group['password']
+    #         if sha256_crypt.verify(group_pass_candidate, passwordGroup):
+    #             # Create variables with data
+    #             name = request.form['name']
+    #             description = request.form['description']
+    #             link = request.form['link']
+    #             type = request.form['type']
+    #
+    #             pinId = pin['pinId']
+    #             cur.execute("UPDATE activity_pin SET name = %s, description = %s, link = %s, type = %s WHERE pinId = %s", [name, description, link,type, pinId])
+    #             mysql.connection.commit()
+    #             cur.close()
+    #             flash("Pin succesfully updated!")
+    #             return redirect(url_for('group', id=id))
 
             else:
                 flash("You got your group password twisted")
@@ -729,41 +625,25 @@ def editActivityPin(name):
             flash("You got your user password twisted")
             return render_template('edit_activity_pin.html', form=form, id=id, pin=pin, group=group, profile=profile)
 
-    cur.close()
     return render_template('edit_activity_pin.html', form=form, id=id, pin=pin, group=group)
 
 
-@app.route('/delete_rental_pin/<string:name>', methods=['GET','POST'])
+@app.route('/delete_rental_pin/<int:id>/<string:name>', methods=['GET','POST'])
 @is_logged_in
-def deleteRentalPin(name):
+def deleteRentalPin(id, name):
     form = DeletePinForm(request.form)
+    user = session['username']
+    profile = User.query.filter(User.username==user).first()
+    pin = Lodging_Pin.query.filter(and_(Lodging_Pin.lodgeName==name), (Lodging_Pin.groupId==id)).first()
+    group = Group.query.filter(Group.id==id).first()
+
     if form.yes.data:
-        cur = mysql.connection.cursor()
-        user = session['username']
-
-        cur.execute("SELECT * FROM rental_pin WHERE rental_name = %s", [name])
-        pin = cur.fetchone()
-        id = pin['groupId']
-
-        cur.execute("SELECT * FROM users WHERE username = %s", [user])
-        profile = cur.fetchone()
-        userPassword = profile['password']
-        user_pass_candidate = form.passwordUser.data
-        if sha256_crypt.verify(user_pass_candidate, userPassword):
-
-            cur.execute("SELECT * FROM groups WHERE groupId = %s", [id])
-            group = cur.fetchone()
-            groupPassword = group['password']
-            group_pass_candidate = form.passwordGroup.data
-            if sha256_crypt.verify(group_pass_candidate, groupPassword):
-
-                cur.execute("DELETE FROM rental_pin WHERE rental_name = %s", [name])
-                mysql.connection.commit()
-                cur.close()
-                flash("Pin deleted")
-
+        if sha256_crypt.verify(form.passwordUser.data, profile.password):
+            if sha256_crypt.verify(form.passwordGroup.data, group.password):
+                db.session.delete(pin)
+                db.session.commit()
+                flash('Pin deleted.')
                 return redirect(url_for('group', id=id))
-
             else:
                 flash("Incorrect group password")
                 return render_template('delete_rental_pin.html', name=name, form=form)
@@ -773,75 +653,46 @@ def deleteRentalPin(name):
 
     return render_template('delete_rental_pin.html', name=name, form=form)
 
-@app.route('/delete_restaurant_pin/<string:name>', methods=['GET','POST'])
+@app.route('/delete_restaurant_pin/<int:id>/<string:name>', methods=['GET','POST'])
 @is_logged_in
-def deleteRestaurantPin(name):
+def deleteRestaurantPin(id, name):
     form = DeletePinForm(request.form)
+    user = session['username']
+    profile = User.query.filter(User.username==user).first()
+    pin = Rest_Pin.query.filter(and_(Rest_Pin.restName==name), (Rest_Pin.groupId==id)).first()
+    group = Group.query.filter(Group.id==id).first()
     if form.yes.data:
-        cur = mysql.connection.cursor()
-        user = session['username']
-
-        cur.execute("SELECT * FROM rest_pin WHERE rest_name = %s", [name])
-        pin = cur.fetchone()
-        id = pin['groupId']
-
-        cur.execute("SELECT * FROM users WHERE username = %s", [user])
-        profile = cur.fetchone()
-        userPassword = profile['password']
-        user_pass_candidate = form.passwordUser.data
-        if sha256_crypt.verify(user_pass_candidate, userPassword):
-
-            cur.execute("SELECT * FROM groups WHERE groupId = %s", [id])
-            group = cur.fetchone()
-            groupPassword = group['password']
-            group_pass_candidate = form.passwordGroup.data
-            if sha256_crypt.verify(group_pass_candidate, groupPassword):
-
-                cur.execute("DELETE FROM rest_pin WHERE rest_name = %s", [name])
-                mysql.connection.commit()
-                cur.close()
-                flash("Pin deleted")
-
+        if sha256_crypt.verify(form.passwordUser.data, profile.password):
+            if sha256_crypt.verify(form.passwordGroup.data, group.password):
+                db.session.delete(pin)
+                db.session.commit()
+                flash('Pin deleted.')
                 return redirect(url_for('group', id=id))
 
             else:
                 flash("Incorrect group password")
-                return render_template('delete_restaurant_pin.html', name=name, form=form)
+                return render_template('delete_restaurant_pin.html', name=name, form=form, id=id)
         else:
             flash("Incorrect user password")
-            return render_template('delete_restaurant_pin.html', name=name, form=form)
+            return render_template('delete_restaurant_pin.html', name=name, form=form, id=id)
 
-    return render_template('delete_restaurant_pin.html', name=name, form=form)
+    return render_template('delete_restaurant_pin.html', name=name, form=form, id=id)
 
-@app.route('/delete_transportation_pin/<string:name>', methods=['GET','POST'])
+@app.route('/delete_transportation_pin/<int:id>/<string:name>', methods=['GET','POST'])
 @is_logged_in
-def deleteTransportationPin(name):
+def deleteTransportationPin(id, name):
     form = DeletePinForm(request.form)
+    user = session['username']
+    profile = User.query.filter(User.username==user).first()
+    pin = Transpo_Pin.query.filter(and_(Transpo_Pin.transpoName==name), (Transpo_Pin.groupId==id)).first()
+    group = Group.query.filter(Group.id==id).first()
+
     if form.yes.data:
-        cur = mysql.connection.cursor()
-        user = session['username']
-
-        cur.execute("SELECT * FROM transpo_pin WHERE name = %s", [name])
-        pin = cur.fetchone()
-        id = pin['groupId']
-
-        cur.execute("SELECT * FROM users WHERE username = %s", [user])
-        profile = cur.fetchone()
-        userPassword = profile['password']
-        user_pass_candidate = form.passwordUser.data
-        if sha256_crypt.verify(user_pass_candidate, userPassword):
-
-            cur.execute("SELECT * FROM groups WHERE groupId = %s", [id])
-            group = cur.fetchone()
-            groupPassword = group['password']
-            group_pass_candidate = form.passwordGroup.data
-            if sha256_crypt.verify(group_pass_candidate, groupPassword):
-
-                cur.execute("DELETE FROM transpo_pin WHERE name = %s", [name])
-                mysql.connection.commit()
-                cur.close()
-                flash("Pin deleted")
-
+        if sha256_crypt.verify(form.passwordUser.data, profile.password):
+            if sha256_crypt.verify(form.passwordGroup.data, group.password):
+                db.session.delete(pin)
+                db.session.commit()
+                flash('Pin deleted.')
                 return redirect(url_for('group', id=id))
 
             else:
@@ -853,37 +704,22 @@ def deleteTransportationPin(name):
 
     return render_template('delete_transportation_pin.html', name=name, form=form)
 
-@app.route('/delete_activity_pin/<string:name>', methods=['GET','POST'])
+@app.route('/delete_activity_pin/<int:id>/<string:name>', methods=['GET','POST'])
 @is_logged_in
-def deleteActivityPin(name):
+def deleteActivityPin(id, name):
     form = DeletePinForm(request.form)
+    user = session['username']
+    profile = User.query.filter(User.username==user).first()
+    pin = Activity_Pin.query.filter(and_(Activity_Pin.activityName==name), (Activity_Pin.groupId==id)).first()
+    group = Group.query.filter(Group.id==id).first()
+
     if form.yes.data:
-        cur = mysql.connection.cursor()
-        user = session['username']
-
-        cur.execute("SELECT * FROM activity_pin WHERE name = %s", [name])
-        pin = cur.fetchone()
-        id = pin['groupId']
-
-        cur.execute("SELECT * FROM users WHERE username = %s", [user])
-        profile = cur.fetchone()
-        userPassword = profile['password']
-        user_pass_candidate = form.passwordUser.data
-        if sha256_crypt.verify(user_pass_candidate, userPassword):
-
-            cur.execute("SELECT * FROM groups WHERE groupId = %s", [id])
-            group = cur.fetchone()
-            groupPassword = group['password']
-            group_pass_candidate = form.passwordGroup.data
-            if sha256_crypt.verify(group_pass_candidate, groupPassword):
-
-                cur.execute("DELETE FROM activity_pin WHERE name = %s", [name])
-                mysql.connection.commit()
-                cur.close()
-                flash("Pin deleted")
-
+        if sha256_crypt.verify(form.passwordUser.data, profile.password):
+            if sha256_crypt.verify(form.passwordGroup.data, group.password):
+                db.session.delete(pin)
+                db.session.commit()
+                flash('Pin deleted.')
                 return redirect(url_for('group', id=id))
-
             else:
                 flash("Incorrect group password")
                 return render_template('delete_activity_pin.html', name=name, form=form)

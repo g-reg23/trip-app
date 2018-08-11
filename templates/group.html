@@ -50,7 +50,7 @@
               <a class="pinLink" target="_blank" href="{{ pin.link }}">View at site</a>
               <br /><br />
               {% if user == group.admin or user == pin.creator %}
-                <p><a href="/edit_rental_pin/{{ pin.rental_name }}" class="pinLink">Edit Pin</a>   <a  href="/delete_rental_pin/{{ pin.rental_name }}" class="pinLink">  Delete Pin</a></p>
+                <p><a href="/edit_rental_pin/{{ id }}/{{ pin.lodgeName }}" class="pinLink">Edit Pin</a>   <a  href="/delete_rental_pin/{{ id }}/{{ pin.lodgeName }}" class="pinLink">  Delete Pin</a></p>
               {% endif %}
             </div>
           {% endfor %}
@@ -71,7 +71,7 @@
               <p>Posted by: <strong>{{ pinTwo.creator }}</strong></p>
               <br />
               {% if user == group.admin or user == pinTwo.creator %}
-                <p><a href="/edit_restaurant_pin/{{ pinTwo.rest_name }}" class="pinLink">Edit Pin</a>   <a  href="/delete_restaurant_pin/{{ pinTwo.rest_name }}" class="pinLink">  Delete Pin</a></p>
+                <p><a href="/edit_restaurant_pin/{{ id }}/{{ pinTwo.restName }}" class="pinLink">Edit Pin</a>   <a  href="/delete_restaurant_pin/{{ id }}/{{ pinTwo.restName }}" class="pinLink">  Delete Pin</a></p>
               {% endif %}
             </div>
           {% endfor %}
@@ -92,7 +92,7 @@
               <p>Posted by: <strong>{{ pinThree.creator }}</strong></p>
               <br />
               {% if user == group.admin or user == pinThree.creator %}
-                <p><a href="/edit_transportation_pin/{{ pinThree.name }}" class="pinLink">Edit Pin</a>   <a  href="/delete_transportation_pin/{{ pinThree.name }}" class="pinLink">  Delete Pin</a></p>
+                <p><a href="/edit_transportation_pin/{{ id }}/{{ pinThree.transpoName }}" class="pinLink">Edit Pin</a>   <a  href="/delete_transportation_pin/{{ id }}/{ pinThree.transpoName }}" class="pinLink">  Delete Pin</a></p>
               {% endif %}
             </div>
           {% endfor %}
@@ -112,7 +112,7 @@
               <p>Posted by: <strong>{{ pinFour.creator }}</strong></p>
               <br />
               {% if user == group.admin or user == pinFour.creator %}
-                <p><a href="/edit_activity_pin/{{ pinFour.name }}" class="pinLink">Edit Pin</a>   <a  href="/delete_activity_pin/{{ pinFour.name }}" class="pinLink">  Delete Pin</a></p>
+                <p><a href="/edit_activity_pin/{{ id }}/{{ pinFour.activityName }}" class="pinLink">Edit Pin</a>   <a  href="/delete_activity_pin/{{ id }}/{{ pinFour.activityName }}" class="pinLink">  Delete Pin</a></p>
               {% endif %}
             </div>
           {% endfor %}
