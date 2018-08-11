@@ -61,7 +61,6 @@ class SignupForm(FlaskForm):
 class EditProfileForm(FlaskForm):
     firstName = StringField('First Name:', [validators.Length(min=1, max=30)], render_kw={"placeholder": "First Name"})
     lastName = StringField('Last Name:', [validators.Length(min=1, max=30)], render_kw={"placeholder": "Last Name"})
-    username = StringField('Username:', [validators.Length(min=1, max=30)], render_kw={"placeholder": "Username"})
     email = StringField('Email:', [validators.Email()], render_kw={"placeholder": "Email"})
     password = PasswordField([validators.InputRequired()], render_kw={"placeholder": "Password"})
     submit = SubmitField('Submit')
@@ -69,7 +68,8 @@ class EditProfileForm(FlaskForm):
 class GroupForm(FlaskForm):
     groupName = StringField('Group Name:', [validators.Length(min=2, max=30)], render_kw={"placeholder": "Group Name"})
     location = StringField('Location', [validators.Length(min=2, max=30)], render_kw={"placeholder": "Location"})
-    dates = StringField('Dates:', [validators.Length(min=5, max=45)], render_kw={"placeholder": "Dates"})
+    startDate = StringField('Start date:', render_kw={"placeholder": "Start date"})
+    endDate = StringField('End date:', render_kw={"placeholder": "End date"})
     password = PasswordField('Password:', [
     validators.InputRequired(),
     validators.EqualTo('confirm', message='Passwords do not match.')], render_kw={"placeholder": "Password"})
@@ -100,6 +100,7 @@ class RestPinForm(FlaskForm):
 class ActivityPinForm(FlaskForm):
     activityName = StringField('Name', [validators.Length(min=4, max=40)], render_kw={"placeholder": "Activity Name"})
     description = TextAreaField('Description', [validators.Length(min=4)], render_kw={"placeholder": "Description"})
+    price = IntegerField('Price:', [validators.NumberRange(min=0, max=10000)], render_kw={"placeholder": "Price"})
     link = StringField('Link', [validators.Length(min=6, max=255)], render_kw={"placeholder": "Link"})
     type = SelectField('Type', choices=[('Indoor', 'Indoor'), ('Outdoor', 'Outdoor')])
     submit4 = SubmitField('Submit')
@@ -116,7 +117,8 @@ class TransportationPinForm(FlaskForm):
 class EditGroupForm(FlaskForm):
     name = StringField([validators.Length(min=2, max=30)], render_kw={"placeholder": "Group Name"})
     location = StringField([validators.Length(min=2, max=35)], render_kw={"placeholder": "Location"})
-    dates = StringField([validators.Length(min=5, max=35)], render_kw={"placeholder": "Dates"})
+    startDate = StringField('Start date:', render_kw={"placeholder": "Start date"})
+    endDate = StringField('End date:', render_kw={"placeholder": "End date"})
     description = TextAreaField([validators.Length(min=10)], render_kw={"placeholder": "Description/Message"})
     groupPassword = PasswordField([validators.InputRequired()], render_kw={"placeholder": "Group Password"})
     password = PasswordField([validators.InputRequired()], render_kw={"placeholder": "Your Password"})

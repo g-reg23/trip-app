@@ -10,6 +10,8 @@ from flask_bootstrap import Bootstrap
 from forms import *
 from confi import *
 from classes import *
+from sqlalchemy import and_, or_, update
+from models import *
 #from routes import *
 #from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
@@ -26,42 +28,58 @@ def gettin():
 def signup():
     form = SignupForm(request.form)
     if form.validate_on_submit():
-        f_Name = form.firstName.data
-        l_Name = form.lastName.data
-        u_name = form.username.data
-        e_mail = form.email.data
-        e_verified = 0
-        p_word = sha256_crypt.encrypt(str(form.password.data))
-
-        #create cursor
-        cur = mysql.connection.cursor()
-
-        check = cur.execute("SELECT * FROM users WHERE username = %s", [u_name])
-        check2 = cur.execute("SELECT * FROM users WHERE email = %s", [e_mail])
-        if check > 0:
-            #close
-            cur.close()
-
-            error = "That username is already in use, sorry."
-            return render_template("signup.html", error=error, form=form)
-        elif check2 > 0:
-            cur.close()
-            error = "That email address is already in use"
-            return render_template("signup.html", error=error, form=form)
-        else:
-            cur.execute("INSERT INTO users(firstName, lastName, username, email, password, e_verified) VALUES(%s, %s, %s, %s, %s, %s)", (f_Name, l_Name, u_name, e_mail, p_word, e_verified))
-
-            #Commit to Database
-            mysql.connection.commit()
-
-            #Close connection
-            cur.close()
-
-            flash("Congrats, your are registered, you can now login once you confirm your email")
-            msg = Message("Email Confirmation", sender=app.config['MAIL_USERNAME'], recipients=[e_mail])
-            msg.html = render_template("verify_email.html")
-            mail.send(msg)
+        # Check if username or email is already taken
+        user = User.query.filter(User.username==form.username.data).first()
+        email = User.query.filter(User.email==form.email.data).first()
+        if user is None and email is None:
+            u = User(firstName=form.firstName.data, lastName=form.lastName.data, email=form.email.data, username=form.username.data, password=sha256_crypt.encrypt(str(form.password.data)))
+            db.session.add(u)
+            db.session.commit()
+            flash('Congrats you are now registered. Please sign in.')
             return redirect(url_for('login'))
+        if user is not None:
+            flash('That username is already in use.')
+            # form.username.data = ''
+
+        else:
+            flash('That email is already in use')
+            form.email.data = ''
+        # f_Name = form.firstName.data
+        # l_Name = form.lastName.data
+        # u_name = form.username.data
+        # e_mail = form.email.data
+        # e_verified = 0
+        # p_word = sha256_crypt.encrypt(str(form.password.data))
+        #
+        # #create cursor
+        # cur = mysql.connection.cursor()
+        #
+        # check = cur.execute("SELECT * FROM users WHERE username = %s", [u_name])
+        # check2 = cur.execute("SELECT * FROM users WHERE email = %s", [e_mail])
+        # if check > 0:
+        #     #close
+        #     cur.close()
+        #
+        #     error = "That username is already in use, sorry."
+        #     return render_template("signup.html", error=error, form=form)
+        # elif check2 > 0:
+        #     cur.close()
+        #     error = "That email address is already in use"
+        #     return render_template("signup.html", error=error, form=form)
+        # else:
+        #     cur.execute("INSERT INTO users(firstName, lastName, username, email, password, e_verified) VALUES(%s, %s, %s, %s, %s, %s)", (f_Name, l_Name, u_name, e_mail, p_word, e_verified))
+        #
+        #     #Commit to Database
+        #     mysql.connection.commit()
+        #
+        #     #Close connection
+        #     cur.close()
+        #
+        #     flash("Congrats, your are registered, you can now login once you confirm your email")
+        #     msg = Message("Email Confirmation", sender=app.config['MAIL_USERNAME'], recipients=[e_mail])
+        #     msg.html = render_template("verify_email.html")
+        #     mail.send(msg)
+        #     return redirect(url_for('login'))
 
     return render_template('signup.html',form=form)
 
@@ -69,42 +87,55 @@ def signup():
 def login():
     form = LoginForm(request.form)
     if form.validate_on_submit():
-        username = form.username.data
-        password_candidate = form.password.data
-
-        #Create DictCursor
-        cur = mysql.connection.cursor()
-
-        result = cur.execute("SELECT * FROM users WHERE username = %s", [username])
-        if result > 0:
-            data = cur.fetchone()
-            password, verified = data['password'], data['e_verified']
-
-            if sha256_crypt.verify(password_candidate, password):
-                if verified == 0:
-                    error = 'You must verifiy your email first'
-                    return render_template('login.html', error=error, form=form)
+        user = User.query.filter(User.username==form.username.data).first()
+        if user:
+            pass_candidate = form.password.data
+            if sha256_crypt.verify(pass_candidate, user.password):
                 session['logged_in'] = True
-                session['username'] = username
-                userId = data['userId']
-                cur.execute("SELECT * FROM user_group WHERE userId = %s", [userId])
-                groups = cur.fetchall()
-                #user_profile = User(username, userId, groups)
-                cur.close()
-                app.logger.info('%s logged in successfully', username)
-                # msg = Message("Email Confirmation", sender="gstauf5420@att.net", recipients=["gztauf5420@gmail.com"])
-                # msg.html = render_template("validate_email.html")
-                # mail.send(msg)
-                return redirect(url_for('dashboard'))
+                session['username'] = user.username
+                flash("You are now logged in. Welcome!")
+                return redirect(url_for("dashboard"))
             else:
-                error = 'Invalid log in.'
-                return render_template('login.html', error=error, form=form)
-
-
+                flash("Invalid login")
+            return render_template("login.html", form=form, error=error)
         else:
-            error = "Username not found"
-            return render_template('login.html', error=error, form=form)
-        cur.close()
+            flash('Invalid login')
+        # username = form.username.data
+        # password_candidate = form.password.data
+        #
+        # #Create DictCursor
+        # cur = mysql.connection.cursor()
+        #
+        # result = cur.execute("SELECT * FROM users WHERE username = %s", [username])
+        # if result > 0:
+        #     data = cur.fetchone()
+        #     password, verified = data['password'], data['e_verified']
+        #
+        #     if sha256_crypt.verify(password_candidate, password):
+        #         if verified == 0:
+        #             error = 'You must verifiy your email first'
+        #             return render_template('login.html', error=error, form=form)
+        #         session['logged_in'] = True
+        #         session['username'] = username
+        #         userId = data['userId']
+        #         cur.execute("SELECT * FROM user_group WHERE userId = %s", [userId])
+        #         groups = cur.fetchall()
+        #         #user_profile = User(username, userId, groups)
+        #         cur.close()
+        #         app.logger.info('%s logged in successfully', username)
+        #         # msg = Message("Email Confirmation", sender="gstauf5420@att.net", recipients=["gztauf5420@gmail.com"])
+        #         # msg.html = render_template("validate_email.html")
+        #         # mail.send(msg)
+        #         return redirect(url_for('dashboard'))
+        #     else:
+        #         error = 'Invalid log in.'
+        #         return render_template('login.html', error=error, form=form)
+        #
+        #
+        # else:
+        #     error = "Username not found"
+        #     return render_template('login.html', error=error, form=form)
+        # cur.close()
 
     return render_template('login.html', form=form)
 #Check if logged in
@@ -165,73 +196,34 @@ def logout():
 @app.route('/dashboard')
 @is_logged_in
 def dashboard():
-    #groups = []
-    username = session['username']
-    # Get id from users db
-    cur = mysql.connection.cursor()
-    # Find user in db
-    cur.execute("SELECT * FROM users WHERE username = %s", [username])
-    profile = cur.fetchone()
-    #store id in 'user'
-    id = profile['userId']
+    user = session['username']
+    profile = User.query.filter(User.username==user).first()
+    groups = User_Group.query.filter(User_Group.userId==profile.id).all()
+    admins = User_Group.query.filter(and_(User_Group.userId==profile.id), (User_Group.type=='Admin')).all()
+    # groups = User_Group.query.filter(User_Group.userId==profile.id).all()
 
-    result = cur.execute("SELECT * FROM user_group WHERE userId = %s", [id])
-
-    if result > 0:
-        groups = cur.fetchall()
-        ad = 'admin'
-        cur.execute("SELECT * FROM user_group WHERE userId = %s AND type = %s", [id, ad])
-        admins  = cur.fetchall()
-        cur.close()
-        return render_template('dashboard.html', groups=groups, profile=profile, admins=admins)
-    else:
-        cur.close()
-        return render_template('dashboard.html', profile=profile)
-
-    return render_template('dashboard.html', profile=profile)
+    return render_template("dashboard.html", profile=profile, groups=groups, admins=admins)
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 @is_logged_in
 def edit_profile():
     form = EditProfileForm(request.form)
     user = session['username']
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM users WHERE username = %s", [user])
-    profile = cur.fetchone()
-
-    cur.close()
-
-    password = profile['password']
-    id = profile['userId']
-
-    form.firstName.data = profile['firstName']
-    form.lastName.data = profile['lastName']
-    form.username.data = profile['username']
-    form.email.data = profile['email']
-
-    if form.validate_on_submit ():
-        password_candidate = form.password.data
-        if sha256_crypt.verify(password_candidate, password):
-            f_Name = request.form['firstName']
-            l_Name = request.form['lastName']
-            u_name = request.form['username']
-            e_mail = request.form['email']
-            cur = mysql.connection.cursor()
-
-            cur.execute("UPDATE users SET firstName = %s, lastName = %s, username = %s, email = %s WHERE userId = %s", [f_Name, l_Name, u_name, e_mail, id])
-
-            #Commit to Database
-            mysql.connection.commit()
-            flash("Your profile was successfully edited. Please re-signin")
-
-            #Close connection
-            cur.close()
-
-
-            return redirect(url_for('logout'))
-
-        flash("Incorrect password")
-        return render_template('edit_profile.html', form=form, profile=profile)
+    profile = User.query.filter(User.username==user).first()
+    if form.validate_on_submit():
+        if profile.email == form.email.data:
+            newProfile = User.query.filter(User.id==profile.id).update(dict(firstName=form.firstName.data,lastName=form.lastName.data, email=form.email.data))
+            db.session.commit()
+            return redirect(url_for('dashboard'))
+        else:
+            check_email = User.query.filter(User.email==form.email.data).first()
+            if check_email is not None:
+                flash("Sorry that email is in use.")
+                return render_template('edit_profile.html', form=form, profile=profile)
+            else:
+                newProfile = User.query.filter(User.id==profile.id).update(dict(firstName=form.firstName.data,lastName=form.lastName.data, email=form.email.data))
+                db.session.commit()
+                return redirect(url_for('dashboard'))
 
     return render_template('edit_profile.html', form=form, profile=profile)
 
@@ -241,28 +233,17 @@ def delete_profile():
     form = DeleteProfileForm(request.form)
     user = session['username']
     if form.yes.data:
-        cur = mysql.connection.cursor()
-        cur.execute("SELECT * FROM users WHERE username = %s", [user])
-        data = cur.fetchone()
+        # cur = mysql.connection.cursor()
+        # cur.execute("SELECT * FROM users WHERE username = %s", [user])
+        profile = User.query.filter(User.username==user).first()
         password_candidate = form.password.data
-        password = data['password']
-        #Get id to delete this users group affiliations
-        id = data['userId']
-        if sha256_crypt.verify(password_candidate, password):
-            #if password match, delete user;
-            cur.execute("DELETE FROM users WHERE userId = %s", [id])
-            mysql.connection.commit()
-            #All user_group relationships are deleted, however
-            #Does not delete groups that user is admin, here deletes group,
-            cur.execute("DELETE FROM groups WHERE admin = %s", [user])
-            mysql.connection.commit()
-            # Close connection
-            cur.close()
-            session.clear()
-            flash("You're account was succesfully deleted.", "danger")
-            return redirect(url_for("login"))
+        if sha256_crypt.verify(password_candidate, profile.password):
+            db.session.delete(profile)
+            db.session.commit()
+            flash('Your account was successfully deleted.')
+            return redirect(url_for('logout'))
         else:
-            flash("Incorrect password")
+            flash('Incorrect password')
             return render_template('delete_profile.html', form=form)
 
     return render_template('delete_profile.html', form=form)
@@ -272,46 +253,49 @@ def delete_profile():
 def edit_group(id):
     form = EditGroupForm(request.form)
     user = session['username']
-    cur = mysql.connection.cursor()
-
-    # Get group info
-    cur.execute("SELECT * FROM groups WHERE groupId = %s", [id])
-    group = cur.fetchone()
-    passwordGroup = group['password']
-
-    # Get user credentials in order to get password
-    cur.execute("SELECT * FROM users WHERE username = %s", [user])
-    profile = cur.fetchone()
-    passwordUser = profile['password']
-    cur.close()
-
-    form.name.data = group['title']
-    form.location.data = group['location']
-    form.dates.data = group['dates']
-    form.description.data = group['description']
-
+    # cur = mysql.connection.cursor()
+    #
+    # # Get group info
+    # cur.execute("SELECT * FROM groups WHERE groupId = %s", [id])
+    # group = cur.fetchone()
+    # passwordGroup = group['password']
+    #
+    # # Get user credentials in order to get password
+    # cur.execute("SELECT * FROM users WHERE username = %s", [user])
+    # profile = cur.fetchone()
+    # passwordUser = profile['password']
+    # cur.close()
+    #
+    # form.name.data = group['title']
+    # form.location.data = group['location']
+    # form.dates.data = group['dates']
+    # form.description.data = group['description']
+    profile = User.query.filter(User.username==user).first()
+    group = Group.query.filter(Group.id==id).first()
     if form.validate_on_submit():
         password_candidate_user = form.password.data
         password_candidate_group = form.groupPassword.data
-        if sha256_crypt.verify(password_candidate_user, passwordUser):
-
-            if sha256_crypt.verify(password_candidate_group, passwordGroup):
-                name = request.form['name']
-                location = request.form['location']
-                dates = request.form['dates']
-                description = request.form['description']
-
-                cur = mysql.connection.cursor()
-
-                cur.execute("UPDATE groups SET title = %s, location = %s, dates = %s, description = %s WHERE groupId = %s", [name, location, dates, description, id])
-
-                #Commit to Database
-                mysql.connection.commit()
-                cur.execute("UPDATE user_group SET name = %s", [name])
-                mysql.connection.commit()
-                cur.close()
-                flash("Your group was successfully edited.")
-                return redirect(url_for('dashboard'))
+        if sha256_crypt.verify(password_candidate_user, profile.password):
+            if sha256_crypt.verify(password_candidate_group, group.password):
+                # Check if name is the same as before
+                if group.groupName == form.name.data:
+                    newGroup = Group.query.filter(Group.id==group.id).update(dict(groupName=form.name.data,location=form.location.data, startDate=form.startDate.data, endDate=form.endDate.data, description=form.description.data))
+                    db.session.commit()
+                    flash('Group was successfully updated')
+                    return redirect(url_for('dashboard'))
+                # If group is changed, then check if it is already in use
+                else:
+                    group_check = Group.query.filter(Group.groupName==form.name.data)
+                    # If not in use, then make the update
+                    if group_check is None:
+                        newGroup = Group.query.filter(Group.id==group.id).update(dict(groupName=form.name.data,location=form.location.data, startDate=form.startDate.data, endDate=form.endDate.data, description=form.description.data))
+                        db.session.commit()
+                        flash('Group was successfully updated')
+                        return redirect(url_for('dashboard'))
+                    # If name is in use, then inform them and reload page.
+                    else:
+                        flash("Sorry that group name is already in use")
+                        return render_template('edit_group.html', id=id, profile=profile, group=group, form=form)
             else:
                 flash("Incorrect group password.")
                 return render_template('edit_group.html', id=id, profile=profile, group=group, form=form)
@@ -327,43 +311,47 @@ def edit_group(id):
 @is_logged_in
 def delete_group(id):
     form = DeleteGroupForm(request.form)
+    user = session['username']
+    profile = User.query.filter(User.username==user).first()
+    group = Group.query.filter(Group.id==id).first()
     if form.yes.data:
+
         #set both password attempts (user, and group), as well as user
-        user_pass_candidate = form.passwordUser.data
-        group_pass_candidate = form.passwordGroup.data
-        user = session['username']
-
-        cur = mysql.connection.cursor()
-        # Get user, and group info, as well as all memmbers of group
-        cur.execute("SELECT * FROM users WHERE username = %s", [user])
-        profile = cur.fetchone()
-
-        cur.execute("SELECT * FROM groups WHERE groupId = %s", [id])
-        group = cur.fetchone()
-
-        #close connection
-        cur.close()
+        # user_pass_candidate = form.passwordUser.data
+        # group_pass_candidate = form.passwordGroup.data
+        # user = session['username']
+        #
+        # cur = mysql.connection.cursor()
+        # # Get user, and group info, as well as all memmbers of group
+        # cur.execute("SELECT * FROM users WHERE username = %s", [user])
+        # profile = cur.fetchone()
+        #
+        # cur.execute("SELECT * FROM groups WHERE groupId = %s", [id])
+        # group = cur.fetchone()
+        #
+        # #close connection
+        # cur.close()
         # Set both actual passwords
-        user_pass, group_pass = profile['password'], group['password']
-        if sha256_crypt.verify(user_pass_candidate, user_pass):
-            if sha256_crypt.verify(group_pass_candidate, group_pass):
+        if sha256_crypt.verify(form.passwordUser.data, profile.password):
+            if sha256_crypt.verify(form.passwordGroup.data, group.password):
                 #Reopen connection if passes both Passwords
-                cur = mysql.connection.cursor()
-                # Delete group
-                cur.execute("DELETE FROM groups WHERE groupId = %s", [id])
-                #Commit to db
-                mysql.connection.commit()
-                # Cascading delete MySQL deletes user_group, chats, and all pins with groupId!
-                cur.close()
-
+                # cur = mysql.connection.cursor()
+                # # Delete group
+                # cur.execute("DELETE FROM groups WHERE groupId = %s", [id])
+                # #Commit to db
+                # mysql.connection.commit()
+                # # Cascading delete MySQL deletes user_group, chats, and all pins with groupId!
+                # cur.close()
+                db.session.delete(group)
+                db.session.commit()
                 flash("Group Deleted")
                 return redirect(url_for('dashboard'))
             else:
                 flash("Incorrect group password")
-                return render_template("edit_profile.html", id=id, profile=profile, group=group, form=form)
+                return render_template("delete_group.html", id=id, profile=profile, group=group, form=form)
         else:
             flash("Incorrect user password")
-            return render_template("edit_profile.html", id=id, profile=profile, group=group, form=form)
+            return render_template("delete_group.html", id=id, profile=profile, group=group, form=form)
 
     return render_template('delete_group.html', id=id, form=form)
 @app.route('/newGroup', methods=['GET', 'POST'])
@@ -372,157 +360,102 @@ def newGroup():
     form = GroupForm(request.form)
     user = session['username']
     if form.validate_on_submit():
-        groupName = form.groupName.data
-        location = form.location.data
-        dates = form.dates.data
-        admin = session['username']
-        password = sha256_crypt.encrypt(str(form.password.data))
-        description = form.description.data
-
-
-        # Create cursor
-        cur = mysql.connection.cursor()
-
-        #Check for group name
-        check = cur.execute("SELECT * FROM groups WHERE title = %s", [groupName])
-        if check > 0:
-            cur.close()
-            flash("That group name is already in use, sorry.")
-            return render_template("newGroup.html", form=form)
-        else:
-            #Add group to db
-            cur.execute("INSERT INTO groups(title, location, dates, admin, password, description) VALUES(%s,%s,%s,%s,%s,%s)", (groupName, location, dates, admin, password, description))
-
-            mysql.connection.commit()
-
-            # Create variables for user ID number, group id number and type(admin), to enter admin into user_groups
-            cur.execute("SELECT * FROM users WHERE username = %s", [user])
-            profile = cur.fetchone()
-            userId = profile['userId']
-
-            cur.execute("SELECT * FROM groups WHERE title = %s", [groupName])
-            groupProfile = cur.fetchone()
-            groupId = groupProfile['groupId']
-            type = 'admin'
-
-            cur.execute("INSERT INTO user_group(userId, groupId, name, type, username) VALUES(%s,%s,%s,%s,%s)", [userId, groupId, groupName, type, user])
-
-            mysql.connection.commit()
-            cur.close()
-
-            flash("Group Created")
+        group = Group.query.filter(Group.groupName==form.groupName.data).first()
+        if group is None:
+            g = Group(groupName=form.groupName.data, location=form.location.data, startDate=form.startDate.data, endDate=form.endDate.data, admin=session['username'], password=sha256_crypt.encrypt(str(form.password.data)), description=form.description.data)
+            profile = User.query.filter(User.username==user).first()
+            db.session.add(g)
+            db.session.commit()
+            user_group = User_Group(groupId=g.id, userId=profile.id, type='Admin', groupName=form.groupName.data)
+            db.session.add(user_group)
+            db.session.commit()
+            flash('Group successfully created.')
             return redirect(url_for('dashboard'))
+        else:
+            flash("Sorry, that group name is already in use")
 
     return render_template('newGroup.html', form=form)
-
 @app.route('/group/<int:id>', methods=['GET', 'POST'])
 @is_logged_in
 def group(id):
-
     user = session['username']
-    renPins, restPins, transpoPins, activityPins = {}, {}, {}, {}
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM groups WHERE groupId = %s", [id])
-    group = cur.fetchone()
-    cur.execute("SELECT * FROM users WHERE username = %s", [user])
-    profile = cur.fetchone()
-    userId = profile['userId']
-    ifMember = cur.execute("SELECT * FROM user_group WHERE groupId = %s AND userId = %s", [id, userId])
+    profile = User.query.filter(User.username==user).first()
+    group = Group.query.filter(Group.id==id).first()
+    ifMember = User_Group.query.filter(and_(User_Group.userId==profile.id), (User_Group.groupId==id)).first()
+    if ifMember is not None:
+        renPins, restPins, transpoPins, activityPins = {}, {}, {}, {}
+        members, history = [], []
+        pinForm, pinFormTwo = RentalPinForm(request.form), RestPinForm(request.form)
+        pinFormThree, pinFormFour = TransportationPinForm(request.form), ActivityPinForm(request.form)
+        memList = User_Group.query.filter(User_Group.groupId==id).all()
+        for mem in memList:
+            member = User.query.filter(User.id==mem.userId).first()
+            members.append(member.username)
 
-    if ifMember > 0:
-
-        #Get all the pins
-        pinner1 = cur.execute("SELECT * FROM rental_pin WHERE groupId = %s", [id])
-        if pinner1 > 0:
-            renPins = cur.fetchall()
-        pinner2 = cur.execute("SELECT * FROM rest_pin WHERE groupId = %s", [id])
-        if pinner2 > 0:
-            restPins = cur.fetchall()
-        pinner3 = cur.execute("SELECT * FROM transpo_pin WHERE groupId = %s", [id])
-        if pinner3 > 0:
-            transpoPins = cur.fetchall()
-        pinner4 = cur.execute("SELECT * FROM activity_pin WHERE groupId = %s", [id])
-        if pinner4 > 0:
-            activityPins = cur.fetchall()
-
-        # get all group members
-        members = []
-        cur.execute("SELECT * FROM user_group WHERE groupId = %s", [id])
-        group_data = cur.fetchall()
-        for member in group_data:
-            members.append(member['username'])
-
-
-        #Rental pin form
-        pinForm = RentalPinForm(request.form)
         if pinForm.submit1.data and pinForm.validate():
-            username = session['username']
-            rentalName = pinForm.rentalName.data
-            price = pinForm.price.data
-            rooms = pinForm.rooms.data
-            description = pinForm.description.data
-            link = pinForm.link.data
-            id = id
-
-            cur.execute("INSERT INTO rental_pin(groupId, rental_name, price, rooms, description, link, creator) VALUES(%s,%s,%s,%s,%s,%s,%s)", [id, rentalName, price, rooms, description, link, username])
-
-            cur.connection.commit()
+            rental = Lodging_Pin(groupId=id, lodgeName=pinForm.rentalName.data, price=pinForm.price.data, rooms=pinForm.rooms.data, description=pinForm.description.data, link=pinForm.link.data, creator=user)
+            db.session.add(rental)
+            db.session.commit()
             flash("Pin created!")
             return redirect(url_for('group', id=id))
 
-        pinFormTwo = RestPinForm(request.form)
         if pinFormTwo.submit2.data and pinFormTwo.validate():
-            username = session['username']
-            restName = pinFormTwo.restName.data
-            description = pinFormTwo.description2.data
-            link = pinFormTwo.link2.data
-            type = pinFormTwo.type.data
-            id = id
-
-
-            cur.execute("INSERT INTO rest_pin(groupId, rest_name, description, link, type, creator) VALUES(%s,%s,%s,%s,%s, %s)", [id, restName, description, link, type, username])
-
-            cur.connection.commit()
-            flash("Pin created!")
+            rest = Rest_Pin(groupId=id, restName=pinFormTwo.restName.data, description=pinFormTwo.description2.data, link=pinFormTwo.link2.data, types=pinFormTwo.type.data, creator=user)
+            db.session.add(rest)
+            db.session.commit()
+            flash("Pin created")
             return redirect(url_for('group', id=id))
+        # Get rental pins and rest pins
+        renPins, restPins = Lodging_Pin.query.filter(Lodging_Pin.groupId==id).all(), Rest_Pin.query.filter(Rest_Pin.groupId==id).all()
 
-        pinFormThree = TransportationPinForm(request.form)
         if pinFormThree.submit3.data and pinFormThree.validate():
-            username = session['username']
-            name = pinFormThree.name.data
-            date = pinFormThree.date.data
-            price = pinFormThree.price3.data
-            description = pinFormThree.description3.data
-            link = pinFormThree.link3.data
-            type = pinFormThree.type.data
-
-            cur.execute("INSERT INTO transpo_pin(groupId, name, date, price, link, description, creator, type) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)", [id, name, date, price, link, description, username, type])
-
-            cur.connection.commit()
-            flash("Pin created!")
+            transport = Transpo_Pin(groupId=id, transpoName=pinFormThree.name.data, price=pinFormThree.price3.data, description=pinFormThree.description3.data, link=pinFormThree.link3.data, creator=user)
+            db.session.add(transport)
+            db.session.commit()
+            flash("Pin created")
             return redirect(url_for('group', id=id))
 
-        pinFormFour = ActivityPinForm(request.form)
+
         if pinFormFour.submit4.data and pinFormFour.validate():
-            username = session['username']
-            activityName = pinFormFour.activityName.data
-            description = pinFormFour.description.data
-            link = pinFormFour.link.data
-            type = pinFormFour.type.data
-
-            cur.execute("INSERT INTO activity_pin(groupId, creator, name, description, link, type) VALUES(%s,%s,%s,%s,%s,%s)", [id, username,  activityName, description, link, type])
-            cur.connection.commit()
-            flash("Pin created!")
+            activity = Activity_Pin(groupId=id, activityName=pinFormFour.activityName.data, price=pinFormFour.price.data, description=pinFormFour.description.data, types=pinFormFour.type.data, link=pinFormFour.link.data, creator=user)
+            db.session.add(activity)
+            db.session.commit()
+            flash("Pin created")
             return redirect(url_for('group', id=id))
+        #Get transportation pins and activity pins
+        transpoPins, activityPins = Transpo_Pin.query.filter(Transpo_Pin.groupId==id).all(), Activity_Pin.query.filter(Activity_Pin.groupId==id).all()
 
-        cur.execute("SELECT * FROM chats WHERE groupId = %s", [id])
-        history = cur.fetchall()
+        history = Chat.query.filter(Chat.groupId==id).all()
+
+        @socketio.on('connect', namespace='/chat')
+        def connect():
+            user = session['username']
+            users.append(user)
+            msg = " just connected!"
+            emit('on connect', {'msg': msg, 'user': user, 'users': users}, broadcast=True)
+
+        @socketio.on('disconnect', namespace='/chat')
+        def disconnect():
+            user = session['username']
+            users.remove(user)
+            msg = " just disconnected :("
+            emit('on disconnect', {'msg': msg, 'user': user, "users": users}, broadcast=True)
+
+        @socketio.on('send message', namespace='/chat')
+        def handle_my_custom_event(msg, id):
+            user = session['username']
+            # cur = mysql.connection.cursor()
+            # cur.execute("INSERT INTO chats(groupId, user, message) VALUES(%s,%s,%s)", [id, user, msg])
+            # cur.connection.commit()
+            # cur.close()
+            chat_mess = Chat(groupId=id, username=user, message=msg)
+            db.session.add(chat_mess)
+            db.session.commit()
+            emit('new message', {'msg': msg, 'user': user}, broadcast=True)
+
     else:
         flash("You must join the group first!")
-        return redirect(url_for("joinGroup"))
-
-    cur.close()
-
+        return redirect(url_for('newGroup'))
 
     return render_template("group.html", group=group, renPins=renPins, restPins=restPins, transpoPins=transpoPins, activityPins=activityPins, pinForm=pinForm, id=id, user=user, pinFormTwo=pinFormTwo, pinFormThree=pinFormThree, pinFormFour=pinFormFour, history=history, members=members)
 
@@ -532,54 +465,25 @@ def joinGroup():
     form = JoinGroupForm(request.form)
     username = session['username']
     if form.validate_on_submit():
-        groupName = request.form['name']
-        password_candidate = request.form['password']
-
-        #Create DictCursor
-        cur = mysql.connection.cursor()
-        #Check if already a member
-
-        result = cur.execute("SELECT * FROM groups WHERE title = %s", [groupName])
-        if result > 0:
-            data = cur.fetchone()
-            password = data['password']
-            username = session['username']
-            type = 'member'
-            if sha256_crypt.verify(password_candidate, password):
-                cur.execute("SELECT * FROM users WHERE username = %s", [username])
-                profile = cur.fetchone()
-                userId = profile['userId']
-                # Make sure they arent already part of the group
-                ifMember = cur.execute("SELECT * FROM user_group WHERE name = %s AND userId = %s", [groupName, userId])
-                if ifMember > 0:
-                    flash("You are already a member of the group")
-                    return redirect(url_for("dashboard"))
-
-                # Get id's from user and group db
-                groupId = data['groupId']
-
-                # put user/group ids in user/group database
-                cur.execute("INSERT INTO user_group(userId, groupId, name, type, username) VALUES(%s, %s, %s, %s, %s)", (userId, groupId, groupName, type, username))
-                #commit
-                cur.connection.commit()
-
-                #redirect to Dashboard
-                flash("Group joined!")
-
-                #Close connection
-                cur.close()
-                return redirect(url_for("groups"))
-            else:
-                cur.close()
-                error = 'Invalid group password.'
-                return render_template('joinGroup.html', error=error, form=form)
-
-
+        group = Group.query.filter(Group.groupName==form.name.data).first()
+        if group is None:
+            flash("Sorry that group does not exist yet.")
+            form.name.data = ''
         else:
-            cur.close()
-            error = "Group not found"
-            return render_template('joinGroup.html', error=error, form=form)
-
+            user = User.query.filter(User.username==username).first()
+            check = User_Group.query.filter(and_(User_Group.userId==user.id), (User_Group.groupId==group.id)).first()
+            if check:
+                flash('You are already a member of that group!')
+            else:
+                pass_candidate = form.password.data
+                if sha256_crypt.verify(pass_candidate, group.password):
+                    g = User_Group(groupId=group.id, userId=user.id, type='Member', groupName=form.name.data)
+                    db.session.add(g)
+                    db.session.commit()
+                    flash('Congrats, you have joined the group')
+                    return redirect(url_for('dashboard'))
+                else:
+                    flash("Incorrect password")
 
     return render_template('joinGroup.html', form=form)
 
@@ -588,26 +492,14 @@ def joinGroup():
 @app.route('/groups')
 @is_logged_in
 def groups():
-    groups = []
     username = session['username']
-    # Get id from users db
-    cur = mysql.connection.cursor()
+    profile = User.query.filter(User.username==username).first()
+    groups = User_Group.query.filter(User_Group.userId==profile.id).all()
 
-    # Find user in db
-    cur.execute("SELECT * FROM users WHERE username = %s", [username])
-    data = cur.fetchone()
-    #store id in 'user'
-    user = data['userId']
-
-    result = cur.execute("SELECT * FROM user_group WHERE userId = %s", [user])
-
-    if result > 0:
-        groups = cur.fetchall()
-        cur.close()
+    if groups is not None:
         return render_template('groups.html', groups=groups)
     else:
-        msg = "You are not a member of any groups yet."
-        cur.close()
+        flash("You are not a member of any groups yet.")
         return render_template('groups.html', groups=groups)
 
 @app.route('/edit_rental_pin/<string:name>', methods=['GET', 'POST'])
@@ -1013,28 +905,7 @@ def internalerror(error):
 
 users = []
 
-@socketio.on('connect', namespace='/chat')
-def connect():
-    user = session['username']
-    users.append(user)
-    msg = " just connected!"
-    emit('on connect', {'msg': msg, 'user': user, 'users': users}, broadcast=True)
 
-@socketio.on('disconnect', namespace='/chat')
-def disconnect():
-    user = session['username']
-    users.remove(user)
-    msg = " just disconnected :("
-    emit('on disconnect', {'msg': msg, 'user': user, "users": users}, broadcast=True)
-
-@socketio.on('send message', namespace='/chat')
-def handle_my_custom_event(msg, id):
-    user = session['username']
-    cur = mysql.connection.cursor()
-    cur.execute("INSERT INTO chats(groupId, user, message) VALUES(%s,%s,%s)", [id, user, msg])
-    cur.connection.commit()
-    cur.close()
-    emit('new message', {'msg': msg, 'user': user}, broadcast=True)
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)

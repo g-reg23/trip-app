@@ -5,15 +5,15 @@ html {
 body {
   /*background-image: url("../images/pexels-photo.jpg");
   background-size: 210%;*/
-  background-image: url("../images/circles-light/circles-light/circles-light.png");
-  margin-bottom: 15%;
+  background-image: url("../images/circles-light/circles-light/circles-light.png")
+  /* font-family: 'Amaranth', sans-serif; */
 }
- .homeContainer {
-   background-image: url(../images/download.jpg);
-   background-size: 75%;
-   background-repeat: no-repeat;s
-   margin-left: -1.5%;
-}
+/* .homeContainer {*/
+/*   background-image: url(../images/download.jpg);*/
+/*   background-size: 75%;*/
+/*   background-repeat: no-repeat;s*/
+/*   margin-left: -1.5%;*/
+/*}*/
 input {
   font-family: 'Space Mono', monospace;
 
@@ -44,6 +44,20 @@ h6 {
 }
 th {
   background: #42914a;
+}
+.flashMessage {
+    margin-top: 6%;
+    margin-left: 4%;
+    background-color: #bc522f;
+    padding: 2%;
+    border-radius: .5rem;
+    margin-right: 3%;
+    color: white;
+    text-align: center;
+}
+.groupFlash {
+  margin-left: 30%;
+  margin-right: 30%;
 }
 /* nav styling */
 .nav-list{
@@ -82,36 +96,6 @@ th {
   margin-top: 2% 1%;
 }
 /* Home page */
-.homePic {
-  position: absolute;
-  border-radius: .7rem;
-  top: 55%;
-  margin-left: 5%;
-  width: 90%;
-}
-.pageHeader {
-  position: absolute;
-  top: 5%;
-  margin-left: 2.5%;
-}
-.subtitleDiv {
-  position: absolute;
-  top: 20%;
-  margin: 0 5%;
-}
-.homeButtonDiv {
-  position: absolute;
-  top: 95%;
-  width: 65%;
-  margin-left: 17.5%;
-  margin-bottom: 15%;
-}
-.homeInfo {
-  position: absolute;
-  top: 108%;
-  margin: 0 5%;
-  margin-bottom: 15%;
-}
 
 /* pageContainer */
 .pageContainer {
@@ -418,6 +402,9 @@ th {
 .calculatorResults {
   margin-left: -9%;
 }
+.resultList {
+    list-style-type: none;
+}
 .results, .totalResult {
   display: none;
 }
@@ -457,18 +444,8 @@ th {
   #sendChat {
     width: 13%;
   }
-  .homeButtonDiv{
-    width: 45%;
-    margin-left: 32.5%;
-  }
 }
 @media only screen and (min-width: 45rem){
-  .homePic {
-    top: 42%;
-  }
-  .homeButtonDiv {
-    top: 87%;
-  }
   .sign-logInput {
     width: 45%;
   }
@@ -523,7 +500,6 @@ th {
     position: absolute;
     left:75%;
     top:30%;
-    margin: 0;
   }
   .homeDiv {
     margin-top: 18%;
@@ -543,17 +519,17 @@ th {
     margin-top: 6%;
     margin-left: 2%;
     border-radius: .7rem;
-    top: 0%;
   }
   .homeInfo {
     position: absolute;
-    top: 91%;
+    top: 83%;
     left: 10%;
     right: 30%;
   }
   .homeButtonDiv {
     position: absolute;
-    top: 75%;
+    left: 75%;
+    top: 80%;
     width: 20%;
   }
   .picDiv{
@@ -640,4 +616,5 @@ th {
       height: 4.55rem;
     }
   }
+
 }

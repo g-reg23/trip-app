@@ -3,12 +3,11 @@
 {% block body %}
   <div class="pageContainer">
     <div class="loginHeader"><h3>Edit Profile</h3></div>
-    <p class="editProfileInfo">You will be logged out and an email will be sent upon successfully editing your profile.</p>
+    <p class="editProfileInfo">Sorry you cannot change your username.</p>
     <form method='POST' action=''>
       <div>{{ form.hidden_tag() }}</div>
       <div><strong><strong> Current first name:</strong> {{ profile.firstName }}</strong></div>{{ form.firstName(class="sign-logInput") }}
       <div> <strong><strong>Current last name:</strong> {{ profile.lastName }}</strong></div>{{ form.lastName(class="sign-logInput") }}
-      <div><strong><strong>Current username:</strong> {{ profile.username }}</strong></div>{{ form.username(class="sign-logInput") }}
       <div> <strong><strong>Current email:</strong> {{ profile.email }}</strong></div>{{ form.email(class="sign-logInput") }}
       <div>{{ form.password(class="sign-logInput") }}</div>
       <div>{{ form.submit(class="sign-logSubmit") }}</div>

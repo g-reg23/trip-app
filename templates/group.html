@@ -3,7 +3,7 @@
   <div class="groupDiv">
       <h1 style="margin-top: 2.5%;" align="center" class='groupHeading'>Group</h1>
       <div id="groupHeader">
-        <h1 style="text-decoration: underline;">{{ group.title }}</h1>
+        <h1 style="text-decoration: underline;">{{ group.groupName }}</h1>
           <p class='groupHeadDesc'>{{ group.description }}</p>
           <p>Group Creator: <strong>{{ group.admin }}</strong></p>
       </div>
@@ -14,7 +14,7 @@
       <h1 align="center" class="chatLabel">Chat</h1>
       <div class="chat" id="chat">
            {% for line in history %}
-              <div id="chat_message"><strong style="text-decoration: underline;">{{ line.user }}</strong>: {{ line.message }}</div>
+              <div id="chat_message"><strong style="text-decoration: underline;">{{ line.username }}</strong>: {{ line.message }}</div>
           {% endfor %}
       </div>
       <div>
@@ -43,7 +43,7 @@
         {% if renPins %}
           {% for pin in renPins %}
             <div class="pinList" style:"border: 1px solid black">
-              <h3 text-decoration="underline"><large>{{ pin.rental_name }}:</large></h3>
+              <h3 text-decoration="underline"><large>{{ pin.lodgeName }}:</large></h3>
               <p> {{ pin.rooms }} Bedrooms, ${{ pin.price }} per night.</p>
               <p> {{ pin.description }}</p>
               <p>Posted by: <strong>{{ pin.creator }}</strong></p>
@@ -63,7 +63,7 @@
         {% if restPins %}
           {% for pinTwo in restPins %}
             <div class="pinList">
-              <h3 text-decoration="underline"><large>{{ pinTwo.rest_name }}:</large></h3>
+              <h3 text-decoration="underline"><large>{{ pinTwo.restName }}:</large></h3>
               <p> {{pinTwo.type}}</p>
               <p> {{ pinTwo.description }}</p>
               <p>Posted by: <strong>{{ pinTwo.creator }}</strong></p>
@@ -84,7 +84,7 @@
         {% if transpoPins %}
           {% for pinThree in transpoPins %}
             <div class="pinList">
-              <h3 text-decoration="underline"><large>{{ pinThree.name }}:</large></h3>
+              <h3 text-decoration="underline"><large>{{ pinThree.transpoName }}:</large></h3>
               <p>{{ pinThree.date }}</p>
               <p>{{ pinThree.price }}</p>
               <p>{{ pinThree.description }}</p>
@@ -105,7 +105,7 @@
         {% if activityPins %}
           {% for pinFour in activityPins %}
             <div class="pinList">
-              <h3 text-decoration="underline"><large>{{ pinFour.name }}:</large></h3>
+              <h3 text-decoration="underline"><large>{{ pinFour.activityName }}:</large></h3>
               <p>{{ pinFour.type }} activity</p>
               <p>{{ pinFour.description }}</p>
               <p><a class="pinLink" target="_blank" href="{{ pinFour.link }}">View at site</a></p>
@@ -194,6 +194,7 @@
           <div class="pinnerForm" id="activityPin"><h3 class="pinFormTitle" align="center">Pin an Activity</h3>
             <div>{{ pinFormFour.hidden_tag() }}</div>
             <div>{{ pinFormFour.activityName(class="pinInput") }}</div>
+            <div>{{ pinFormFour.price(class="pinInput") }}</div>
             <div>{{ pinFormFour.description(class="pinInput descriptionPin") }}</div>
             <div>{{ pinFormFour.link(class="pinInput") }}</div>
             <div>{{ pinFormFour.type(class="pinInput selectorPin") }}</div>
@@ -207,16 +208,18 @@
             <tr>
               <th>Group Name</th>
               <th>Group Admin</th>
-              <th>Trip Dates</th>
+              <th>Start Date</th>
+              <th>End Date</th>
               <th>Group #</th>
               <th>Create Date</th>
             </tr>
             <tr>
-              <td>{{group.title}}</td>
+              <td>{{group.groupName}}</td>
               <td>{{group.admin}}</td>
-              <td>{{group.dates}}</td>
-              <td id="groupId" align="center">{{group.groupId}}</td>
-                <td>{{group.create_date}}</td>
+              <td>{{group.startDate}}</td>
+              <td>{{group.endDate}}</td>
+              <td id="groupId" align="center">{{group.id}}</td>
+              <td>{{group.createDate}}</td>
             </tr>
           </table>
         </div>
@@ -228,93 +231,80 @@
   <script type="text/javascript" charset="utf-8">
     // $(function()
     {
+        // Declare variables
         let id = document.querySelector('#groupId');
         let socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
         let message = document.querySelector('#message');
-        // let $chat = $('#chat');
         let chat = document.querySelector('#chat');
-        // var $online = $('#online');
-        let online = document.querySelector('#online');
-        // let $username = $('.nav-username')
+        let groupPageFlash = document.querySelector('.flashMessage');
+        let online = document.querySelector('#online')
         let arr = [];
         let mems = document.querySelectorAll('.memListItem');
+        // List of group members
         for (i=0;i<mems.length;i++) {
             arr.push(mems[i].innerHTML);
         }
-
+        // Event listener for chat submit
         document.querySelector('#messageForm').addEventListener('submit', sendMessage);
-
+        // Function for submitting chat message, sends message to server
         function sendMessage(e) {
           e.preventDefault();
           socket.emit('send message', message.value, id.innerHTML);
           message.value = ('');
         }
-
-        // $messageForm.submit(function(e) {
-        //     e.preventDefault();
-        //     socket.emit('send message', message.value, id.innerHTML);
-        //     message.value = ('');
-        // });
+        // On connect callback
         socket.on('on connect', function(data) {
-            if (arr.includes(data.user)){
-                // $chat.append('<div id="chat_message"><strong style="text-decoration: underline;">'+data.user+ '</strong>' +data.msg+'</div>');
-                // $online.html("");
-                let elem = document.createElement('div');
-                elem.innerHTML = '<strong style="text-decoration: underline;">'+data.user+'</strong>:  '+data.msg;
-                elem.id = 'chat_message';
-                // document.querySelector('.chat').appendChild(elem);
-                chat.appendChild(elem);
-                elem.scrollIntoView();
-                // chat.scroll({ top: 2500, left: 0, behavior: 'smooth' });
-            };
-
-            for(i=0; i < data.users.length;i++){
-                if (arr.includes(data.users[i])) {
-                    // $online.append('<li class="onlineMember">'+data.users[i]+'</li>');
-                    let item = document.createElement('li');
-                    item.className = 'onlineMember';
-                    let tnode = document.createTextNode(data.users[i]);
-                    online.appendChild(tnode);
-                };
+            // Create chat element that says user connected.
+            let elem = document.createElement('div');
+            elem.innerHTML = '<strong style="text-decoration: underline;">'+data.user+'</strong>:  '+data.msg;
+            elem.id = 'chat_message';
+            chat.appendChild(elem);
+            elem.scrollIntoView();
+            // Empty out the list of members online.
+            while(online.firstChild ){
+                online.removeChild(online.firstChild );
+            }
+            // Create elements to display all online users
+            for(i=0; i < data.users.length;i++) {
+                  let item = document.createElement('li');
+                  item.className = 'onlineMember';
+                  let tnode = document.createTextNode(data.users[i]);
+                  item.appendChild(tnode);
+                  online.appendChild(item);
             };
         });
+        // On disconnect callback
         socket.on('on disconnect', function(data) {
-            if (arr.includes(data.user)){
-                // $chat.append('<div id="chat_message"><strong style="text-decoration: underline;">'+data.user+ '</strong>' +data.msg+'</div>');
-                // $online.html("");
-                let elem = document.createElement('div');
-                elem.innerHTML = '<strong style="text-decoration: underline;">'+data.user+'</strong>:  '+data.msg;
-                elem.id = 'chat_message';
-                // document.querySelector('.chat').appendChild(elem);
-                chat.appendChild(elem);
-                elem.scrollIntoView();
-                // chat.scroll({ top: 2500, left: 0, behavior: 'smooth' });
-            };
+            // Create chat element that says user disconnected
+            let elem = document.createElement('div');
+            elem.innerHTML = '<strong style="text-decoration: underline;">'+data.user+'</strong>:  '+data.msg;
+            elem.id = 'chat_message';
+            chat.appendChild(elem);
+            elem.scrollIntoView();
+            // Clear out all online members from list
+            while(online.firstChild ){
+                online.removeChild(online.firstChild );
+            }
+            // Create all elements for remaining users online
             for(i=0; i < data.users.length;i++){
-                if (arr.includes(data.users[i])) {
-                    // $online.append('<li class="onlineMember">'+data.users[i]+'</li>');
-                    let item = document.createElement('li');
-                    item.className = 'onlineMember';
-                    let tnode = document.createTextNode(data.users[i]);
-                    online.appendChild(tnode);
-                };
-                // $("#chat").stop().animate({ scrollTop: $("#chat")[0].scrollHeight}, 500);
+                let item = document.createElement('li');
+                item.className = 'onlineMember';
+                let tnode = document.createTextNode(data.users[i]);
+                item.appendChild(tnode);
+                online.appendChild(item);
             };
         });
+        // Callback Function to display the message
         socket.on('new message', function(data) {
-            if (arr.includes(data.user)) {
-                // $chat.append('<div id="chat_message"><strong style="text-decoration: underline; font-size: medium;">'+data.user+'</strong>:  '+data.msg+'</div>');
-                let elem = document.createElement('div');
-                elem.innerHTML = '<strong style="text-decoration: underline;">'+data.user+'</strong>:  '+data.msg;
-                elem.id = 'chat_message';
-                // document.querySelector('.chat').appendChild(elem);
-                // chat.scroll({ top: 2500, left: 0, behavior: 'smooth' });
-                chat.appendChild(elem);
-                elem.scrollIntoView();
-            };
-            // $("#chat").stop().animate({ scrollTop: $("#chat")[0].scrollHeight}, 500);
-            // chat.scroll({ top: 2500, left: 0, behavior: 'smooth' });
+            // Create chat element and append into chat.
+            let elem = document.createElement('div');
+            elem.innerHTML = '<strong style="text-decoration: underline;">'+data.user+'</strong>:  '+data.msg;
+            elem.id = 'chat_message';
+            chat.appendChild(elem);
+            elem.scrollIntoView();
         });
+        document.querySelector('.flashMessage').style.marginLeft = '24%';
+        document.querySelector('.flashMessage').style.marginRight = '30%';
     };
   </script>
 

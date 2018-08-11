@@ -1,5 +1,5 @@
 from sqlalchemy.sql import func
-from config import db
+from confi import db
 
 class User(db.Model):
     __tablename__ = "users"
@@ -8,12 +8,13 @@ class User(db.Model):
     lastName = db.Column(db.String(40))
     email = db.Column(db.String(50))
     username = db.Column(db.String(30))
+    password = db.Column(db.String(100))
     registerDate = db.Column(db.DateTime(timezone=True), server_default=func.now())
     e_verified = db.Column(db.SMALLINT, default=0, nullable=False)
 
 class Group(db.Model):
     __tablename__ = "groups"
-    groupId = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     groupName = db.Column(db.String(40))
     location = db.Column(db.String(40))
     startDate = db.Column(db.Date())
@@ -25,14 +26,16 @@ class Group(db.Model):
 
 class User_Group(db.Model):
     __tablename__ = "users_groups"
-    idNum = db.Column(db.Integer, primary_key=True)
-    userId = db.Column(db.Integer, db.ForeignKey("users.id"))
-    groupId = db.Column(db.Integer, db.ForeignKey("groups.groupId"))
+    id = db.Column(db.Integer, primary_key=True)
+    userId = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
+    groupId = db.Column(db.Integer, db.ForeignKey("groups.id", ondelete="CASCADE"))
+    type = db.Column(db.Enum('Admin', 'Member'))
+    groupName = db.Column(db.String(40))
 
 class Lodging_Pin(db.Model):
-    __tablename__ = "rentalPins"
-    lodgeNum = db.Column(db.Integer, primary_key=True)
-    groupId = db.Column(db.Integer, db.ForeignKey("groups.groupId"))
+    __tablename__ = "lodgingPins"
+    id = db.Column(db.Integer, primary_key=True)
+    groupId = db.Column(db.Integer, db.ForeignKey("groups.id", ondelete="CASCADE"))
     lodgeName = db.Column(db.String(40))
     price = db.Column(db.Integer)
     rooms = db.Column(db.SMALLINT)
@@ -42,8 +45,8 @@ class Lodging_Pin(db.Model):
 
 class Rest_Pin(db.Model):
     __tablename__ = "restPins"
-    restNum = db.Column(db.Integer, primary_key=True)
-    groupId = db.Column(db.Integer, db.ForeignKey("groups.groupId"))
+    id = db.Column(db.Integer, primary_key=True)
+    groupId = db.Column(db.Integer, db.ForeignKey("groups.id", ondelete="CASCADE"))
     restName = db.Column(db.String(40))
     description = db.Column(db.Text)
     link = db.Column(db.String(512))
@@ -52,8 +55,8 @@ class Rest_Pin(db.Model):
 
 class Transpo_Pin(db.Model):
     __tablename__ = "transpoPins"
-    transpoNum = db.Column(db.Integer, primary_key=True)
-    groupId = db.Column(db.Integer, db.ForeignKey("groups.groupId"))
+    id = db.Column(db.Integer, primary_key=True)
+    groupId = db.Column(db.Integer, db.ForeignKey("groups.id", ondelete="CASCADE"))
     transpoName = db.Column(db.String(40))
     price = db.Column(db.Integer)
     description = db.Column(db.Text)
@@ -63,8 +66,8 @@ class Transpo_Pin(db.Model):
 
 class Activity_Pin(db.Model):
     __tablename__ = "activityPins"
-    transpoNum = db.Column(db.Integer, primary_key=True)
-    groupId = db.Column(db.Integer, db.ForeignKey("groups.groupId"))
+    id = db.Column(db.Integer, primary_key=True)
+    groupId = db.Column(db.Integer, db.ForeignKey("groups.id", ondelete="CASCADE"))
     activityName = db.Column(db.String(40))
     price = db.Column(db.Integer)
     description = db.Column(db.Text)
@@ -74,8 +77,8 @@ class Activity_Pin(db.Model):
 
 class Chat(db.Model):
     __tablename__ = "chats"
-    chatNum = db.Column(db.Integer, primary_key=True)
-    groupId = db.Column(db.Integer, db.ForeignKey("groups.groupId"))
+    id = db.Column(db.Integer, primary_key=True)
+    groupId = db.Column(db.Integer, db.ForeignKey("groups.id", ondelete="CASCADE"))
     username = db.Column(db.String(30))
     message = db.Column(db.Text)
     date = db.Column(db.DateTime(timezone=True), server_default=func.now())

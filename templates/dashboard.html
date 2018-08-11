@@ -7,7 +7,7 @@
       {% if groups %}
         <ul class="groupList">
           {% for group in groups %}
-            <li><a class="groupButton" href="group/{{ group.groupId }}">{{ group.name }}</a></li><br />
+            <li><a class="groupButton" href="group/{{ group.groupId }}">{{ group.groupName }}</a></li><br />
           {% endfor %}
         </ul><br /><hr />
       {% else %}
@@ -27,7 +27,7 @@
               </tr>
               <tr>
                 {% for admin in admins %}
-                  <td>{{ admin.name }}</th>
+                  <td>{{ admin.groupName }}</th>
                   <td>{{ admin.groupId }}</th>
                   <td><a href="/edit_group/{{ admin.groupId }}">Edit Group</a></th>
                   <td><a href="/delete_group/{{ admin.groupId }}">Delete Group</a></th>
@@ -53,7 +53,7 @@
             <tr>
               <td>{{profile.firstName}}  {{profile.lastName}}</td>
               <td>{{profile.email}}
-              <td>{{profile.register_date}}</td>
+              <td>{{profile.registerDate}}</td>
               <td><a href="/edit_profile" id="editProfileButton">Edit Info</a></td>
               <td><a href="/delete_profile" id="deleteProfileButton">Delete Account</a></td>
             </tr>

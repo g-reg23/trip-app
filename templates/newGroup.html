@@ -10,10 +10,13 @@
           {{ form.groupName(class="sign-logInput") }}
         </div><br />
         <div>
-          {{ form.location(class="sign-logInput") }}
+          {{ form.location(class="sign-logInput ") }}
         </div><br />
         <div>
-          {{ form.dates(class="sign-logInput") }}
+          {{ form.startDate(class="sign-logInput start") }}
+        </div><br />
+        <div>
+          {{ form.endDate(class="sign-logInput end") }}
         </div><br />
         <div>
           {{ form.password(class="sign-logInput") }}
@@ -29,4 +32,12 @@
         </div>
       </form>
     </div>
+    <script type="text/javascript" charset="utf-8">
+        {
+            const start = document.querySelector('.start');
+            start.type = 'date';
+            const end = document.querySelector('.end');
+            end.type = 'date'
+        }
+    </script>
 {% endblock %}
