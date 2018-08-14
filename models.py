@@ -1,5 +1,9 @@
 from sqlalchemy.sql import func
+from time import time
 from confi import db
+import jwt
+from confi import app
+import secrets
 
 class User(db.Model):
     __tablename__ = "users"
@@ -11,6 +15,19 @@ class User(db.Model):
     password = db.Column(db.String(100))
     registerDate = db.Column(db.DateTime(timezone=True), server_default=func.now())
     e_verified = db.Column(db.SMALLINT, default=0, nullable=False)
+
+    def getEmailVerificationToken(self, expires_in=604800):
+        return jwt.encode({'verifyEmail':self.id}, 'wUCu3q6jjqoI3Mh5kwD7dCp4wSju-OURchpKHXLv9oY87ROs', algorithm='HS256').decode('utf-8')
+
+    @staticmethod
+    def verifyEmailToken(token):
+        try:
+            id = jwt.decode(token, 'wUCu3q6jjqoI3Mh5kwD7dCp4wSju-OURchpKHXLv9oY87ROs',
+                            algorithms=['HS256'])['verifyEmail']
+        except:
+            return
+        return User.query.get(id)
+
 
 class Group(db.Model):
     __tablename__ = "groups"

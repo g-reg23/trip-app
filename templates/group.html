@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 {% block body %}
   <div class="groupDiv">
-      <h1 style="margin-top: 2.5%;" align="center" class='groupHeading'>Group</h1>
+      <h1 align="center" class='groupHeading'>Group</h1>
       <div id="groupHeader">
         <h1 style="text-decoration: underline;">{{ group.groupName }}</h1>
           <p class='groupHeadDesc'>{{ group.description }}</p>
@@ -55,7 +55,7 @@
             </div>
           {% endfor %}
         {% else %}
-          <div class="noPinDiv"><a href="#rentalPin" style="color: white">You can pin rental here!</a></div>
+          <div class="noPinDiv"><a href="#rentalPin">You can pin rental here!</a></div>
         {% endif %}
       </div><br />
       <div class="pinRow">
@@ -76,7 +76,7 @@
             </div>
           {% endfor %}
         {% else %}
-          <div class="noPinDiv"><a href="#restPin" style="color: white">How about pinning a restaurant or nightclub!</a></div><br />
+          <div class="noPinDiv"><a class="noPinLink" href="#restPin">How about pinning a restaurant or nightclub!</a></div><br />
         {% endif %}
       </div>
       <div class="pinRow">
@@ -97,7 +97,7 @@
             </div>
           {% endfor %}
         {% else %}
-          <div class="noPinDiv"><a style="color: white" href="#transpoPin">You can pin differrent transportation too!</a></div><br />
+          <div class="noPinDiv"><a class="noPinLink" href="#transpoPin">You can pin differrent transportation too!</a></div><br />
         {% endif %}
       </div>
       <div class="pinRow">
@@ -117,7 +117,7 @@
             </div>
           {% endfor %}
         {% else %}
-          <div class="noPinDiv"><a href="#activityPin" style="color: white">This area could use an activity pin or two!</a></div><br />
+          <div class="noPinDiv"><a class="noPinLink" href="#activityPin">This area could use an activity pin or two!</a></div><br />
         {% endif %}
       </div>
       <div class='calcDiv'>
@@ -239,6 +239,7 @@
         let groupPageFlash = document.querySelector('.flashMessage');
         let online = document.querySelector('#online')
         let arr = [];
+        let arrTwo = [];
         let mems = document.querySelectorAll('.memListItem');
         // List of group members
         for (i=0;i<mems.length;i++) {
@@ -264,15 +265,18 @@
             while(online.firstChild ){
                 online.removeChild(online.firstChild );
             }
+            // Remove all non unique users
+            newUsers = Array.from(new Set(data.users));
+
             // Create elements to display all online users
-            for(i=0; i < data.users.length;i++) {
+            for(i=0; i < newUsers.length;i++) {
                   let item = document.createElement('li');
                   item.className = 'onlineMember';
                   let tnode = document.createTextNode(data.users[i]);
                   item.appendChild(tnode);
                   online.appendChild(item);
-            };
-        });
+            }
+        })
         // On disconnect callback
         socket.on('on disconnect', function(data) {
             // Create chat element that says user disconnected
@@ -292,8 +296,8 @@
                 let tnode = document.createTextNode(data.users[i]);
                 item.appendChild(tnode);
                 online.appendChild(item);
-            };
-        });
+            }
+        })
         // Callback Function to display the message
         socket.on('new message', function(data) {
             // Create chat element and append into chat.
@@ -302,10 +306,12 @@
             elem.id = 'chat_message';
             chat.appendChild(elem);
             elem.scrollIntoView();
-        });
-        document.querySelector('.flashMessage').style.marginLeft = '24%';
-        document.querySelector('.flashMessage').style.marginRight = '30%';
-    };
+        })
+        if (document.querySelector('.flashMessage') != null){
+            document.querySelector('.flashMessage').style.marginLeft = '24%';
+            document.querySelector('.flashMessage').style.marginRight = '30%';
+        }
+    }
   </script>
 
 {% endblock %}

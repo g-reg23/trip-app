@@ -10,7 +10,7 @@ app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USE_SSL'] = 1
 app.config['MAIL_USERNAME'] = 'biteth1979@gmail.com'
-app.config['MAIL_PASSWORD'] = 'Flow!154skip'
+app.config['MAIL_PASSWORD'] = 'Flask-the-best3825'
 app.config['SECRET_KEY'] = '\xa3sw\xba\xe8D;:vJL\xa3\xe9\xe4\xba\x1a\xe6\xb4\xdd\xd3r\x87\x958'
 
 app.config['MYSQL_HOST'] = 'localhost'

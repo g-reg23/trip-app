@@ -1,12 +1,5 @@
-// const heading = document.querySelector('.groupHeading');
-// const body = document.querySelector('.groupDiv');
-// body.addEventListener('mousemove', runEvent);
-//
-// function runEvent(e) {
-//   heading.textContent = 'Mouse X: ' + e.offsetX + ' Mouse Y: ' + e.offsetY;
-// }
-
 //variables
+const groupNum = document.querySelector('#groupId').textContent;
 const expenseList = document.querySelector('.resultList');
 const totalExpense = document.querySelector('.totalResult');
 const grandTotal = document.querySelector('.grandTotal')
@@ -41,97 +34,115 @@ function deleteExpenses(e) {
   e.preventDefault();
 }
 
-function deleteIndExp(e) {
-  if (e.target.parentElement.classList.contains('calculatorResults')) {
-    if (confirm('Are you sure you want to clear this expense?')) {
-      let list = document.querySelectorAll('.calculatorResults');
-      e.target.parentElement.remove();
-      for (i=0;i<list.length;i++) {
-        if (e.target.parentElement === list[i]) {
-          let expos = JSON.parse(localStorage.getItem('expenses'));
-          let typos = JSON.parse(localStorage.getItem('types'));
-          let price = parseFloat(expos[i]);
-          expos.splice(i, 1);
-          typos.splice(i, 1);
 
-          localStorage.setItem('expenses', JSON.stringify(expos));
-          localStorage.setItem('types', JSON.stringify(typos));
-          let total = parseFloat(localStorage.getItem('total')).toFixed(2);
-          total -= price.toFixed(2);
-          localStorage.setItem('total', JSON.stringify(total));
-          getTotal();
-          return;
+function deleteIndExp(e) {
+    if (e.target.parentElement.classList.contains('calculatorResults')) {
+        if (confirm('Are you sure you want to clear this expense?')) {
+            let list = document.querySelectorAll('.calculatorResults');
+            let counter = 0;
+            for (i=0;i<list.length;i++) {
+                if (e.target.parentElement === list[i]) {
+                    break;
+                }
+                counter += 1;
+            }
+            let counter2 = 0;
+            e.target.parentElement.remove();
+            let group = JSON.parse(localStorage.getItem('whichGroup'));
+            for (i=0;i<group.length;i++) {
+                if (group[i] == groupNum) {
+                    if (counter === counter2) {
+                        let expos = JSON.parse(localStorage.getItem('expenses'));
+                        let typos = JSON.parse(localStorage.getItem('types'));
+                        let price = parseFloat(expos[i]);
+                        expos.splice(i, 1);
+                        typos.splice(i, 1);
+                        group.splice(i, 1);
+                        localStorage.setItem('expenses', JSON.stringify(expos));
+                        localStorage.setItem('types', JSON.stringify(typos));
+                        localStorage.setItem('whichGroup', JSON.stringify(group));
+                        let total = parseFloat(localStorage.getItem(groupNum));
+                        total = (total - price).toFixed(2);
+                        localStorage.setItem(groupNum, total);
+                        getTotal();
+                        break;
+                    }
+                    counter2 += 1;
+                }
+
+            }
         }
-      }
     }
-  }
-  e.preventDefault();
+    e.preventDefault();
 }
 function getExpenses() {
   // const item = document.querySelector('#expenseResults');
-  if (localStorage.getItem('expenses') === null){
-    results.style.display = 'none'
-  } else {
-    results.style.display = 'block';
-    let expenseStorage = JSON.parse(localStorage.getItem('expenses'));
-    let typeStorage = JSON.parse(localStorage.getItem('types'));
-    for (i=0;i<expenseStorage.length;i++){
-      let li = document.createElement('li');
-      li.className = 'calculatorResults';
-      let textNode = document.createTextNode("$" + expenseStorage[i] + " " + typeStorage[i] + " expense.");
-      li.appendChild(textNode);
-      document.querySelector('.resultList').appendChild(li);
-      let link = document.createElement('a');
-      let xnode = document.createTextNode('Clear');
-      link.appendChild(xnode);
-      li.appendChild(link);
-      link.className = 'deleteX';
-      link.href = '#';
-    }
+    if (localStorage.getItem('expenses') === null){
+        results.style.display = 'none'
+    } else {
+        results.style.display = 'block';
+        let expenseStorage = JSON.parse(localStorage.getItem('expenses'));
+        let typeStorage = JSON.parse(localStorage.getItem('types'));
+        let groups = JSON.parse(localStorage.getItem('whichGroup'));
+        for (i=0;i<expenseStorage.length;i++){
+            if (groups[i] === groupNum) {
+                let li = document.createElement('li');
+                li.className = 'calculatorResults';
+                let textNode = document.createTextNode("$" + expenseStorage[i] + " " + typeStorage[i] + " expense.");
+                li.appendChild(textNode);
+                document.querySelector('.resultList').appendChild(li);
+                let link = document.createElement('a');
+                let xnode = document.createTextNode('Clear');
+                link.appendChild(xnode);
+                li.appendChild(link);
+                link.className = 'deleteX';
+                link.href = '#';
+            }
+        }
     getTotal();
-  }
+    }
 }
 
 function calculateResults(e){
-  if (price.value < 1 || divisor.value < 1 || multiple.value < 1 || type.value === '') {
-    alert("Please check your inputs.")
-    return
-  }
-  let expense = price.value * multiple.value / divisor.value;
-  document.querySelector('.results').style.display = 'block';
-  //Create the title and result element
-  // let title = document.createElement('h5');
-  let li = document.createElement('li');
-  // title.className = 'nameExpense';
-  li.className = 'calculatorResults';
-  // let nameNode = document.createTextNode(name.value);
-  let node = document.createTextNode("$" + expense.toFixed(2) + " " + type.value + " expense.");
-  // title.appendChild(nameNode);
-  li.appendChild(node);
-  // res.appendChild(title);
-  res.appendChild(li);
-  //Create delete X
-  let link = document.createElement('a');
-  let xnode = document.createTextNode('Clear');
-  link.appendChild(xnode);
-  li.appendChild(link);
-  link.className = 'deleteX';
-  link.href = '#';
-  price.value = '';
-  divisor.value = '';
-  multiple.value = '';
-  // name.value = '';
-  let total;
-  if (localStorage.getItem('total') === null) {
-    total = 0;
-  }else {
-    total = parseFloat(JSON.parse(localStorage.getItem('total')).toFixed(2));
-  }
-  total += +(parseFloat(expense)).toFixed(2);
-  localStorage.setItem('total', JSON.stringify(total));
-  storeExpenseInLocalStorage(expense, type.value);
-  getTotal();
-  e.preventDefault();
+    if (price.value < 1 || divisor.value < 1 || multiple.value < 1 || type.value === '') {
+        alert("Please check your inputs.")
+        return
+    }
+    let expense = price.value * multiple.value / divisor.value;
+    document.querySelector('.results').style.display = 'block';
+    //Create the title and result element
+    // let title = document.createElement('h5');
+    let li = document.createElement('li');
+    // title.className = 'nameExpense';
+    li.className = 'calculatorResults';
+    // let nameNode = document.createTextNode(name.value);
+    let node = document.createTextNode("$" + expense.toFixed(2) + " " + type.value + " expense.");
+    // title.appendChild(nameNode);
+    li.appendChild(node);
+    // res.appendChild(title);
+    res.appendChild(li);
+    //Create delete X
+    let link = document.createElement('a');
+    let xnode = document.createTextNode('Clear');
+    link.appendChild(xnode);
+    li.appendChild(link);
+    link.className = 'deleteX';
+    link.href = '#';
+    price.value = '';
+    divisor.value = '';
+    multiple.value = '';
+    // name.value = ''
+    let total;
+    if (localStorage.getItem(groupNum) === null) {
+        total = 0;
+     }else {
+        total = JSON.parse(localStorage.getItem(groupNum));
+    }
+    total += expense;
+    localStorage.setItem(groupNum, total.toFixed(2));
+    storeExpenseInLocalStorage(expense, type.value);
+    getTotal();
+    e.preventDefault();
 };
 
 function getTotal() {
@@ -141,7 +152,7 @@ function getTotal() {
     document.querySelector('.grandTotal').remove();
   }
   totalDiv.className = 'grandTotal';
-  let node = document.createTextNode("$" + localStorage.getItem('total'));
+  let node = document.createTextNode("$" + localStorage.getItem(groupNum));
   totalDiv.appendChild(node);
   document.querySelector('.totalResult').appendChild(totalDiv);
 }
@@ -149,20 +160,25 @@ function getTotal() {
 function storeExpenseInLocalStorage(cost, type2) {
   let expenses;
   let types;
+  let groups;
   // let names;
   if (localStorage.getItem('expenses') === null) {
     expenses = [];
     types = [];
+    groups = [];
     // names = [];
   }else {
     expenses = JSON.parse(localStorage.getItem('expenses'));
     types = JSON.parse(localStorage.getItem('types'));
+    groups = JSON.parse(localStorage.getItem('whichGroup'));
     // names = JSON.parse(localStorage.getItem('names'));
   }
   expenses.push(cost.toFixed(2));
   types.push(type2);
+  groups.push(groupNum);
   // names.push(title);
   localStorage.setItem('expenses', JSON.stringify(expenses));
   localStorage.setItem('types', JSON.stringify(types));
+  localStorage.setItem('whichGroup', JSON.stringify(groups));
   // localStorage.setItem('names', title);
-}
+};

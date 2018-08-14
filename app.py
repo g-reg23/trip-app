@@ -12,6 +12,7 @@ from confi import *
 from classes import *
 from sqlalchemy import and_, or_, update
 from models import *
+import jwt
 #from routes import *
 #from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
@@ -36,6 +37,7 @@ def signup():
             db.session.add(u)
             db.session.commit()
             flash('Congrats you are now registered. Please sign in.')
+            send_Email(form.username.data)
             return redirect(url_for('login'))
         if user is not None:
             flash('That username is already in use.')
@@ -44,44 +46,32 @@ def signup():
         else:
             flash('That email is already in use')
             form.email.data = ''
-        # f_Name = form.firstName.data
-        # l_Name = form.lastName.data
-        # u_name = form.username.data
-        # e_mail = form.email.data
-        # e_verified = 0
-        # p_word = sha256_crypt.encrypt(str(form.password.data))
-        #
-        # #create cursor
-        # cur = mysql.connection.cursor()
-        #
-        # check = cur.execute("SELECT * FROM users WHERE username = %s", [u_name])
-        # check2 = cur.execute("SELECT * FROM users WHERE email = %s", [e_mail])
-        # if check > 0:
-        #     #close
-        #     cur.close()
-        #
-        #     error = "That username is already in use, sorry."
-        #     return render_template("signup.html", error=error, form=form)
-        # elif check2 > 0:
-        #     cur.close()
-        #     error = "That email address is already in use"
-        #     return render_template("signup.html", error=error, form=form)
-        # else:
-        #     cur.execute("INSERT INTO users(firstName, lastName, username, email, password, e_verified) VALUES(%s, %s, %s, %s, %s, %s)", (f_Name, l_Name, u_name, e_mail, p_word, e_verified))
-        #
-        #     #Commit to Database
-        #     mysql.connection.commit()
-        #
-        #     #Close connection
-        #     cur.close()
-        #
-        #     flash("Congrats, your are registered, you can now login once you confirm your email")
-        #     msg = Message("Email Confirmation", sender=app.config['MAIL_USERNAME'], recipients=[e_mail])
-        #     msg.html = render_template("verify_email.html")
-        #     mail.send(msg)
-        #     return redirect(url_for('login'))
 
     return render_template('signup.html',form=form)
+
+# Function returns the user profile object
+def getProfile(user):
+    return User.query.filter(User.username==user).first()
+# Function returns all groups for a given user
+def getUserGroups(user):
+    return users_Groups.query.filter(Users_Groups.username==user).all()
+# Function returns all info for a given group
+def getGroupInfo(groupId):
+    return Group.query.filter(Group.id==groupId).first()
+
+
+def send_Email(user):
+    profile = getProfile(user)
+    token = profile.getEmailVerificationToken()
+    app.logger.info(token)
+    msg = Message("Email Confirmation", sender=app.config['MAIL_USERNAME'], recipients=[profile.email])
+    msg.html = render_template("verify_email.html", profile=profile, token=token)
+    mail.send(msg)
+    return redirect(url_for('login'))
+
+@app.route('/verify_email')
+def verify_email():
+    return render_template("verify_email", token=token, profile=profile)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -91,51 +81,19 @@ def login():
         if user:
             pass_candidate = form.password.data
             if sha256_crypt.verify(pass_candidate, user.password):
+                # if user.e_verified == 0:
+                #     flash("You must validate your email first")
+                #     return render_template('login.html', form=form)
                 session['logged_in'] = True
                 session['username'] = user.username
                 flash("You are now logged in. Welcome!")
                 return redirect(url_for("dashboard"))
             else:
                 flash("Invalid login")
-            return render_template("login.html", form=form, error=error)
+                return render_template("login.html", form=form)
         else:
             flash('Invalid login')
-        # username = form.username.data
-        # password_candidate = form.password.data
-        #
-        # #Create DictCursor
-        # cur = mysql.connection.cursor()
-        #
-        # result = cur.execute("SELECT * FROM users WHERE username = %s", [username])
-        # if result > 0:
-        #     data = cur.fetchone()
-        #     password, verified = data['password'], data['e_verified']
-        #
-        #     if sha256_crypt.verify(password_candidate, password):
-        #         if verified == 0:
-        #             error = 'You must verifiy your email first'
-        #             return render_template('login.html', error=error, form=form)
-        #         session['logged_in'] = True
-        #         session['username'] = username
-        #         userId = data['userId']
-        #         cur.execute("SELECT * FROM user_group WHERE userId = %s", [userId])
-        #         groups = cur.fetchall()
-        #         #user_profile = User(username, userId, groups)
-        #         cur.close()
-        #         app.logger.info('%s logged in successfully', username)
-        #         # msg = Message("Email Confirmation", sender="gstauf5420@att.net", recipients=["gztauf5420@gmail.com"])
-        #         # msg.html = render_template("validate_email.html")
-        #         # mail.send(msg)
-        #         return redirect(url_for('dashboard'))
-        #     else:
-        #         error = 'Invalid log in.'
-        #         return render_template('login.html', error=error, form=form)
-        #
-        #
-        # else:
-        #     error = "Username not found"
-        #     return render_template('login.html', error=error, form=form)
-        # cur.close()
+            return render_template('login.html', form=form)
 
     return render_template('login.html', form=form)
 #Check if logged in
@@ -149,42 +107,56 @@ def is_logged_in(f):
             return redirect(url_for('login'))
     return wrap
 
-@app.route('/validate_email', methods=["GET", "POST"])
-def validate_email():
+@app.route('/validate_email/<token>', methods=["GET", "POST"])
+def validate_email(token):
     form = LoginForm(request.form)
-    if form.validate_on_submit():
-        username = form.username.data
-        password_candidate = form.password.data
-
-        #Create DictCursor
-        cur = mysql.connection.cursor()
-
-        result = cur.execute("SELECT * FROM users WHERE username = %s", [username])
-        if result > 0:
-            data = cur.fetchone()
-            password, verified = data['password'], data['e_verified']
-
-            if sha256_crypt.verify(password_candidate, password):
-                if verified > 0:
-                    error = 'You have already verified this email'
-                    return render_template('validate_email.html', error=error, form=form)
-                session['logged_in'] = True
-                session['username'] = username
-                userId, verify = data['userId'], 1
-                cur.execute("UPDATE users SET e_verified = %s WHERE userId = %s", [verify, userId])
-                mysql.connection.commit()
-                cur.close()
-                app.logger.info('%s validated email successfully', username)
-
-                return redirect(url_for('dashboard'))
-            else:
-                error = 'Invalid log in.'
-                return render_template('validate_email.html', error=error, form=form)
-
-
-        else:
-            error = "Username not found"
-            return render_template('validate_email.html', error=error, form=form)
+    # if form.validate_on_submit():
+    #     username = form.username.data
+    #     password_candidate = form.password.data
+    #
+    #     #Create DictCursor
+    #     cur = mysql.connection.cursor()
+    #
+    #     result = cur.execute("SELECT * FROM users WHERE username = %s", [username])
+    #     if result > 0:
+    #         data = cur.fetchone()
+    #         password, verified = data['password'], data['e_verified']
+    #
+    #         if sha256_crypt.verify(password_candidate, password):
+    #             if verified > 0:
+    #                 error = 'You have already verified this email'
+    #                 return render_template('validate_email.html', error=error, form=form)
+    #             session['logged_in'] = True
+    #             session['username'] = username
+    #             userId, verify = data['userId'], 1
+    #             cur.execute("UPDATE users SET e_verified = %s WHERE userId = %s", [verify, userId])
+    #             mysql.connection.commit()
+    #             cur.close()
+    #             app.logger.info('%s validated email successfully', username)
+    #
+    #             return redirect(url_for('dashboard'))
+    #         else:
+    #             error = 'Invalid log in.'
+    #             return render_template('validate_email.html', error=error, form=form)
+    #
+    #
+    #     else:
+    #         error = "Username not found"
+    #         return render_template('validate_email.html', error=error, form=form)
+    user = User.verifyEmailToken(token)
+    app.logger.info(user)
+    if user is not None:
+        if form.validate_on_submit():
+            profile = getProfile(form.username.data)
+            newProfile =  User.query.filter(User.username==form.username.data).update(dict(e_verified=1))
+            db.session.commit()
+            session['logged_in'] = True
+            session['username'] = profile.username
+            flash("Your email was successfully verified. Enjoy TripLounge!!!")
+            return redirect(url_for('dashboard'))
+    else:
+        flash("Sorry you missed your window")
+        return render_template("validate_email.html", form=form)
     return render_template("validate_email.html", form=form)
 
 @app.route('/logout')
