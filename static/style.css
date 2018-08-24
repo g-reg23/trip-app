@@ -15,6 +15,9 @@ body {
 /*   background-repeat: no-repeat;s*/
 /*   margin-left: -1.5%;*/
 /*}*/
+.help-inline {
+  display: inline;
+}
 input {
   font-family: 'Space Mono', monospace;
 
@@ -64,6 +67,29 @@ th {
 .groupFlash {
   margin-left: 30%;
   margin-right: 30%;
+}
+.alert {
+  padding: 1.25%;
+  border-radius: .5rem;
+  color: white;
+  margin-bottom: 1%;
+  width: 85.5%;
+  margin-left: 5.8%;
+}
+.success {
+  background-color: green;
+}
+.error {
+  background-color: red;
+}
+.formError {
+  background-color: #ff5656;
+  padding: .5%;
+  border-radius: .35rem;
+  color: white;
+  margin-bottom: 1%;
+  margin-top: -.65%;
+  width: 44.2%;
 }
 /* nav styling */
 .nav-list{
@@ -120,6 +146,9 @@ th {
   font-size: .835rem;
 }
 /* Inputs and Submit buttons*/
+.buttonList{
+  margin-bottom: 3.5%;
+}
 .homeButtons {
   color: white;
   background: #2c5ba5;
@@ -279,6 +308,11 @@ th {
 .noPinLink {
   color: white;
 }
+.formErrorPin {
+  width: 89%;
+  margin-left: 5%;
+  margin-top: .5%;
+}
 .pinList {
   display: block;
   font-family: 'Roboto', sans-serif;
@@ -322,7 +356,7 @@ th {
   border-radius: 12px 12px 12px 12px;
   list-style-type: none;
   width: 40%;
-  height: 10rem;
+  height: 9rem;
   margin-left: 30%;
 }
 .membersBox {
@@ -336,7 +370,7 @@ th {
   border-radius: 12px 12px 12px 12px;
   list-style-type: none;
   width: 40%;
-  height: 10rem;
+  height: 9rem;
   margin-left: 30%;
 }
 .membersTitle {
@@ -551,7 +585,7 @@ th {
   }
   .homeInfo {
     position: absolute;
-    top: 65%;
+    top: 68%;
     left: 6.5%;
     right: 30%;
   }
@@ -587,27 +621,27 @@ th {
   }
   .onlineTitle {
     position: absolute;
-    left: 1.5%;
+    left: .2%;
     top: 1%;
   }
   #online {
     position: absolute;
-    width: 14%;
-    left: -26%;
+    width: 15%;
+    left: -27%;
     top: 11%;
     position: absolute;
   }
   .membersTitle {
     position: absolute;
-    left: 1.5%;
-    top: 189%;
+    left: .2%;
+    top: 35%;
+    width: 22%;
   }
   .membersBox {
     position: absolute;
-    width: 14%;
-    left: -26%;
-    top: 199%;
-    position: absolute;
+    width: 15%;
+    left: -27%;
+    top: 51.5%;
   }
   .pinnerForm {
     margin-top: 3%;
@@ -616,22 +650,22 @@ th {
   #rentalPin {
     position: absolute;
     left: .5%;
-    top: 39.5%;
+    top: 75%;
   }
   #restPin {
     position: absolute;
     left: .5%;
-    top: 74%;
+    top: 137%;
   }
   #transpoPin {
     position: absolute;
     left: .5%;
-    top: 110%;
+    top: 193%;
   }
   #activityPin {
     position: absolute;
     left: .5%;
-    top: 153%;
+    top: 254%;
   }
   .groupFooter {
     font-size: 1.05rem;
@@ -649,22 +683,22 @@ th {
       height: 4.55rem;
     }
     .homeInfo {
-      top: 67%;
+      top: 70%;
     }
 }
 @media only screen and (min-width: 82rem) {
     .homeInfo {
-      top: 73%;
+      top: 76%;
     }
 }
 @media only screen and (min-width: 88rem) {
   .homeInfo {
-    top: 79%;
+    top: 82%;
   }
 }
 @media only screen and (min-width: 97rem) {
   .homeInfo {
-    top: 84%;
+    top: 87%;
   }
   .homePic {
     margin-top: 3%;

@@ -6,20 +6,43 @@ from wtforms import Form, StringField, SelectField, TextAreaField, PasswordField
 from passlib.hash import sha256_crypt
 from functools import wraps
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
+from threading import Thread
 from flask_bootstrap import Bootstrap
 from forms import *
 from confi import *
 from classes import *
 from sqlalchemy import and_, or_, update
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+
 from models import *
 import jwt
 #from routes import *
-#from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-
 
 socketio = SocketIO(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
 
-groups = []
+def sendVerificationEmail(user):
+    profile = User.getProfile(user)
+    token = profile.getEmailVerificationToken()
+    msg = Message("Email Confirmation", sender=app.config['MAIL_USERNAME'], recipients=[profile.email])
+    msg.html = render_template("verify_email.html", profile=profile, token=token)
+    Thread(target=send_async_email, args=(app, msg)).start()
+
+def send_async_email(app, msg):
+    with app.app_context():
+        mail.send(msg)
+
+def sendPassResetEmail(userProfile):
+    token = userProfile.getNewPassToken()
+    msg = Message("Email Confirmation", sender=app.config['MAIL_USERNAME'], recipients=[userProfile.email])
+    msg.html = render_template("email_new_password.html", profile=userProfile, token=token)
+    Thread(target=send_async_email, args=(app, msg)).start()
+    return
+
+@login_manager.user_loader
+def load_user(userId):
+    return User.query.get(int(userId))
 
 @app.route('/')
 def gettin():
@@ -27,6 +50,9 @@ def gettin():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
+    if is_logged_in:
+        flash("You are already logged in!")
+        return redirect(url_for("dashboard"))
     form = SignupForm(request.form)
     if form.validate_on_submit():
         # Check if username or email is already taken
@@ -36,8 +62,8 @@ def signup():
             u = User(firstName=form.firstName.data, lastName=form.lastName.data, email=form.email.data, username=form.username.data, password=sha256_crypt.encrypt(str(form.password.data)))
             db.session.add(u)
             db.session.commit()
-            flash('Congrats you are now registered. Please sign in.')
-            send_Email(form.username.data)
+            flash('Congrats you are all signed up. We have sent you an email verification link. Please follow the steps in said email in order to verify your email and start using TripLounge.')
+            User.sendVerificationEmail(form.username.data)
             return redirect(url_for('login'))
         if user is not None:
             flash('That username is already in use.')
@@ -49,41 +75,20 @@ def signup():
 
     return render_template('signup.html',form=form)
 
-# Function returns the user profile object
-def getProfile(user):
-    return User.query.filter(User.username==user).first()
-# Function returns all groups for a given user
-def getUserGroups(user):
-    return users_Groups.query.filter(Users_Groups.username==user).all()
-# Function returns all info for a given group
-def getGroupInfo(groupId):
-    return Group.query.filter(Group.id==groupId).first()
-
-
-def send_Email(user):
-    profile = getProfile(user)
-    token = profile.getEmailVerificationToken()
-    app.logger.info(token)
-    msg = Message("Email Confirmation", sender=app.config['MAIL_USERNAME'], recipients=[profile.email])
-    msg.html = render_template("verify_email.html", profile=profile, token=token)
-    mail.send(msg)
-    return redirect(url_for('login'))
-
-@app.route('/verify_email')
-def verify_email():
-    return render_template("verify_email", token=token, profile=profile)
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm(request.form)
+    if is_logged_in:
+        flash("You are already logged in!")
+        return redirect(url_for("dashboard"))
     if form.validate_on_submit():
         user = User.query.filter(User.username==form.username.data).first()
         if user:
             pass_candidate = form.password.data
             if sha256_crypt.verify(pass_candidate, user.password):
-                # if user.e_verified == 0:
-                #     flash("You must validate your email first")
-                #     return render_template('login.html', form=form)
+                if user.e_verified == 0:
+                    flash("You must validate your email first")
+                    return render_template('login.html', form=form)
                 session['logged_in'] = True
                 session['username'] = user.username
                 flash("You are now logged in. Welcome!")
@@ -109,53 +114,26 @@ def is_logged_in(f):
 
 @app.route('/validate_email/<token>', methods=["GET", "POST"])
 def validate_email(token):
+    if is_logged_in:
+        flash("You are already logged in!")
+        return redirect(url_for("dashboard"))
     form = LoginForm(request.form)
-    # if form.validate_on_submit():
-    #     username = form.username.data
-    #     password_candidate = form.password.data
-    #
-    #     #Create DictCursor
-    #     cur = mysql.connection.cursor()
-    #
-    #     result = cur.execute("SELECT * FROM users WHERE username = %s", [username])
-    #     if result > 0:
-    #         data = cur.fetchone()
-    #         password, verified = data['password'], data['e_verified']
-    #
-    #         if sha256_crypt.verify(password_candidate, password):
-    #             if verified > 0:
-    #                 error = 'You have already verified this email'
-    #                 return render_template('validate_email.html', error=error, form=form)
-    #             session['logged_in'] = True
-    #             session['username'] = username
-    #             userId, verify = data['userId'], 1
-    #             cur.execute("UPDATE users SET e_verified = %s WHERE userId = %s", [verify, userId])
-    #             mysql.connection.commit()
-    #             cur.close()
-    #             app.logger.info('%s validated email successfully', username)
-    #
-    #             return redirect(url_for('dashboard'))
-    #         else:
-    #             error = 'Invalid log in.'
-    #             return render_template('validate_email.html', error=error, form=form)
-    #
-    #
-    #     else:
-    #         error = "Username not found"
-    #         return render_template('validate_email.html', error=error, form=form)
     user = User.verifyEmailToken(token)
-    app.logger.info(user)
     if user is not None:
         if form.validate_on_submit():
-            profile = getProfile(form.username.data)
-            newProfile =  User.query.filter(User.username==form.username.data).update(dict(e_verified=1))
-            db.session.commit()
-            session['logged_in'] = True
-            session['username'] = profile.username
-            flash("Your email was successfully verified. Enjoy TripLounge!!!")
-            return redirect(url_for('dashboard'))
+            if user.username == form.username.data:
+                profile = User.getProfile(form.username.data)
+                newProfile =  User.query.filter(User.username==form.username.data).update(dict(e_verified=1))
+                db.session.commit()
+                session['logged_in'] = True
+                session['username'] = profile.username
+                flash("Your email was successfully verified. Enjoy TripLounge!!!")
+                return redirect(url_for('dashboard'))
+            else:
+                flash("Sorry that is not the account that you requested")
+                return render_template("validate_email.html", form=form)
     else:
-        flash("Sorry you missed your window")
+        flash("Sorry, the token is not valid. You should try to resign up")
         return render_template("validate_email.html", form=form)
     return render_template("validate_email.html", form=form)
 
@@ -169,8 +147,8 @@ def logout():
 @is_logged_in
 def dashboard():
     user = session['username']
-    profile = User.query.filter(User.username==user).first()
-    groups = User_Group.query.filter(User_Group.userId==profile.id).all()
+    profile = User.getProfile(user)
+    groups = User_Group.getUserGroups(profile.id)
     admins = User_Group.query.filter(and_(User_Group.userId==profile.id), (User_Group.type=='Admin')).all()
     # groups = User_Group.query.filter(User_Group.userId==profile.id).all()
 
@@ -205,13 +183,14 @@ def delete_profile():
     form = DeleteProfileForm(request.form)
     user = session['username']
     if form.yes.data:
-        # cur = mysql.connection.cursor()
-        # cur.execute("SELECT * FROM users WHERE username = %s", [user])
         profile = User.query.filter(User.username==user).first()
         password_candidate = form.password.data
         if sha256_crypt.verify(password_candidate, profile.password):
             db.session.delete(profile)
             db.session.commit()
+            admins = Group.query.filter(Group.admin==profile.username).all()
+            for admin in admins:
+                Group.deleteGroup(admin)
             flash('Your account was successfully deleted.')
             return redirect(url_for('logout'))
         else:
@@ -225,25 +204,10 @@ def delete_profile():
 def edit_group(id):
     form = EditGroupForm(request.form)
     user = session['username']
-    # cur = mysql.connection.cursor()
-    #
-    # # Get group info
-    # cur.execute("SELECT * FROM groups WHERE groupId = %s", [id])
-    # group = cur.fetchone()
-    # passwordGroup = group['password']
-    #
-    # # Get user credentials in order to get password
-    # cur.execute("SELECT * FROM users WHERE username = %s", [user])
-    # profile = cur.fetchone()
-    # passwordUser = profile['password']
-    # cur.close()
-    #
-    # form.name.data = group['title']
-    # form.location.data = group['location']
-    # form.dates.data = group['dates']
-    # form.description.data = group['description']
     profile = User.query.filter(User.username==user).first()
     group = Group.query.filter(Group.id==id).first()
+    form.name.data, form.location.data, form.description.data = group.groupName, group.location, group.description
+
     if form.validate_on_submit():
         password_candidate_user = form.password.data
         password_candidate_group = form.groupPassword.data
@@ -251,7 +215,7 @@ def edit_group(id):
             if sha256_crypt.verify(password_candidate_group, group.password):
                 # Check if name is the same as before
                 if group.groupName == form.name.data:
-                    newGroup = Group.query.filter(Group.id==group.id).update(dict(groupName=form.name.data,location=form.location.data, startDate=form.startDate.data, endDate=form.endDate.data, description=form.description.data))
+                    newGroup = Group.query.filter(Group.id==group.id).update(dict(groupName=request.form['name'],location=request.form['location'], startDate=request.form['startDate'], endDate=request.form['endDate'], description=request.form['description']))
                     db.session.commit()
                     flash('Group was successfully updated')
                     return redirect(url_for('dashboard'))
@@ -260,7 +224,7 @@ def edit_group(id):
                     group_check = Group.query.filter(Group.groupName==form.name.data)
                     # If not in use, then make the update
                     if group_check is None:
-                        newGroup = Group.query.filter(Group.id==group.id).update(dict(groupName=form.name.data,location=form.location.data, startDate=form.startDate.data, endDate=form.endDate.data, description=form.description.data))
+                        newGroup = Group.query.filter(Group.id==group.id).update(dict(groupName=request.form['name'],location=request.form['location'], startDate=request.form['startDate'], endDate=request.form['endDate'], description=request.form['description']))
                         db.session.commit()
                         flash('Group was successfully updated')
                         return redirect(url_for('dashboard'))
@@ -289,8 +253,7 @@ def delete_group(id):
     if form.yes.data:
         if sha256_crypt.verify(form.passwordUser.data, profile.password):
             if sha256_crypt.verify(form.passwordGroup.data, group.password):
-                db.session.delete(group)
-                db.session.commit()
+                Group.deleteGroup(group)
                 flash("Group Deleted")
                 return redirect(url_for('dashboard'))
             else:
@@ -301,6 +264,8 @@ def delete_group(id):
             return render_template("delete_group.html", id=id, profile=profile, group=group, form=form)
 
     return render_template('delete_group.html', id=id, form=form)
+
+
 @app.route('/newGroup', methods=['GET', 'POST'])
 @is_logged_in
 def newGroup():
@@ -322,12 +287,59 @@ def newGroup():
             flash("Sorry, that group name is already in use")
 
     return render_template('newGroup.html', form=form)
+
+@app.route('/reset_password_request', methods=['GET', 'POST'])
+def reset_password_req():
+    if is_logged_in:
+        flash("You are already logged in!")
+        return redirect(url_for("dashboard"))
+    form = RequestNewPassword(request.form)
+    if form.validate_on_submit():
+        profile = User.query.filter(User.email==form.email.data).first()
+        if profile is not None:
+            sendPassResetEmail(profile)
+            flash("The link has been sent, please check your email")
+            return redirect(url_for('login'))
+        else:
+            flash("That email is not in our records, try again, or sign up for a new account!!")
+    return render_template('reset_password_request.html', form=form)
+
+@app.route('/email_new_password')
+def emailNewPass():
+    return render_template('email_new_password.html', profile=profile, token=token)
+
+@app.route('/reset_password/<token>', methods=["GET", "POST"])
+def reset_password(token):
+    if is_logged_in:
+        flash("You are already logged in!")
+        return redirect(url_for("dashboard"))
+    form = ResetPassword(request.form)
+    user = User.verifyNewPassToken(token)
+
+    if user is not None:
+        if form.validate_on_submit():
+            if user.username == form.username.data:
+                newPass =  User.query.filter(User.username==form.username.data).update(dict(password=sha256_crypt.encrypt(form.password.data)))
+                db.session.commit()
+                flash("Your password was updated, you may now login.")
+                return redirect(url_for('login'))
+            else:
+                flash('Sorry, that is not the same user as requested.')
+    else:
+        flash("Sorry your link token expired, please request another")
+        return redirect(url_for('reset_password_req'))
+    return render_template("reset_password.html", form=form)
+
+# def getChatHistAsync(groupNum):
+#     return Chat.query.filter(Chat.groupId==groupNum).all()
+
+
 @app.route('/group/<int:id>', methods=['GET', 'POST'])
 @is_logged_in
 def group(id):
     user = session['username']
     profile = User.query.filter(User.username==user).first()
-    group = Group.query.filter(Group.id==id).first()
+    group = Group.getGroupInfo(id)
     ifMember = User_Group.query.filter(and_(User_Group.userId==profile.id), (User_Group.groupId==id)).first()
     if ifMember is not None:
         renPins, restPins, transpoPins, activityPins = {}, {}, {}, {}
@@ -356,7 +368,7 @@ def group(id):
         renPins, restPins = Lodging_Pin.query.filter(Lodging_Pin.groupId==id).all(), Rest_Pin.query.filter(Rest_Pin.groupId==id).all()
 
         if pinFormThree.submit3.data and pinFormThree.validate():
-            transport = Transpo_Pin(groupId=id, transpoName=pinFormThree.name.data, price=pinFormThree.price3.data, description=pinFormThree.description3.data, link=pinFormThree.link3.data, creator=user)
+            transport = Transpo_Pin(groupId=id, transpoName=pinFormThree.name.data, price=pinFormThree.price3.data, description=pinFormThree.description3.data, link=pinFormThree.link3.data, types=pinFormThree.type.data, creator=user)
             db.session.add(transport)
             db.session.commit()
             flash("Pin created")
@@ -372,25 +384,22 @@ def group(id):
         #Get transportation pins and activity pins
         transpoPins, activityPins = Transpo_Pin.query.filter(Transpo_Pin.groupId==id).all(), Activity_Pin.query.filter(Activity_Pin.groupId==id).all()
 
-        history = Chat.query.filter(Chat.groupId==id).all()
+        history = Chat.getChatHist(group.id)
 
         @socketio.on('connect', namespace='/chat')
         def connect():
-            user = session['username']
-            users.append(user)
+            group.addOnlineUser(user)
             msg = " just connected!"
-            emit('on connect', {'msg': msg, 'user': user, 'users': users}, broadcast=True)
+            emit('on connect', {'msg': msg, 'user': user, 'users': group.users}, broadcast=True)
 
         @socketio.on('disconnect', namespace='/chat')
         def disconnect():
-            user = session['username']
-            users.remove(user)
+            group.removeOnlineUser(user)
             msg = " just disconnected :("
-            emit('on disconnect', {'msg': msg, 'user': user, "users": users}, broadcast=True)
+            emit('on disconnect', {'msg': msg, 'user': user, 'users': group.users}, broadcast=True)
 
         @socketio.on('send message', namespace='/chat')
         def handle_my_custom_event(msg, id):
-            user = session['username']
             chat_mess = Chat(groupId=id, username=user, message=msg)
             db.session.add(chat_mess)
             db.session.commit()
@@ -547,49 +556,6 @@ def editActivityPin(id, name):
                 db.session.commit()
                 flash("Pin updated!!")
                 return redirect(url_for('group', id=id))
-    # form = EditActivityPin(request.form)
-    # user = session['username']
-    # cur = mysql.connection.cursor()
-    #
-    # # Get pin info
-    # cur.execute("SELECT * FROM activity_pin WHERE name = %s", [name])
-    # pin = cur.fetchone()
-    # id = pin['groupId']
-    #
-    # # Get group info
-    # cur.execute("SELECT * FROM groups WHERE groupId = %s", [id])
-    # group = cur.fetchone()
-    #
-    # #Populate fields
-    # form.name.data = pin['name']
-    # form.description.data = pin['description']
-    # form.link.data = pin['link']
-    # form.type.data = pin['type']
-    #
-    # if form.validate_on_submit():
-    #     #print("Inside first if")
-    #     user_pass_candidate = form.passwordUser.data
-    #     cur.execute("SELECT * FROM users WHERE username = %s", [user])
-    #     profile = cur.fetchone()
-    #     passwordUser = profile['password']
-    #     # Check Passwords
-    #     if sha256_crypt.verify(user_pass_candidate, passwordUser):
-    #         group_pass_candidate = form.passwordGroup.data
-    #         passwordGroup = group['password']
-    #         if sha256_crypt.verify(group_pass_candidate, passwordGroup):
-    #             # Create variables with data
-    #             name = request.form['name']
-    #             description = request.form['description']
-    #             link = request.form['link']
-    #             type = request.form['type']
-    #
-    #             pinId = pin['pinId']
-    #             cur.execute("UPDATE activity_pin SET name = %s, description = %s, link = %s, type = %s WHERE pinId = %s", [name, description, link,type, pinId])
-    #             mysql.connection.commit()
-    #             cur.close()
-    #             flash("Pin succesfully updated!")
-    #             return redirect(url_for('group', id=id))
-
             else:
                 flash("You got your group password twisted")
                 return render_template('edit_activity_pin.html', form=form, id=id, pin=pin, group=group, profile=profile)
@@ -709,10 +675,6 @@ def not_found_error(error):
 def internalerror(error):
     session.rollback()
     return render_template('500.html'), 500
-
-
-users = []
-
 
 
 if __name__ == '__main__':

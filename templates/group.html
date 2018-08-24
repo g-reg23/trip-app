@@ -55,7 +55,7 @@
             </div>
           {% endfor %}
         {% else %}
-          <div class="noPinDiv"><a href="#rentalPin">You can pin rental here!</a></div>
+          <div class="noPinDiv"><a class="noPinLink" href="#rentalPin">You can pin rental here!</a></div>
         {% endif %}
       </div><br />
       <div class="pinRow">
@@ -88,6 +88,7 @@
               <p>{{ pinThree.date }}</p>
               <p>{{ pinThree.price }}</p>
               <p>{{ pinThree.description }}</p>
+              <p>{{ pinThree.types }}</p>
               <p><a class="pinLink" target="_blank" href="{{ pinThree.link }}">View at site</a></p>
               <p>Posted by: <strong>{{ pinThree.creator }}</strong></p>
               <br />
@@ -127,18 +128,20 @@
           you expect to split the cost of each expense, and the calculator will do the math.
         </p>
         <!-- <input type="text" class="sign-logInput calcName" placeholder="Name"> -->
-        <input type="number" class="sign-logInput" id="calcPrice" placeholder="Price">
-        <input type="number" class="sign-logInput" id="calcDays" placeholder="Recurring payments">
-        <input type="number" class="sign-logInput" id="calcDivideBy" placeholder="# of people to split">
-        <select class="sign-logInput" id="calcSelect">
-          <option align="center" selected value="">Type:</option>
-          <option value="rental">Rental</option>
-          <option value="food/drink">Food/Drink</option>
-          <option value="transportation">Transportation</option>
-          <option value="activity">Activity</option>
-          <option value="other">Other</option>
-        </select>
-        <button class="sign-logSubmit" id="calcSubmit" style="width: 45%;">Calculate</button>
+        <form class="expenseForm">
+          <input type="number" class="sign-logInput" id="calcPrice" placeholder="Price">
+          <input type="number" class="sign-logInput" id="calcDays" placeholder="Recurring payments">
+          <input type="number" class="sign-logInput" id="calcDivideBy" placeholder="# of people to split">
+          <select class="sign-logInput" id="calcSelect">
+            <option align="center" selected value="">Type:</option>
+            <option value="rental">Rental</option>
+            <option value="food/drink">Food/Drink</option>
+            <option value="transportation">Transportation</option>
+            <option value="activity">Activity</option>
+            <option value="other">Other</option>
+          </select>
+          <button class="sign-logSubmit" id="calcSubmit" style="width: 45%;">Calculate</button>
+        </form>
       </div>
       <div class="calcDiv results">
         <h3>Individual Expenses</h3>
@@ -155,10 +158,25 @@
           <div class="pinnerForm" id="rentalPin"><h3 class="pinFormTitle" align="center">Pin a Rental</h3>
             <div>{{ pinForm.hidden_tag() }}</div>
             <div>{{ pinForm.rentalName(class="pinInput") }}</div>
+            {% for message in pinForm.rentalName.errors %}
+              <div class='formErrorPin formError'>  {{ message }} </div>
+            {% endfor %}
             <div>{{ pinForm.price(class="pinInput") }}</div>
+            {% for message in pinForm.price.errors %}
+              <div class='formErrorPin formError'>  {{ message }} </div>
+            {% endfor %}
             <div>{{ pinForm.rooms(class="pinInput") }}</div>
+            {% for message in pinForm.rooms.errors %}
+              <div class='formErrorPin formError'>  {{ message }} </div>
+            {% endfor %}
             <div>{{ pinForm.description(class="pinInput descriptionPin") }}</div>
+            {% for message in pinForm.description.errors %}
+              <div class='formErrorPin formError'>  {{ message }} </div>
+            {% endfor %}
             <div>{{ pinForm.link(class="pinInput") }}</div>
+            {% for message in pinForm.link.errors %}
+              <div class='formErrorPin formError'>  {{ message }} </div>
+            {% endfor %}
             <div>{{ pinForm.submit1(class="pinInput pinSubmit") }}</div>
           </div>
         </form>
@@ -168,9 +186,21 @@
           <div class="pinnerForm" id="restPin"><h3 class="pinFormTitle" align="center">Pin a Restaurant or Nightclub</h3>
             <div>{{ pinFormTwo.hidden_tag() }}</div>
             <div>{{ pinFormTwo.restName(class="pinInput") }}</div>
+            {% for message in pinFormTwo.restName.errors %}
+              <div class='formErrorPin formError'>  {{ message }} </div>
+            {% endfor %}
             <div>{{ pinFormTwo.description2(class="pinInput descriptionPin") }}</div>
+            {% for message in pinFormTwo.description2.errors %}
+              <div class='formErrorPin formError'>  {{ message }} </div>
+            {% endfor %}
             <div>{{ pinFormTwo.link2(class="pinInput") }}</div>
+            {% for message in pinFormTwo.link2.errors %}
+              <div class='formErrorPin formError'>  {{ message }} </div>
+            {% endfor %}
             <div>{{ pinFormTwo.type(class="pinInput selectorPin") }}</div>
+            {% for message in pinFormTwo.type.errors %}
+              <div class='formErrorPin formError'>  {{ message }} </div>
+            {% endfor %}
             <div>{{ pinFormTwo.submit2(class="pinInput pinSubmit") }}</div>
           </div>
         </form>
@@ -180,10 +210,25 @@
           <div class="pinnerForm" id="transpoPin"><h3 class="pinFormTitle" align="center">Pin Transportation</h3>
             <div>{{ pinFormThree.hidden_tag() }}</div>
             <div>{{ pinFormThree.name(class="pinInput") }}</div>
+            {% for message in pinFormThree.name.errors %}
+              <div class='formErrorPin formError'>  {{ message }} </div>
+            {% endfor %}
             <div>{{ pinFormThree.date(class="pinInput") }}</div>
+            {% for message in pinFormThree.date.errors %}
+              <div class='formErrorPin formError'>  {{ message }} </div>
+            {% endfor %}
             <div>{{ pinFormThree.price3(class="pinInput") }}</div>
+            {% for message in pinFormThree.price3.errors %}
+              <div class='formErrorPin formError'>  {{ message }} </div>
+            {% endfor %}
             <div>{{ pinFormThree.description3(class="pinInput descriptionPin") }}</div>
+            {% for message in pinFormThree.description3.errors %}
+              <div class='formErrorPin formError'>  {{ message }} </div>
+            {% endfor %}
             <div>{{ pinFormThree.link3(class="pinInput") }}</div>
+            {% for message in pinFormThree.link3.errors %}
+              <div class='formErrorPin formError'>  {{ message }} </div>
+            {% endfor %}
             <div>{{ pinFormThree.type(class="pinInput selectorPin") }}</div>
             <div>{{ pinFormThree.submit3(class="pinInput pinSubmit") }}</div>
           </div>
@@ -194,9 +239,21 @@
           <div class="pinnerForm" id="activityPin"><h3 class="pinFormTitle" align="center">Pin an Activity</h3>
             <div>{{ pinFormFour.hidden_tag() }}</div>
             <div>{{ pinFormFour.activityName(class="pinInput") }}</div>
+            {% for message in pinFormFour.activityName.errors %}
+              <div class='formErrorPin formError'>  {{ message }} </div>
+            {% endfor %}
             <div>{{ pinFormFour.price(class="pinInput") }}</div>
+            {% for message in pinFormFour.price.errors %}
+              <div class='formErrorPin formError'>  {{ message }} </div>
+            {% endfor %}
             <div>{{ pinFormFour.description(class="pinInput descriptionPin") }}</div>
+            {% for message in pinFormFour.description.errors %}
+              <div class='formErrorPin formError'>  {{ message }} </div>
+            {% endfor %}
             <div>{{ pinFormFour.link(class="pinInput") }}</div>
+            {% for message in pinFormFour.link.errors %}
+              <div class='formErrorPin formError'>  {{ message }} </div>
+            {% endfor %}
             <div>{{ pinFormFour.type(class="pinInput selectorPin") }}</div>
             <div>{{ pinFormFour.submit4(class="pinInput pinSubmit") }}</div>
           </div>
@@ -310,6 +367,7 @@
         if (document.querySelector('.flashMessage') != null){
             document.querySelector('.flashMessage').style.marginLeft = '24%';
             document.querySelector('.flashMessage').style.marginRight = '30%';
+            document.querySelector('.flashMessage').style.marginTop = '10%';
         }
     }
   </script>

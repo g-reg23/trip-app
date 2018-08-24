@@ -4,8 +4,10 @@ from confi import db
 import jwt
 from confi import app
 import secrets
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
-class User(db.Model):
+
+class User(UserMixin, db.Model):
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     firstName = db.Column(db.String(40))
@@ -16,18 +18,30 @@ class User(db.Model):
     registerDate = db.Column(db.DateTime(timezone=True), server_default=func.now())
     e_verified = db.Column(db.SMALLINT, default=0, nullable=False)
 
+    def getProfile(user):
+        return User.query.filter(User.username==user).first()
+
     def getEmailVerificationToken(self, expires_in=604800):
-        return jwt.encode({'verifyEmail':self.id}, 'wUCu3q6jjqoI3Mh5kwD7dCp4wSju-OURchpKHXLv9oY87ROs', algorithm='HS256').decode('utf-8')
+        return jwt.encode({'verifyEmail':self.id, 'exp': time() + expires_in}, 'wUCu3q6jjqoI3Mh5kwD7dCp4wSju-OURchpKHXLv9oY87ROs', algorithm='HS256').decode('utf-8')
 
     @staticmethod
     def verifyEmailToken(token):
         try:
-            id = jwt.decode(token, 'wUCu3q6jjqoI3Mh5kwD7dCp4wSju-OURchpKHXLv9oY87ROs',
-                            algorithms=['HS256'])['verifyEmail']
+            idOne = jwt.decode(token, 'wUCu3q6jjqoI3Mh5kwD7dCp4wSju-OURchpKHXLv9oY87ROs', algorithms=['HS256'])['verifyEmail']
         except:
             return
-        return User.query.get(id)
+        return User.query.get(idOne)
 
+    def getNewPassToken(self, expires_in=600):
+        return jwt.encode({'newPass':self.id, 'exp': time() + expires_in}, 'EzVyo9hoxqWeHRjFDGpw17P5CENp8Dmt6XWdAEsO0CYhFtKX', algorithm='HS256').decode('utf-8')
+
+    @staticmethod
+    def verifyNewPassToken(token):
+        try:
+            idTwo = jwt.decode(token, 'EzVyo9hoxqWeHRjFDGpw17P5CENp8Dmt6XWdAEsO0CYhFtKX', algorithms=['HS256'])['newPass']
+        except:
+            return
+        return User.query.get(idTwo)
 
 class Group(db.Model):
     __tablename__ = "groups"
@@ -40,6 +54,27 @@ class Group(db.Model):
     password = db.Column(db.String(100))
     description = db.Column(db.Text)
     createDate = db.Column(db.DateTime(timezone=True), server_default=func.now())
+    users = []
+
+    def getGroupInfo(groupId):
+        return Group.query.filter(Group.id==groupId).first()
+
+
+    def addOnlineUser(self, user):
+        self.users.append(user)
+
+    def removeOnlineUser(self, user):
+        self.users.remove(user)
+
+    @staticmethod
+    def deleteGroup(group):
+        db.session.delete(group)
+        db.session.commit()
+        userGroup = User_Group.query.filter(User_Group.groupId==group.id).all()
+        for i in userGroup:
+            db.session.delete(i)
+            db.commit()
+        return
 
 class User_Group(db.Model):
     __tablename__ = "users_groups"
@@ -48,6 +83,10 @@ class User_Group(db.Model):
     groupId = db.Column(db.Integer, db.ForeignKey("groups.id", ondelete="CASCADE"))
     type = db.Column(db.Enum('Admin', 'Member'))
     groupName = db.Column(db.String(40))
+
+    def getUserGroups(userId):
+        return User_Group.query.filter(User_Group.userId==userId).all()
+
 
 class Lodging_Pin(db.Model):
     __tablename__ = "lodgingPins"
@@ -99,3 +138,7 @@ class Chat(db.Model):
     username = db.Column(db.String(30))
     message = db.Column(db.Text)
     date = db.Column(db.DateTime(timezone=True), server_default=func.now())
+
+    @staticmethod
+    def getChatHist(groupNum):
+        return Chat.query.filter(Chat.groupId==groupNum).all()

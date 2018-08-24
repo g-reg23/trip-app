@@ -16,7 +16,7 @@ function loadEventListeners() {
   document.querySelector('#calcSubmit').addEventListener('click', calculateResults);
   document.addEventListener('DOMContentLoaded', getExpenses);
   document.querySelector('.expenseDelete').addEventListener('click', deleteExpenses);
-  document.querySelector('.resultList').addEventListener('click', deleteIndExp)
+  document.querySelector('.resultList').addEventListener('click', deleteIndExp);
 }
 
 loadEventListeners();
@@ -102,48 +102,64 @@ function getExpenses() {
     getTotal();
     }
 }
+function showErrorMessage(message, type) {
+  let div = document.createElement('div');
+  div.className = (type);
+  div.classList += ' alert';
+  div.appendChild(document.createTextNode(message));
+  let container = document.querySelector('.calcDiv');
+  let form = document.querySelector('.expenseForm');
+  container.insertBefore(div, form);
+  setTimeout(function(){
+      document.querySelector('.alert').remove();
+  },5000);
+}
 
 function calculateResults(e){
     if (price.value < 1 || divisor.value < 1 || multiple.value < 1 || type.value === '') {
-        alert("Please check your inputs.")
-        return
+        showErrorMessage('Please fill out all form values.', 'error');
+        e.preventDefault();
+
+    }else {
+      let expense = price.value * multiple.value / divisor.value;
+      document.querySelector('.results').style.display = 'block';
+      //Create the title and result element
+      // let title = document.createElement('h5');
+      let li = document.createElement('li');
+      // title.className = 'nameExpense';
+      li.className = 'calculatorResults';
+      // let nameNode = document.createTextNode(name.value);
+      let node = document.createTextNode("$" + expense.toFixed(2) + " " + type.value + " expense.");
+      // title.appendChild(nameNode);
+      li.appendChild(node);
+      // res.appendChild(title);
+      res.appendChild(li);
+      //Create delete X
+      let link = document.createElement('a');
+      let xnode = document.createTextNode('Clear');
+      link.appendChild(xnode);
+      li.appendChild(link);
+      link.className = 'deleteX';
+      link.href = '#';
+      price.value = '';
+      divisor.value = '';
+      multiple.value = '';
+      // name.value = ''
+      let total;
+      if (localStorage.getItem(groupNum) === null) {
+          total = 0;
+       }else {
+          total = JSON.parse(localStorage.getItem(groupNum));
+      }
+      total += expense;
+      localStorage.setItem(groupNum, total.toFixed(2));
+      storeExpenseInLocalStorage(expense, type.value);
+      getTotal();
+      showErrorMessage('Expense added!', 'success');
+      e.preventDefault();
     }
-    let expense = price.value * multiple.value / divisor.value;
-    document.querySelector('.results').style.display = 'block';
-    //Create the title and result element
-    // let title = document.createElement('h5');
-    let li = document.createElement('li');
-    // title.className = 'nameExpense';
-    li.className = 'calculatorResults';
-    // let nameNode = document.createTextNode(name.value);
-    let node = document.createTextNode("$" + expense.toFixed(2) + " " + type.value + " expense.");
-    // title.appendChild(nameNode);
-    li.appendChild(node);
-    // res.appendChild(title);
-    res.appendChild(li);
-    //Create delete X
-    let link = document.createElement('a');
-    let xnode = document.createTextNode('Clear');
-    link.appendChild(xnode);
-    li.appendChild(link);
-    link.className = 'deleteX';
-    link.href = '#';
-    price.value = '';
-    divisor.value = '';
-    multiple.value = '';
-    // name.value = ''
-    let total;
-    if (localStorage.getItem(groupNum) === null) {
-        total = 0;
-     }else {
-        total = JSON.parse(localStorage.getItem(groupNum));
-    }
-    total += expense;
-    localStorage.setItem(groupNum, total.toFixed(2));
-    storeExpenseInLocalStorage(expense, type.value);
-    getTotal();
-    e.preventDefault();
-};
+}
+
 
 function getTotal() {
   document.querySelector('.totalResult').style.display = 'block';
@@ -181,4 +197,13 @@ function storeExpenseInLocalStorage(cost, type2) {
   localStorage.setItem('types', JSON.stringify(types));
   localStorage.setItem('whichGroup', JSON.stringify(groups));
   // localStorage.setItem('names', title);
-};
+}
+
+if (document.querySelector('.formErrorPin') != null) {
+    let errors = document.querySelectorAll('.formErrorPin');
+    errors.forEach(function(error) {
+        setTimeout(function(){
+            error.remove();
+        },5000)
+    })
+}
