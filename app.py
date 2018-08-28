@@ -5,12 +5,12 @@ from wtforms.validators import DataRequired, Length, EqualTo, Email, NumberRange
 from wtforms import Form, StringField, SelectField, TextAreaField, PasswordField, IntegerField, SubmitField, DateField, validators
 from passlib.hash import sha256_crypt
 from functools import wraps
+import calendar
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
 from threading import Thread
 from flask_bootstrap import Bootstrap
 from forms import *
 from confi import *
-from classes import *
 from sqlalchemy import and_, or_, update
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
@@ -50,9 +50,9 @@ def gettin():
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
-    if is_logged_in:
-        flash("You are already logged in!")
-        return redirect(url_for("dashboard"))
+    # if is_logged_in:
+    #     flash("You are already logged in!")
+    #     return redirect(url_for("dashboard"))
     form = SignupForm(request.form)
     if form.validate_on_submit():
         # Check if username or email is already taken
@@ -63,7 +63,7 @@ def signup():
             db.session.add(u)
             db.session.commit()
             flash('Congrats you are all signed up. We have sent you an email verification link. Please follow the steps in said email in order to verify your email and start using TripLounge.')
-            User.sendVerificationEmail(form.username.data)
+            sendVerificationEmail(form.username.data)
             return redirect(url_for('login'))
         if user is not None:
             flash('That username is already in use.')
@@ -78,9 +78,9 @@ def signup():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm(request.form)
-    if is_logged_in:
-        flash("You are already logged in!")
-        return redirect(url_for("dashboard"))
+    # if is_logged_in:
+    #     flash("You are already logged in!")
+    #     return redirect(url_for("dashboard"))
     if form.validate_on_submit():
         user = User.query.filter(User.username==form.username.data).first()
         if user:
@@ -290,9 +290,9 @@ def newGroup():
 
 @app.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_req():
-    if is_logged_in:
-        flash("You are already logged in!")
-        return redirect(url_for("dashboard"))
+    # if is_logged_in:
+    #     flash("You are already logged in!")
+    #     return redirect(url_for("dashboard"))
     form = RequestNewPassword(request.form)
     if form.validate_on_submit():
         profile = User.query.filter(User.email==form.email.data).first()
@@ -452,6 +452,25 @@ def groups():
     else:
         flash("You are not a member of any groups yet.")
         return render_template('groups.html', groups=groups)
+
+@app.route('/group/<int:id>/get_members', methods=['GET', 'POST'])
+@is_logged_in
+def groupGetMembers(id):
+    form = JoinGroupEmail(request.form)
+    return render_template('get_members.html', form=form)
+
+@app.route('/group/<int:id>/calendar', methods=['GET', 'POST'])
+@is_logged_in
+def groupCalendar(id):
+    group = Group.getGroupInfo(id)
+    j = group.startDate
+    startYear = 2019
+    startMonth = 5
+    cal = calendar.HTMLCalendar(calendar.SUNDAY)
+    firstMonth = cal.formatmonth(startYear, startMonth)
+    # return render_template("calendar.html", firstMonth=firstMonth)
+    return firstMonth
+
 
 @app.route('/edit_rental_pin/<int:id>/<string:name>', methods=['GET', 'POST'])
 @is_logged_in

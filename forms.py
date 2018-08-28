@@ -51,7 +51,7 @@ class SignupForm(FlaskForm):
     firstName = StringField('First Name:', [validators.Length(min=2, max=30, message=("First name must be between 2 and 30 characters."))], render_kw={"placeholder": "First Name"})
     lastName = StringField('Last Name:', [validators.Length(min=2, max=40, message="Last name must be between 2 and 40 characters.")], render_kw={"placeholder": "Last Name"})
     username = StringField('Username:', [validators.Length(min=2, max=30, message="Username must be between 2 and 30 characters")], render_kw={"placeholder": "Username"})
-    email = StringField('Email:', [validators.Email( message=("That is not a proper email address"))], render_kw={"placeholder": "Email"})
+    email = StringField('Email:', [validators.Email()], render_kw={"placeholder": "Email"})
     password = PasswordField('Password:', [
     validators.InputRequired(),
     validators.EqualTo('confirm', message='Passwords do not match.')], render_kw={"placeholder": "Password"})
@@ -150,3 +150,16 @@ class DeletePinForm(FlaskForm):
     passwordUser = PasswordField([validators.InputRequired()], render_kw={'placeholder': 'User Password'})
     passwordGroup = PasswordField([validators.InputRequired()], render_kw={'placeholder': 'Group Password'})
     yes = SubmitField('Yes')
+
+class JoinGroupEmail(FlaskForm):
+    email1 = StringField('Email', [validators.Email()], render_kw={'placeholder': 'Email'})
+    email2 = StringField('Email', [validators.Email()], render_kw={'placeholder': 'Email'})
+    email3 = StringField('Email', [validators.Email()], render_kw={'placeholder': 'Email'})
+    email4 = StringField('Email', [validators.Email()], render_kw={'placeholder': 'Email'})
+    email5 = StringField('Email', [validators.Email()], render_kw={'placeholder': 'Email'})
+    email6 = StringField('Email', [validators.Email()], render_kw={'placeholder': 'Email'})
+    email7 = StringField('Email', [validators.Email()], render_kw={'placeholder': 'Email'})
+    email8 = StringField('Email', [validators.Email()], render_kw={'placeholder': 'Email'})
+    email9 = StringField('Email', [validators.Email()], render_kw={'placeholder': 'Email'})
+    email10 = StringField('Email', [validators.Email()], render_kw={'placeholder': 'Email'})
+    submit = SubmitField('Submit')

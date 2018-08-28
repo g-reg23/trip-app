@@ -1,0 +1,29 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <div class="pageContainer">
+      <table border="1" cellpadding="5" cellspacing="5">
+          <tr>
+              <th>Sunday</th>
+              <th>Monday</th>
+              <th>Tuesday</th>
+              <th>Wednesday</th>
+              <th>Thursday</th>
+              <th>Friday</th>
+              <th>Saturday</th>
+          </tr>
+          <tr>
+              <td>1</td>
+              <td>2</td>
+              <td>3</td>
+              <td>4</td>
+              <td>5</td>
+              <td>6</td>
+              <td>7</td>
+          </tr>
+      </table>
+    </div>
+    <script src="{{url_for('static', filename = 'app.js')}}"></script>
+
+
+{% endblock %}

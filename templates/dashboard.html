@@ -22,6 +22,7 @@
               <tr>
                 <th>Group Name</th>
                 <th>Group #</th>
+                <th>Add</th>
                 <th>Edit Group</th>
                 <th>Delete Group</th>
               </tr>
@@ -29,6 +30,7 @@
                 <tr>
                   <td>{{ admin.groupName }}</td>
                   <td>{{ admin.groupId }}</td>
+                  <td><a href="/group/{{ admin.groupId }}/get_members">Add Members<a></td>
                   <td><a href="/edit_group/{{ admin.groupId }}">Edit Group</a></td>
                   <td><a href="/delete_group/{{ admin.groupId }}">Delete Group</a></td>
                 </tr>

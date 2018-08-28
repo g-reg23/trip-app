@@ -1,0 +1,26 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <div class="pageContainer">
+        <h1>Invite Trip Members</h1>
+        <p>You may invite up to 10 people at a time. Please provide email for each
+        trip participant, if they do not have a TripLounge account they will be given instructions
+        on how to join. </p>
+        <form>
+            <div>{{ form.email1(class='sign-logInput') }}</div>
+            <div>{{ form.email2(class='sign-logInput') }}</div>
+            <div>{{ form.email3(class='sign-logInput') }}</div>
+            <div>{{ form.email4(class='sign-logInput') }}</div>
+            <div>{{ form.email5(class='sign-logInput') }}</div>
+            <div>{{ form.email6(class='sign-logInput') }}</div>
+            <div>{{ form.email7(class='sign-logInput') }}</div>
+            <div>{{ form.email8(class='sign-logInput') }}</div>
+            <div>{{ form.email9(class='sign-logInput') }}</div>
+            <div>{{ form.email10(class='sign-logInput') }}</div>
+            <div>{{ form.submit(class='sign-logSubmit') }}</div>
+        </form>
+    </div>
+    <script src="{{url_for('static', filename = 'app.js')}}"></script>
+
+
+{% endblock %}
