@@ -80,11 +80,14 @@ class User_Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     userId = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
     groupId = db.Column(db.Integer, db.ForeignKey("groups.id", ondelete="CASCADE"))
+    status = db.Column(db.Enum('Pending', 'Accepted'))
     type = db.Column(db.Enum('Admin', 'Member'))
     groupName = db.Column(db.String(40))
 
     def getUserGroups(userId):
         return User_Group.query.filter(User_Group.userId==userId).all()
+    def getMembers(groupId):
+        return User_Group.query.filter(User_Group.groupId==groupId).all()
 
 
 class Lodging_Pin(db.Model):

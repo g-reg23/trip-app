@@ -13,7 +13,14 @@
       {% else %}
         <h5>You are not currently a member of any groups</h5><br /><hr />
       {% endif %}
-
+      <h2 class="infoTitles" text-decoration="underline">Group Invites:</h2><br />
+      {% if pends %}
+        {% for pend in pends %}
+          <li class="buttonList"><a class="groupButton" href="group/{{ pend.groupId }}/join">{{ pend.groupName }}</a></li><br />
+        {% endfor %}
+      {% else %}
+        <h5>You currently have no pending group invites</h5>
+      {% endif %}
       <div class="dashTables">
         <div>
           {% if admins %}

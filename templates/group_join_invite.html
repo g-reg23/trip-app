@@ -1,0 +1,18 @@
+{% extends 'layout.html' %}
+{% block body %}
+  <div class="groupDiv">
+      <h1>Join {{ group.groupName }}?</h1>
+      <form method='POST' action='#'>
+        <div>{{ form.hidden_tag() }}</div>
+        <div>{{ form.yes(class="finalDeleteButtons") }}</div>
+        <div>{{ form.no(class="finalDeleteButtons") }}</div>
+      </form>
+      <h1 align="center" class='groupHeading'>Group</h1>
+      <div id="groupHeader">
+        <h1 style="text-decoration: underline;">{{ group.groupName }}</h1>
+          <p class='groupHeadDesc'>{{ group.description }}</p>
+          <p>Group Creator: <strong>{{ group.admin }}</strong></p>
+          <p><a href="/group/{{group.id}}/calendar" class="noPinLink">Calendar</a></p>
+      </div>
+  </div>
+{% endblock %}

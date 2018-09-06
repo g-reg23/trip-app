@@ -151,15 +151,18 @@ class DeletePinForm(FlaskForm):
     passwordGroup = PasswordField([validators.InputRequired()], render_kw={'placeholder': 'Group Password'})
     yes = SubmitField('Yes')
 
-class JoinGroupEmail(FlaskForm):
-    email1 = StringField('Email', [validators.Email()], render_kw={'placeholder': 'Email'})
-    email2 = StringField('Email', [validators.Email()], render_kw={'placeholder': 'Email'})
-    email3 = StringField('Email', [validators.Email()], render_kw={'placeholder': 'Email'})
-    email4 = StringField('Email', [validators.Email()], render_kw={'placeholder': 'Email'})
-    email5 = StringField('Email', [validators.Email()], render_kw={'placeholder': 'Email'})
-    email6 = StringField('Email', [validators.Email()], render_kw={'placeholder': 'Email'})
-    email7 = StringField('Email', [validators.Email()], render_kw={'placeholder': 'Email'})
-    email8 = StringField('Email', [validators.Email()], render_kw={'placeholder': 'Email'})
-    email9 = StringField('Email', [validators.Email()], render_kw={'placeholder': 'Email'})
-    email10 = StringField('Email', [validators.Email()], render_kw={'placeholder': 'Email'})
-    submit = SubmitField('Submit')
+class InviteGroupNoAccountForm(FlaskForm):
+    email1 = StringField([validators.Email()], render_kw={'placeholder': 'Email'})
+    submit1 = SubmitField('Submit')
+
+class InviteGroupByUsernameForm(FlaskForm):
+    username = StringField([validators.Length(min=2, max=30,)], render_kw={"placeholder": "Username"})
+    submit2 = SubmitField('Submit')
+
+class InviteGroupByEmailForm(FlaskForm):
+    email2 = StringField([validators.Email()], render_kw={'placeholder': 'Email'})
+    submit3 = SubmitField('Submit')
+
+class JoinGroupFromInviteForm(FlaskForm):
+    yes = SubmitField('Yes')
+    no = SubmitField('No')
