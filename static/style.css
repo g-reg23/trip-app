@@ -5,8 +5,11 @@ html {
 body {
   /*background-image: url("../images/pexels-photo.jpg");
   background-size: 210%;*/
-  background-image: url("../images/circles-light/circles-light/circles-light.png");
+  /* background-image: url("../images/circles-light/circles-light/circles-light.png"); */
+  /* background-image: linear-gradient(-20deg, #e9defa 0%, #fbfcdb 100%); */
   /* font-family: 'Amaranth', sans-serif; */
+  background: whitesmoke;
+  background: linear-gradient(to right bottom, #b3b3b3, #333333) fixed;
   padding-bottom: 8rem;
 }
 /* .homeContainer {*/
@@ -57,7 +60,7 @@ th {
 .flashMessage {
   margin-top: 8%;
   margin-left: 4%;
-  background-color: #bc522f;
+  background-color: cadetblue;
   padding: 2%;
   border-radius: .5rem;
   margin-right: 3%;
@@ -189,24 +192,126 @@ th {
 .calendar {
   text-align: center;
   width: 90%;
-  height: 85%;
+  height: 70%;
   position: fixed;
   right: 4%;
-  top: 12%;
+  top: 25%;
+  table-layout: fixed;
 }
 .calDay {
-  background: linear-gradient(#846f63, #8e4d27);
+  position: relative;
+  background: burlywood;
   border: 1px solid;
   font-size: 1.35rem;
   width: 14.285%;
   text-align: left;
-  overflow-y: auto;
+  height: auto;
   /* text-shadow: 3px 2px white; */
 }
-.calDay:hover {
-  border-radius: .5rem;
-  width: 20%;
+.dayTable  {
+  position: sticky;
+  table-layout: fixed;
+  top: 25%;
 }
+.dayCalRow {
+  background: burlywood;
+}
+.daySpan {
+  position: absolute;
+  top: 0;
+  color: white;
+}
+.dayNoteDate {
+  position: absolute;
+  top: 2%;
+  background: #516991;
+  border: none;
+  border-radius: 1rem;
+  padding: 1%;
+  color: white;
+  font-size: 1.75rem;
+  text-align: center;
+  padding-left: 5%;
+  font-family: revert;
+  width: 50%;
+}
+.modal {
+  display: none;
+  position: fixed;
+  width: 60%;
+  height: auto;
+  left: 12%;
+  top: 25%;
+  color: white;
+  padding: 10%;
+  border-radius: .5rem;
+  background: #516991;
+}
+.noteFlash {
+  width: 15.5%;
+  position: absolute;
+  height: auto;
+  top: -38%;
+  right: 27.5%;
+  padding: 1.25%;
+}
+.monthNoteButton {
+  padding: 1.5%;
+  background: cadetblue;
+  display: none;
+}
+.calNoteName {
+  display: block;
+  width: 85%;
+  padding: .5rem;
+  border-radius: .5rem;
+  margin-top: 3%;
+}
+.noteTime {
+  margin-top: 3%;
+}
+.submitNote {
+  margin-top: 3%;
+}
+.cancelNote {
+  padding: 1.38%;
+}
+.calModalTitle {
+  position: absolute;
+  top: 12%;
+  margin-top: 6%;
+}
+.calTableTr {
+  float: left;
+  display: block
+}
+.dayCalTextArea {
+  width: 5rem;
+  background: cadetblue;
+}
+/* .dayCalRow:hover {
+  height: 150px;
+} */
+.dayDiv {
+  height: 80%;
+  overflow-y: auto;
+  position:absolute;
+  left: 10%;
+  top:10rem;
+  width: auto;
+}
+.moreButton {
+  position: absolute;
+  bottom: 2%;
+  left: 5%;
+  font-size: 1rem;
+  text-decoration: none;
+  color: wheat;
+  background: black;
+  border-radius: .5rem;
+  padding: 1.5%;
+}
+
 .clicker {
   display; block;
   width: 100%;
@@ -214,36 +319,74 @@ th {
 .calInfo {
   display: none
 }
-.dayTitle {
-  font-size: .85rem;
-  text-align: center;
-  margin-top: -20%;
+.dayText {
+  position: relative;
+  top: 70%;
+  background: black;
+  font-size: .65rem;
+  padding: 2.725%;
+  margin-left: 5%;
+  border-radius: .25rem;
+  border: white 1px;
+  margin-bottom: 2%;
+  width: 82%;
+  color: wheat;
 }
-.calDay:hover .dayText {
-  font-size: 2rem;
+.prevButton {
+  position: absolute;
+  left: 22%;
+  top:18%;
+}
+.nextButton {
+  position: absolute;
+  left: 65%;
+  top:18%;
 }
 .blankDay {
   border: 1px solid black;
-  background-color: #7e6ff3;
+  background-color: lightgray;
+}
+.dayTitle {
+  position: fixed;
+  top: 15%;
+  left: 38%;
+  font-size: 2rem;
 }
 
 .calTitle {
   position: fixed;
-  top: 5.5s%;
+  top: 17%;
   font-size: 2rem;
-  right: 52%;
+  left: 38%;
 }
 .calForm {
   overflow-wrap: break-word;
 }
 #month_items {
-  position: fixed;
-  right: 21%;
-  top: 9%;
+  position: absolute;
+  right: 6%;
+  top: 7%;
   width: 24%;
   height: 3.5%;
   border-radius: .5rem;
   text-align: center;
+}
+.yearSelect {
+  position: absolute;
+  right: 6%;
+  top: 12%;
+  width: 24%;
+  height: 3.5%;
+  border-radius: .5rem;
+  text-align: center;
+}
+.dayRow {
+  position: relative;
+  height: 2.5%;
+}
+.dayRowTitle {
+  position: absolute;
+  top: 0;
 }
 /* Groups page */
 .groupList {
@@ -292,7 +435,7 @@ th {
 }
 #groupHeader {
   border-radius: 8px;
-  background: linear-gradient(#b3b3ff, #0000cc);
+  background: linear-gradient(#004466, #66ccff);
   color: white;
   font-family: 'Roboto', sans-serif;
   padding: 1.5% 6% 2% 2%;
@@ -312,7 +455,7 @@ th {
 }
 
 .chat {
-  background: linear-gradient(#0d0d0d, #808080);
+  background: linear-gradient(#004466, #66ccff);;
   margin: 2% 3%;
   height: 29rem;
   position: relative;
@@ -410,7 +553,7 @@ th {
   padding-top: 2%;
   padding-bottom: 2%;
   border: 3% solid SlateGrey;
-  background: linear-gradient(#4d4d4d, #000000);
+  background: linear-gradient(#004466, #66ccff););
   color: white;
   overflow-y: auto;
   border-radius: 12px 12px 12px 12px;
@@ -424,7 +567,7 @@ th {
   padding-top: 2%;
   padding-bottom: 2%;
   border: 3% solid SlateGrey;
-  background: linear-gradient(#4d4d4d, #000000);
+  background: linear-gradient(#004466, #66ccff);;
   color: white;
   overflow-y: auto;
   border-radius: 12px 12px 12px 12px;
@@ -543,6 +686,9 @@ th {
   text-decoration: underline;
 }
 @media only screen and (min-width: 26rem) {
+  .dayCalTextArea {
+    width: 12rem;
+  }
   #message {
     width: 80%;
   }
@@ -551,6 +697,15 @@ th {
   }
 }
 @media only screen and (min-width: 45rem){
+  .monthNoteButton {
+    display: block;
+    position:absolute;
+    top: 0;
+    right: 0;
+  }
+  .dayCalTextArea {
+    width: 28rem;
+  }
   .flashMessage {
     margin-top: 6%;
   }
@@ -590,7 +745,7 @@ th {
     left: 59%;
     right: 0%;
     top: 15%;
-    bottom: 9.5%;
+    bottom: 7.5%;
     margin: 0%;
   }
   #message {
@@ -613,7 +768,23 @@ th {
     left: -4%;
   }
 }
+@media only screen and (min-width: 53rem) {
+  .dayCalTextArea {
+    width: 32rem;
+  }
+  .modal {
+    width: 35%;
+    left: 23.5%;
+
+  }
+}
 @media only screen and (min-width: 70rem){
+  .modal {
+    width: 25%;
+  }
+  .dayCalTextArea {
+    width: 47rem;
+  }
   .logBut {
     margin-left: 0%;
   }
@@ -745,10 +916,16 @@ th {
     .homeInfo {
       top: 70%;
     }
+    .dayCalTextArea {
+      width: 55rem;
+    }
 }
 @media only screen and (min-width: 82rem) {
     .homeInfo {
       top: 76%;
+    }
+    .dayCalTextArea {
+      width: 60rem;
     }
 }
 @media only screen and (min-width: 88rem) {

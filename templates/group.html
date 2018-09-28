@@ -290,7 +290,7 @@
     // $(function()
     {
         // Declare variables
-        let id = document.querySelector('#groupId');
+        let id = document.querySelector('#groupId').textContent;
         let socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
         let message = document.querySelector('#message');
         let chat = document.querySelector('#chat');
@@ -311,7 +311,7 @@
           socket.emit('send message', message.value, id.innerHTML);
           message.value = ('');
         }
-        // On connect callback
+        // On connect, adds user to users, sends message saying user connected
         socket.on('on connect', function(data) {
             // Create chat element that says user connected.
             let elem = document.createElement('div');
@@ -319,7 +319,7 @@
             elem.id = 'chat_message';
             chat.appendChild(elem);
             elem.scrollIntoView();
-            // Empty out the list of members online.
+            // Empty out the list of members online in html list.
             while(online.firstChild ){
                 online.removeChild(online.firstChild );
             }
@@ -335,7 +335,7 @@
                   online.appendChild(item);
             }
         })
-        // On disconnect callback
+        // On disconnect, takes user out of users, sends message saying user disconnected
         socket.on('on disconnect', function(data) {
             // Create chat element that says user disconnected
             let elem = document.createElement('div');
@@ -343,7 +343,7 @@
             elem.id = 'chat_message';
             chat.appendChild(elem);
             elem.scrollIntoView();
-            // Clear out all online members from list
+            // Clear out all online members from html list
             while(online.firstChild ){
                 online.removeChild(online.firstChild );
             }

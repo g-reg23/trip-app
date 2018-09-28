@@ -16,6 +16,7 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 
 from models import *
 import jwt
+import json
 #from routes import *
 
 socketio = SocketIO(app)
@@ -114,9 +115,9 @@ def is_logged_in(f):
 
 @app.route('/validate_email/<token>', methods=["GET", "POST"])
 def validate_email(token):
-    if is_logged_in:
-        flash("You are already logged in!")
-        return redirect(url_for("dashboard"))
+    # if is_logged_in:
+    #     flash("You are already logged in!")
+    #     return redirect(url_for("dashboard"))
     form = LoginForm(request.form)
     user = User.verifyEmailToken(token)
     if user is not None:
@@ -347,7 +348,7 @@ def group(id):
     profile = User.query.filter(User.username==user).first()
     group = Group.getGroupInfo(id)
     ifMember = User_Group.query.filter(and_(User_Group.userId==profile.id), (User_Group.groupId==id)).first()
-    if ifMember is not None:
+    if ifMember is not None and ifMember.status == 'Accepted':
         renPins, restPins, transpoPins, activityPins = {}, {}, {}, {}
         members, history = [], []
         pinForm, pinFormTwo = RentalPinForm(request.form), RestPinForm(request.form)
@@ -392,7 +393,7 @@ def group(id):
 
         history = Chat.getChatHist(group.id)
 
-        @socketio.on('connect', namespace='/chat')
+        @socketio.on('connect', namespace='/chat' )
         def connect():
             group.addOnlineUser(user)
             msg = " just connected!"
@@ -420,8 +421,9 @@ def group(id):
 @is_logged_in
 def joinGroup():
     form = JoinGroupForm(request.form)
+    formTwo = JoinGroupRequestForm(request.form)
     username = session['username']
-    if form.validate_on_submit():
+    if form.submit.data and form.validate():
         group = Group.query.filter(Group.groupName==form.name.data).first()
         if group is None:
             flash("Sorry that group does not exist yet.")
@@ -441,8 +443,23 @@ def joinGroup():
                     return redirect(url_for('dashboard'))
                 else:
                     flash("Incorrect password")
-
-    return render_template('joinGroup.html', form=form)
+    if formTwo.submit2.data and formTwo.validate():
+        group = Group.query.filter(Group.groupName==form.name.data).first()
+        if group is None:
+            flash("Sorry that group does not exist yet.")
+            form.name.data = ''
+        else:
+            user = User.query.filter(User.username==username).first()
+            check = User_Group.query.filter(and_(User_Group.userId==user.id), (User_Group.groupId==group.id)).first()
+            if check:
+                flash('You are already a member of that group!')
+            else:
+                u_g = User_Group(groupId=group.id, userId=user.id, status='Pending', type='Member', groupName=form.name.data)
+                db.session.add(u_g)
+                db.session.commit()
+                flash('A request to join the group has been sent to the group admin. You will have access to the group once the admin approves your request.')
+                return redirect(url_for('dashboard'))
+    return render_template('joinGroup.html', form=form, formTwo=formTwo)
 
 
 
@@ -472,15 +489,34 @@ def groupGetMembers(id):
     group = Group.getGroupInfo(id)
     members = User_Group.getMembers(id)
     mems = []
-    pendingMems = []
+    pendingMems, pends = [], []
     for mem in members:
         if mem.status == 'Accepted':
             mems.append(mem.userId)
         else:
+            user = User.getProfileById(mem.userId)
+            pends.append(user)
             pendingMems.append(mem.userId)
+    requestForm = UserGroupJoinDecisionForm(request.form)
     formOne = InviteGroupNoAccountForm(request.form)
     formTwo = InviteGroupByUsernameForm(request.form)
     formThree = InviteGroupByEmailForm(request.form)
+    if requestForm.accept.data and requestForm.validate():
+        app.logger.info(requestForm.data)
+        user = User.getProfile(requestForm.username.data)
+        u_g = User_Group.query.filter(and_(User_Group.userId==user.id), (User_Group.groupId==id)).update(dict(status='Accepted'))
+        db.session.commit()
+        flash(requestForm.username.data + " has been added to the group!!")
+        return render_template('get_members.html', requestForm=requestForm, pends=pends, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
+        # flash('accept submitted username: ' + requestForm.username.data)
+    if requestForm.decline.data and requestForm.validate():
+        user = User.getProfile(requestForm.username.data)
+        u_g = User_Group.query.filter(and_(User_Group.userId==user.id), (User_Group.groupId==id)).first()
+        db.session.delete(u_g)
+        db.session.commit()
+        flash("User " + requestForm.username.data + " request to join has been declined")
+        return render_template('get_members.html', requestForm=requestForm, pends=pends, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
+
     if formOne.submit1.data and formOne.validate():
         flash('Form one submitted')
     if formTwo.submit2.data and formTwo.validate():
@@ -489,41 +525,49 @@ def groupGetMembers(id):
             if user.id in mems:
                 flash('That user is already in the group!!')
                 formTwo.username.data = ''
-                return render_template('get_members.html', formOne=formOne, formTwo=formTwo, formThree=formThree)
+                return render_template('get_members.html', requestForm=requestForm, pends=pends, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
             if user.id in pendingMems:
                 flash('That user already has a pending invite to the group. You must for them to respond')
                 formTwo.username.data = ''
-                return render_template('get_members.html', formOne=formOne, formTwo=formTwo, formThree=formThree)
+                return render_template('get_members.html', requestForm=requestForm, pends=pends, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
             else:
                 u_g = User_Group(groupId=group.id, userId=user.id, status='Pending', type='Member', groupName=group.groupName)
                 db.session.add(u_g)
                 db.session.commit()
                 formTwo.username.data = ''
                 flash('An invitation to join the group has been sent to ' + user.username + "'s dashboard. They must accept accept the invite in order to access the group")
+                return render_template('get_members.html', requestForm=requestForm, pends=pends, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
+
         else:
+            formTwo.username.data = ''
             flash('User not found')
+            return render_template('get_members.html', requestForm=requestForm, pends=pends, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
+
     if formThree.submit3.data and formThree.validate():
         user = User.query.filter(User.email==formThree.email2.data).first()
         if user is not None:
             if user.id in mems:
                 flash('That user is already in the group!!')
                 formThree.email2.data = ''
-                return render_template('get_members.html', formOne=formOne, formTwo=formTwo, formThree=formThree)
+                return render_template('get_members.html', requestForm=requestForm, pendingMems=pendingMems, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
             if user.id in pendingMems:
                 flash('That user already has a pending invite to the group. You must for them to respond')
                 formThree.email2.data = ''
-                return render_template('get_members.html', formOne=formOne, formTwo=formTwo, formThree=formThree)
+                return render_template('get_members.html', requestForm=requestForm, pends=pends, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
             else:
                 u_g = User_Group(groupId=group.id, userId=user.id, status='Pending', type='Member', groupName=group.groupName)
                 db.session.add(u_g)
                 db.session.commit()
                 formThree.email2.data = ''
                 flash('An invitation to join the group has been sent to ' + user.username + "'s dashboard. They must accept accept the invite in order to access the group")
-                return render_template('get_members.html', formOne=formOne, formTwo=formTwo, formThree=formThree)
+                return render_template('get_members.html', requestForm=requestForm, pends=pends, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
         else:
             flash('User not found')
+            formThree.email2.data = ''
+            return render_template('get_members.html', requestForm=requestForm, pends=pends, formOne=formOne, formTwo=formTwo, formThree=formThree,group=group)
 
-    return render_template('get_members.html', formOne=formOne, formTwo=formTwo, formThree=formThree)
+
+    return render_template('get_members.html', requestForm=requestForm, pends=pends, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
 
 @app.route('/group/<int:id>/calendar', methods=['GET', 'POST'])
 @is_logged_in
@@ -534,19 +578,38 @@ def groupCalendarDay(id):
     # startMonth = 5
     # cal = calendar.HTMLCalendar(calendar.SUNDAY)
     # firstMonth = cal.formatmonth(startYear, startMonth)
+    # eventForm = CalendarEventForm(request.form)
+    # inputName, inputForm = '', ''
     group = Group.getGroupInfo(id)
+    notes = Calendar_Note.getNotes(id)
+    cur = mysql.connection.cursor()
+    sql = 'SELECT * FROM calendarnotes WHERE groupId = %s'
+    cur.execute(sql, [id])
+    listNotes = cur.fetchall()
+    listNotes = json.dumps(listNotes)
+    listNotes = json.loads(listNotes)
     fullStartDate, fullEndDate = str(group.startDate), str(group.endDate)
     # fullStartDate, fullEndDate = fullStartDate[::-1], fullEndDate[::-1]
     startMonth, endMonth = fullStartDate[5:7], fullEndDate[5:7]
-    return render_template("calendar.html", group=group, fullStartDate=fullStartDate, fullEndDate=fullEndDate, startMonth=startMonth, endMonth=endMonth)
-    # return firstMonth
 
-@app.route('/group/<int:id>/calendar/int:day', methods=['GET', 'POST'])
-@is_logged_in
-def groupCalendar(id):
-    group = Group.getGroupInfo(id)
+    eventForm = CalendarEventForm(request.form)
+    @socketio.on('connect', namespace='/calendar' )
+    def connect():
+        app.logger.info(listNotes)
+        emit('on connect', {'notes': listNotes}, broadcast=True)
 
-    return render_template('calendar_day.html', group=group, day=day, calendar=calendar)
+    @socketio.on('store note', namespace='/calendar')
+    def handle_my_custom_event(name, time, date):
+        app.logger.info(name + time + date)
+        dateTime = date + ' ' + time
+        newNote = Calendar_Note(groupId=id, name=name, date=dateTime, username=session['username'])
+        db.session.add(newNote)
+        db.session.commit()
+        msg = 'Event saved!!'
+        emit('note saved', {'msg': msg, 'name': name, 'time': time, 'date': date}, broadcast=True)
+
+    return render_template("calendar.html", group=group, eventForm=eventForm, fullStartDate=fullStartDate, fullEndDate=fullEndDate, startMonth=startMonth, endMonth=endMonth, listNotes=listNotes)
+
 
 @app.route('/edit_rental_pin/<int:id>/<string:name>', methods=['GET', 'POST'])
 @is_logged_in

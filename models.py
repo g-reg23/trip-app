@@ -20,6 +20,10 @@ class User(UserMixin, db.Model):
     def getProfile(user):
         return User.query.filter(User.username==user).first()
 
+    def getProfileById(userId):
+        return User.query.filter(User.id==userId).first()
+
+
     def getEmailVerificationToken(self, expires_in=604800):
         return jwt.encode({'verifyEmail':self.id, 'exp': time() + expires_in}, 'wUCu3q6jjqoI3Mh5kwD7dCp4wSju-OURchpKHXLv9oY87ROs', algorithm='HS256').decode('utf-8')
 
@@ -89,6 +93,12 @@ class User_Group(db.Model):
     def getMembers(groupId):
         return User_Group.query.filter(User_Group.groupId==groupId).all()
 
+class Pending_Member(db.Model):
+    __tablename__ = "pending_members"
+    id = db.Column(db.Integer, primary_key=True)
+    userId = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
+    groupId = db.Column(db.Integer, db.ForeignKey("groups.id", ondelete="CASCADE"))
+    type = db.Column(db.Enum('Request', 'Invite'))
 
 class Lodging_Pin(db.Model):
     __tablename__ = "lodgingPins"
@@ -144,3 +154,14 @@ class Chat(db.Model):
     @staticmethod
     def getChatHist(groupNum):
         return Chat.query.filter(Chat.groupId==groupNum).all()
+
+class Calendar_Note(db.Model):
+    __tablename__ = 'calendarNotes'
+    id = db.Column(db.Integer, primary_key=True)
+    groupId = db.Column(db.Integer, db.ForeignKey("groups.id", ondelete="CASCADE"))
+    name = db.Column(db.String(30))
+    date = db.Column(db.String(40))
+    username = db.Column(db.String(30))
+
+    def getNotes(groupId):
+        return Calendar_Note.query.filter(Calendar_Note.groupId==groupId)

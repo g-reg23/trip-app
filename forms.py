@@ -146,6 +146,11 @@ class JoinGroupForm(FlaskForm):
     password = PasswordField([validators.InputRequired()], render_kw={"placeholder": "Password"})
     submit = SubmitField()
 
+class JoinGroupRequestForm(FlaskForm):
+    name = StringField([validators.Length(min=2, max=35)], render_kw={"placeholder": "Group Name"})
+    messageJoin = StringField([validators.Length(min=15, max=255)], render_kw={"placeholder": "Message"})
+    submit2 = SubmitField('Submit')
+
 class DeletePinForm(FlaskForm):
     passwordUser = PasswordField([validators.InputRequired()], render_kw={'placeholder': 'User Password'})
     passwordGroup = PasswordField([validators.InputRequired()], render_kw={'placeholder': 'Group Password'})
@@ -156,7 +161,7 @@ class InviteGroupNoAccountForm(FlaskForm):
     submit1 = SubmitField('Submit')
 
 class InviteGroupByUsernameForm(FlaskForm):
-    username = StringField([validators.Length(min=2, max=30,)], render_kw={"placeholder": "Username"})
+    username = StringField([validators.Length(min=2, max=30)], render_kw={"placeholder": "Username"})
     submit2 = SubmitField('Submit')
 
 class InviteGroupByEmailForm(FlaskForm):
@@ -166,3 +171,13 @@ class InviteGroupByEmailForm(FlaskForm):
 class JoinGroupFromInviteForm(FlaskForm):
     yes = SubmitField('Yes')
     no = SubmitField('No')
+
+class UserGroupJoinDecisionForm(FlaskForm):
+    username = StringField()
+    accept = SubmitField('Accept')
+    decline = SubmitField('Decline')
+
+class CalendarEventForm(FlaskForm):
+    dayNoteDate = StringField()
+    name = StringField('Event Name',[validators.Length(min=3, max=30)], render_kw={'placeholder': 'Event Name'})
+    inputTime = StringField()

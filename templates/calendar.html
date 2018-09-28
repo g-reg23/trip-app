@@ -5,18 +5,483 @@
     <div class="calInfo">
       <h5 class="calStart">{{ fullStartDate }}</h5>
       <h5 class="calEnd">{{ fullEndDate }}</h5>
+      <h7 class='calDay'></h7>
     </div>
-    <p>&nbsp</p>
+    <p>&nbsp;</p>
+    {% for note in listNotes %}
+      <div class='listName' style='display: none'>{{ note.name }}</div>
+      <div class='listDate' style='display: none'>{{ note.date }}</div>
+      <div class='listUserName' style='display: none'>{{ note.username }}</div>
+    {% endfor %}
     <div id="show_calendar" class='calendarClass'>&nbsp;</div>
-    <div id="current_month">&nbsp;</div>
+    <div class='hiddenMonth' style='display: none;'></div>
+    <a class='groupButton monthView' href='#' style='width:15%; display:inline-block;' margin-left:7%;>Month View</a>
+    <div class='groupButton weekView' style='width:15%; display:inline-block;'>Week View</div>
+    <button class='sign-logSubmit prevButton'>Prev</button>
+    <button class='sign-logSubmit nextButton'>Next</button>
+    <form>
+      <select onchange='month_picker()' class='monthSelect' id='month_items'>
+        <!-- <option value="0">January</option>
+        <option value="1">February</option>
+        <option value="2">March</option>
+        <option value="3">April</option>
+        <option value="4">May</option>
+        <option value="5">June</option>
+        <option value="6">July</option>
+        <option value="7">August</option>
+        <option value="8">September</option>
+        <option value="9">October</option>
+        <option value="10">November</option>
+        <option value="11">Decembers</option> -->
+      </select>
+    </form>
+    <select onchange='year_picker()' class='yearSelect'>
+      <option value="2018">2018</option>
+      <option value="2019">2019</option>
+      <option value="2020">2020</option>
+      <option value="2021">2021</option>
+      <option value="2022">2022</option>
+      <option value="2023">2023</option>
+      <option value="2024">2024</option>
+      <option value="2025">2025</option>
+      <option value="2026">2026</option>
+      <option value="2027">2027</option>
+      <option value="2028">2028</option>
+      <option value="2029">2029</option>
+    </select>
+    <!-- <div class='groupButton' style='width:15%; display:inline-block;'>Day View</div> -->
 
+    <div class='dayDiv'>
+      <table class='dayTable' border="1" cellpadding="5" cellspacing="5" style='table-layout: fixed;'>
+      <tr>
+        <th height='100' width='75' class='dayCalRow' style='float:left; display:inline-block;'>12:00 AM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>12:30 AM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>1:00 AM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>1:30 AM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>2:00 AM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>2:30 AM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>3:00 AM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>3:30 AM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>4:00 AM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>4:30 AM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>5:00 AM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>5:30 AM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>6:00 AM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>6:30 AM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' id='startTime' style='float:left; display:inline-block;'>7:00 AM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>7:30 AM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>8:00 AM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>8:30 AM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>9:00 AM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>9:30 AM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>10:00 AM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>10:30 AM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>11:00 AM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>11:30 AM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>12:00 PM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>12:30 PM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>1:00 PM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>1:30 PM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>2:00 PM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>2:30 PM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>3:00 PM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>3:30 PM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>4:00 PM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>4:30 PM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>5:00 PM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>5:30 PM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>6:00 PM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>6:30 PM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>7:00 PM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>7:30 PM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>8:00 PM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>8:30 PM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>9:00 PM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>9:30 PM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>10:00 PM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>10:30 PM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>11:00 PM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr>
+        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>11:30 PM</th>
+        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      </table>
+    </div>
+    <div class="modal">
+      <form method='POST' class="noteForm" name='modalForm'>
+        <input class='dayNoteDate' name='dayNoteDate' value='dayNoteDate' type='text' readonly>
+        <span class='calModalTitle'>Add Day Note</span>
+        <div>{{ eventForm.hidden_tag() }}</div>
+        <div>
+          {{ eventForm.name(class='calNoteName') }}
+        </div>
+        {% for message in eventForm.name.errors %}
+          <div class='formError'>  {{ message }} </div>
+        {% endfor %}
+        <select class='sign-logInput noteTime' value='inputTime' name='inputTime' type='time' style='display:block'>
+          <option value='00:00:00'>12:00 AM</option>
+          <option value='00:30:00'>12:30 AM</option>
+          <option value='01:00:00'>1:00 AM</option>
+          <option value='01:30:00'>1:30 AM</option>
+          <option value='02:00:00'>2:00 AM</option>
+          <option value='02:30:00'>2:30 AM</option>
+          <option value='03:00:00'>3:00 AM</option>
+          <option value='03:30:00'>3:30 AM</option>
+          <option value='04:00:00'>4:00 AM</option>
+          <option value='04:30:00'>4:30 AM</option>
+          <option value='05:00:00'>5:00 AM</option>
+          <option value='05:30:00'>5:30 AM</option>
+          <option value='06:00:00'>6:00 AM</option>
+          <option value='06:30:00'>6:30 AM</option>
+          <option value='07:00:00'>7:00 AM</option>
+          <option value='07:30:00'>7:30 AM</option>
+          <option value='08:00:00'>8:00 AM</option>
+          <option value='08:30:00'>8:30 AM</option>
+          <option value='09:00:00'>9:00 AM</option>
+          <option value='09:30:00'>9:30 AM</option>
+          <option value='10:00:00' selected>10:00 AM</option>
+          <option value='10:30:00'>10:30 AM</option>
+          <option value='11:00:00'>11:00 AM</option>
+          <option value='11:30:00'>11:30 AM</option>
+          <option value='12:00:00'>12:00 PM</option>
+          <option value='12:30:00'>12:30 PM</option>
+          <option value='13:00:00'>1:00 PM</option>
+          <option value='13:30:00'>1:30 PM</option>
+          <option value='14:00:00'>2:00 PM</option>
+          <option value='14:30:00'>2:30 PM</option>
+          <option value='15:00:00'>3:00 PM</option>
+          <option value='15:30:00'>3:30 PM</option>
+          <option value='16:00:00'>4:00 PM</option>
+          <option value='16:30:00'>4:30 PM</option>
+          <option value='17:00:00'>5:00 PM</option>
+          <option value='17::30:00'>5:30 PM</option>
+          <option value='18:00:00'>6:00 PM</option>
+          <option value='18:30:00'>6:30 PM</option>
+          <option value='19:00:00'>7:00 PM</option>
+          <option value='19:30:00'>7:30 PM</option>
+          <option value='20:00:00'>8:00 PM</option>
+          <option value='20:30:00'>8:30 PM</option>
+          <option value='21:00:00'>9:00 PM</option>
+          <option value='21:30:00'>9:30 PM</option>
+          <option value='22:00:00'>10:00 PM</option>
+          <option value='22:30:00'>10:30 PM</option>
+          <option value='23:00:00'>11:00 PM</option>
+          <option value='23:30:00'>11:30 PM</option>
+        </select>
+        <button class='sign-logSubmit submitNote'>Submit</button>
+        <button class='sign-logSubmit cancelNote'>Cancel</button>
+      </form>
+    </div>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
     <!-- <script src="{{url_for('static', filename = 'calendar.js')}}"></script> -->
     <script type="text/javascript" charset="utf-8">
     {
-        let startDate = document.querySelector('.calStart');
+        let socket = io.connect('http://' + document.domain + ':' + location.port + '/calendar');
+        const startDate = document.querySelector('.calStart');
+        const firstDayTrip = new Date(startDate.textContent).getDate() + 1;
+        const yearTripStart = new Date(startDate.textContent).getFullYear;
+        const prevButton = document.querySelector('.prevButton');
+        const nextButton = document.querySelector('.nextButton');
+        const calendarClass = document.querySelector('.calendarClass');
+        const dayDiv = document.querySelector('.dayDiv');
+        const modal = document.querySelector('.modal');
+        const monthSelect = document.querySelector('.monthSelect');
+        const yearSelected = document.querySelector('.yearSelect');
+        const names = document.querySelectorAll('.listName');
+        const dates = document.querySelectorAll('.listDate');
+        // Today is first day of trip
         let today = new Date(startDate.innerHTML);
+        //firstMonth is the month that contains first day of trip, month is the global that
+        // defines the current month being displayed
+        let firstMonth = today.getMonth();
+        let firstDate = today.getDate();
         let month = today.getMonth();
-
+        let year = today.getFullYear();
         Date.prototype.getMonths = function() {
           return [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
         }
@@ -35,37 +500,78 @@
             let calSpan = document.createElement('span')
             calSpan.className = 'calTitle';
             calSpan.textContent = thisMonth + '  ' + thisYear;
-            calendarTable.appendChild(calSpan);;
+            document.querySelector('.hiddenMonth').textContent = thisMonth + '  ' + thisYear;
+            calendarTable.appendChild(calSpan);
             let calDayRow = document.createElement('tr');
-            calDayRow.className = 'dayRow'
+            calDayRow.className = 'dayRow';
             let calSun = document.createElement('td');
-            calSun.textContent = 'SUN';
+            let sunTitle = document.createElement('span');
+            sunTitle.textContent = 'SUN'
+            sunTitle.className = 'dayRowTitle';
+            calSun.appendChild(sunTitle);
             calDayRow.appendChild(calSun)
             let calMon = document.createElement('td');
-            calMon.textContent = 'MON';
+            let monTitle = document.createElement('span');
+            monTitle.textContent = 'MON';
+            monTitle.className = 'dayRowTitle';
+            calMon.appendChild(monTitle);
             calDayRow.appendChild(calMon)
             let calTues = document.createElement('td');
-            calTues.textContent = 'TUE';
+            let tuesTitle = document.createElement('span');
+            tuesTitle.textContent = 'TUE'
+            tuesTitle.className = 'dayRowTitle';
+            calTues.appendChild(tuesTitle);
             calDayRow.appendChild(calTues);
             let calWed = document.createElement('td');
-            calWed.textContent = 'WED';
+            let wedTitle = document.createElement('span');
+            wedTitle.textContent = 'WED'
+            wedTitle.className = 'dayRowTitle';
+            calWed.appendChild(wedTitle);
             calDayRow.appendChild(calWed);
             let calThurs = document.createElement('td');
-            calThurs.textContent = 'THU';
+            let thursTitle = document.createElement('span');
+            thursTitle.textContent = 'THU';
+            thursTitle.className = 'dayRowTitle';
+            calThurs.appendChild(thursTitle);
             calDayRow.appendChild(calThurs);
             let calFri = document.createElement('td');
-            calFri.textContent = 'FRI';
+            let friTitle = document.createElement('span');
+            friTitle.textContent = 'FRI'
+            friTitle.className = 'dayRowTitle';
+            calFri.appendChild(friTitle);
             calDayRow.appendChild(calFri);
             let calSat = document.createElement('td');
-            calSat.textContent = 'SAT';
+            let satTitle = document.createElement('span');
+            satTitle.textContent = 'SAT'
+            satTitle.className = 'dayRowTitle';
+            calSat.appendChild(satTitle);
             calDayRow.appendChild(calSat);
             calendarTable.appendChild(calDayRow);
+            // For loop to figure out how many weeks in tbis month
+            let weekCounter = 0;
+            let daycounter = 0;
+            let blankCounter = 0;
+            for (i=0;i<6;i++) {
+              	for(j=0;j<7;j++){
+                  	if (i==0 && blankCounter < startDay) {
+                      	blankCounter += 1;
+                      }else {
+              			daycounter += 1;
+                      }
+                  }
+              	weekCounter += 1;
+              	if (daycounter >= numOfDays) {
+              		break;
+                  }
+              }
 
             let counter = 0;
-            for (let i=0;i<6;i++) {
+            let usernames = document.querySelectorAll('.listUserName')
+            for (let i=0;i<weekCounter;i++) {
                 let row = document.createElement('tr');
                 for (let j=0;j<7;j++) {
                     let day = document.createElement('td');
+                    let fragment = document.createDocumentFragment();
                     if (counter>=numOfDays) {
                         day.textContent = '';
                         day.className = 'blankDay';
@@ -74,8 +580,16 @@
                         day.className = 'blankDay';
                     }else if (i>0 || j>=startDay) {
                         counter++;
-                        day.textContent = counter;
+                        let span = document.createElement('span');
+                        span.textContent = counter
+                        span.classList = 'daySpan';
+                        day.appendChild(span);
                         day.className = 'calDay';
+                        let button = document.createElement('button');
+                        button.textContent = 'Add Event';
+                        button.classList = 'sign-logSubmit monthNoteButton';
+
+                        day.appendChild(button);
                     }else if (i>4 && counter>numOfDays){
                         day.textContent = '';
                         day.className = 'blankDay';
@@ -83,81 +597,311 @@
                         day.textContent = '';
                         day.className = 'blankDay';
                     }
-                    if (( month === this.getMonth()) && ( today.getDate() === counter)) {
-                        day.classList = 'calDay';
-                        day.id = 'firstDay'
-                        let text = document.createTextNode('First Day of Trip!!');
-                        let div = document.createElement('div');
-                        div.classList = 'dayTitle';
-                        div.appendChild(text);
-                        day.appendChild(div);
-                    }
                     row.appendChild(day);
                 }
                 calendarTable.appendChild(row);
-                if (i===4 && counter===numOfDays) {break;}
-
             }
-            return calendarTable;
+            calendarClass.appendChild(calendarTable);
+            loadMonthNotes();
         }
 
         window.onload = function() {
-            let selected_month = '<form name="month_holder">';
-            selected_month += '<select id="month_items" size="1" onchange="month_picker();">';
-            for ( var x = 0; x <= today.getMonths().length; x++ ) {
-                selected_month += '<option value="' + today.getMonths()[x] + ' 1, ' + today.getFullYear() + '">' + today.getMonths()[x] + '</option>'; }
-            selected_month += '</select></form>';
-            actual_calendar = document.getElementById('show_calendar');
-            actual_calendar.appendChild(today.calendar());
-            let month_list = document.querySelector('#current_month');
-            month_list.innerHTML = selected_month;
-            let actual_month = document.getElementById('month_items');
-            actual_month.selectedIndex = month;
+            yearSelected.value = today.getFullYear();
+            document.querySelector('.calNoteName').value = '';
+            dayDiv.style.display = 'none'
+            let fragment = document.createDocumentFragment();
+            let option;
+            for ( var x = 0; x < today.getMonths().length; x++ ) {
+                option = document.createElement('OPTION');
+                option.value = today.getMonths()[x] + ', ' + today.getFullYear();
+                option.textContent = today.getMonths()[x];
+                fragment.appendChild(option);
+            }
+            today.calendar();
+            monthSelect.appendChild(fragment);
+            monthSelect.selectedIndex = month;
         }
-        function month_picker() {
-            month_menu = new Date(document.querySelector('#month_items').value);
-            actual_calendar.innerHTML = '';
-            actual_calendar.appendChild(month_menu.calendar());
+        function loadMonthNotes() {
+          let arr = [];
+          let nameArr = [];
+          dates.forEach(function(date, index) {
+            if (new Date(date.textContent).getMonth()  === month && new Date(date.textContent).getFullYear() === parseInt(yearSelected.value)) {
+              arr.push(new Date(date.textContent).getDate())
+              nameArr.push(names[index].textContent)
+            }
+          })
+          let fragment = document.createDocumentFragment();
+          let days = document.querySelectorAll('.daySpan');
+          days.forEach(function(day, index) {
+            if (parseInt(day.textContent) === firstDayTrip && month ===firstMonth && yearTripStart === parseInt(yearSelected.value)) {
+              let div = document.createElement('div');
+              div.className = 'dayText';
+              let node = document.createTextNode('First Day of Trip!!');
+              div.appendChild(node);
+              fragment.appendChild(div);
+            }
+            if (arr.includes(parseInt(day.textContent))) {
+              arr.forEach(function(item, index) {
+                if (item === parseInt(day.textContent)) {
+                  if (fragment.children.length < 2) {
+                    let divy = document.createElement('div');
+                    divy.className = 'dayText';
+                    let node = document.createTextNode(nameArr[index]);
+                    divy.appendChild(node);
+                    fragment.appendChild(divy);
+                  }else {
+                    let more = document.createElement('a');
+                    more.textContent = '-More Notes-';
+                    more.className = 'moreButton';
+                    more.href = '#';
+                    fragment.appendChild(more);
+                  }
+                }
+              })
+            }
+            day.parentElement.appendChild(fragment);
+            fragment.textContent = '';
+          })
         }
-    }
-    // Add Event Listeners
-    document.querySelector('.calendarClass').addEventListener('click', dayNote);
 
-    // Function to make a note on individual day
-    function dayNote(e) {
-        // e.target.style.padding = '7.5%'
-        let date = e.target.textContent;
-        if (e.target.className === 'calDay') {
-            while (e.target.firstChild) {
-                e.target.removeChild(e.target.firstChild);
+        function month_picker() {
+            dayDiv.style.display = 'none';
+            calendarClass.style.display = 'block';
+            let month_menu = new Date(monthSelect.value);
+            calendarClass.textContent = '';
+            month = monthSelect.selectedIndex;
+            month_menu.calendar();
+            let frag = document.createDocumentFragment();
+            let option;
+            monthSelect.appendChild(frag);
+            prevButton.style.display = 'block';
+            nextButton.style.display = 'block';
+        }
+
+        function year_picker() {
+            dayDiv.style.display = 'none';
+            calendarClass.style.display = 'block';
+            prevButton.style.display = 'block';
+            nextButton.style.display = 'block';
+            let num = monthSelect.selectedIndex;
+            let num2 = num + 1
+            let year = yearSelected.value
+            let months = new Date(num2 + '/01/' + year);
+            calendarClass.textContent = '';
+            months.calendar();
+            monthSelect.textContent = '';
+            let frag = document.createDocumentFragment();
+            let option;
+            for ( var x = 0; x < months.getMonths().length; x++ ) {
+                option = document.createElement('OPTION');
+                option.value = months.getMonths()[x] + ', ' + year;
+                option.textContent = today.getMonths()[x];
+                frag.appendChild(option);
             }
-            if (e.target.id === 'firstDay') {
-                let text = document.createTextNode('First Day of Trip!!');
-                let div = document.createElement('div');
-                div.className = 'dayTitle';
-                div.appendChild(text);
-                e.target.appendChild(div);
+            monthSelect.appendChild(frag);
+            monthSelect.selectedIndex = num;
+        }
+        // Add Event Listeners
+        calendarClass.addEventListener('click', dayNote);
+        nextButton.addEventListener('click', nextMonth);
+        prevButton.addEventListener('click', prevMonth);
+        document.querySelector('.monthView').addEventListener('click', monthViewFunc);
+        calendarClass.addEventListener('click', addNote);
+        calendarClass.addEventListener('click', moreButton);
+        document.querySelector('.dayTable').addEventListener('click', addADayNote);
+        document.querySelector('.submitNote').addEventListener('click', submitANote);
+        document.querySelector('.cancelNote').addEventListener('click', cancelANote);
+
+        function monthViewFunc(e) {
+          dayDiv.style.display = 'none';
+          calendarClass.style.display = 'block';
+          prevButton.style.display = 'block';
+          nextButton.style.display = 'block';
+        }
+        function cancelANote(e) {
+          e.preventDefault();
+          modal.style.display = 'none';
+        }
+
+        function addADayNote(e){
+          if (e.target.classList.contains('dayNoteButton')) {
+            modal.style.display = 'block';
+          }else {
+            return;
+          }
+        }
+
+        function moreButton(e) {
+          if (e.target.classList.contains('moreButton')) {
+            if (document.querySelector('.dayTitle') != null) {
+                let elem = document.querySelector('.dayTitle');
+                elem.parentNode.removeChild(elem);
             }
-            e.target.textContent = date;
-            form = document.createElement('input');
-            form.type = 'textarea';
-            form.classList = 'sign-logInput calForm';
-            form.style.height = '70%';
-            // form.style.wrap = 'hard';
-            submit = document.createElement('input');
-            submit.type = 'submit';
-            submit.classList = 'sign-logSubmit calSubmit'
-            form.style.marginLeft = '2.5%';
-            e.target.appendChild(form);
-            // form.style.display = 'block';
-            e.target.appendChild(submit);
-            console.log(e.target);
+            let date = e.target.parentElement.firstChild.textContent;
+            prevButton.style.display = 'none';
+            nextButton.style.display = 'none';
+            dayDiv.style.display = 'block';
+            calendarClass.style.display = 'none';
+            // let calSpan = document.createElement('span')
+            let calSpan = document.createElement('span');
+            calSpan.className = 'dayTitle';
+            let fullDate = new Date(monthSelect.value);
+            let dateNumber = fullDate.getMonth();
+            calSpan.textContent = fullDate.getMonths()[dateNumber] + ' ' + date + ', ' + fullDate.getFullYear();
+            // let dayCalendar = document.querySelector('.dayTable');
+            dayDiv.appendChild(calSpan);
+            document.querySelector('#startTime').scrollIntoView();
+            loadIndDayNotes();
         }else {
-          return;
+            return;
         }
         e.preventDefault();
+
+        }
+
+        function addNote(e) {
+          if (e.target.classList.contains('monthNoteButton')){
+            modal.style.display = 'block';
+            let firstOfMonth = new Date(monthSelect.value);
+            // let box = document.querySelector('.modal');
+            let currentMonth = firstOfMonth.getMonths()[firstOfMonth.getMonth()];
+            let currentYear = firstOfMonth.getFullYear();
+            let day = e.target.parentElement.firstChild.textContent;
+            let dayTitle = document.querySelector('.dayNoteDate')
+            dayTitle.value = currentMonth + ' ' + day + ', ' + currentYear;
+            e.preventDefault();
+          }
+        }
+
+        function submitANote(e) {
+          let name = document.querySelector('.calNoteName');
+          let time = document.querySelector('.noteTime');
+          let date = document.querySelector('.dayNoteDate');
+          if (name.value.length < 3 || name.value.length >30) {
+            // document.querySelector('.modal').style.display = 'block';
+            e.preventDefault();
+            let error = document.createElement('div');
+            error.textContent = 'The event name must be between 3 and 30 characters';
+            modal.appendChild(error);
+            setTimeout(function(){
+                error.remove();
+            },5000)
+            name.value = '';
+          }else {
+            e.preventDefault();
+            socket.emit('store note', name.value, time.value, date.value);
+            name.value = ('');
+            modal.style.display = 'none';
+          }
+        }
+
+        // socket.on('on connect', function(data) {
+        //   // console.log(data.notes);
+        //   loadNotesMonthView(data.notes);
+        // })
+
+
+        socket.on('note saved', function(data) {
+            let calendar = document.querySelector('.calendar')
+            let div = document.createElement('div');
+            div.classList = 'flashMessage noteFlash'
+            div.textContent = data.msg;
+            calendar.appendChild(div);
+            let num = new Date(data.date).getDate();
+            let days = document.querySelectorAll('.daySpan');
+            days.forEach(function(day) {
+              if (parseInt(day.textContent) === num) {
+                let div = document.createElement('div');
+                let node = document.createTextNode(data.name);
+                div.appendChild(node)
+                div.className = 'dayText';
+                day.parentElement.appendChild(div);
+              }
+            })
+
+        });
+
+        function prevMonth(e) {
+            let fullDate = new Date(document.querySelector('#month_items').value);
+            let prevYear = fullDate.getFullYear() - 1;
+            if (prevYear < 2018) {
+                prevYear = 2018;
+            }
+            monthSelect.selectedIndex -= 1;
+            month -= 1
+            if (monthSelect.selectedIndex < 0) {
+                yearSelected.selectedIndex -= 1;
+                monthSelect.textContent = '';
+                let frag = document.createDocumentFragment();
+                let option;
+                for ( var x = 0; x < today.getMonths().length; x++ ) {
+                    option = document.createElement('OPTION');
+                    option.value = today.getMonths()[x] + ', ' + yearSelected.value;
+                    option.textContent = today.getMonths()[x];
+                    frag.appendChild(option);
+                }
+                monthSelect.appendChild(frag);
+                monthSelect.selectedIndex = 11;
+                month = 11;
+            }
+            month_menu = new Date(monthSelect.value);
+            calendarClass.textContent = '';
+            month_menu.calendar();
+        }
+
+        function nextMonth(e) {
+            let fullDate = new Date(monthSelect.value);
+            let nextYear = fullDate.getFullYear() + 1;
+            monthSelect.selectedIndex += 1;
+            month += 1
+            if (monthSelect.selectedIndex < 0) {
+              yearSelected.selectedIndex += 1;
+              monthSelect.textContent = '';
+              let frag = document.createDocumentFragment();
+              let option;
+              for ( var x = 0; x < today.getMonths().length; x++ ) {
+                  option = document.createElement('OPTION');
+                  option.value = today.getMonths()[x] + ', ' + yearSelected.value;
+                  option.textContent = today.getMonths()[x];
+                  frag.appendChild(option);
+              }
+              monthSelect.appendChild(frag);
+              monthSelect.selectedIndex = 0;
+              month = 0
+            }
+            month_menu = new Date(monthSelect.value);
+            calendarClass.textContent = '';
+            month_menu.calendar();
+            document.querySelector('.yearSelect').value = nextYear - 1;
+        }
+
+        function dayNote(e) {
+            let date = e.target.firstChild.textContent;
+            if (e.target.className === 'calDay' && e.target.className != 'monthNoteButton') {
+                if (document.querySelector('.dayTitle') != null) {
+                    let elem = document.querySelector('.dayTitle');
+                    elem.parentNode.removeChild(elem);
+                }
+                prevButton.style.display = 'none';
+                nextButton.style.display = 'none';
+                dayDiv.style.display = 'block';
+                calendarClass.style.display = 'none';
+                let calSpan = document.createElement('span')
+                calSpan.className = 'dayTitle';
+                let fullDate = new Date(monthSelect.value);
+                let dateNumber = fullDate.getMonth();
+                calSpan.textContent = fullDate.getMonths()[dateNumber] + ' ' + date + ', ' + fullDate.getFullYear();
+                // let dayCalendar = document.querySelector('.dayTable');
+                dayDiv.appendChild(calSpan);
+                document.querySelector('#startTime').scrollIntoView();
+                loadIndDayNotes();
+            }else {
+                return;
+            }
+            e.preventDefault();
+        }
     }
-    </script type="text/javascript" charset="utf-8">
+    </script>
 
 
 
