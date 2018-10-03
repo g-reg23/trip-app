@@ -150,16 +150,18 @@ def dashboard():
     user = session['username']
     profile = User.getProfile(user)
     groupies = User_Group.getUserGroups(profile.id)
-    pends, groups = [], []
-    for group in groupies:
-        if group.status == 'Accepted':
-            groups.append(group)
-        else:
-            pends.append(group)
+    pends = Pending_Member.query.filter(Pending_Member.userId==profile.id)
+    invitePends = [Group.getGroupInfo(x.groupId) for x in pends if x.type=='Request']
+    # app.logger.info(invitePends[0].groupName)
+    # for group in groupies:
+    #     if group.status == 'Accepted':
+    #         groups.append(group)
+    #     else:
+    #         pends.append(group)
     admins = User_Group.query.filter(and_(User_Group.userId==profile.id), (User_Group.type=='Admin')).all()
     # groups = User_Group.query.filter(User_Group.userId==profile.id).all()
 
-    return render_template("dashboard.html", profile=profile, groups=groups, admins=admins, pends=pends)
+    return render_template("dashboard.html", profile=profile, groupies=groupies, admins=admins, invitePends=invitePends)
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 @is_logged_in
@@ -348,16 +350,13 @@ def group(id):
     profile = User.query.filter(User.username==user).first()
     group = Group.getGroupInfo(id)
     ifMember = User_Group.query.filter(and_(User_Group.userId==profile.id), (User_Group.groupId==id)).first()
-    if ifMember is not None and ifMember.status == 'Accepted':
+    if ifMember is not None:
         renPins, restPins, transpoPins, activityPins = {}, {}, {}, {}
         members, history = [], []
         pinForm, pinFormTwo = RentalPinForm(request.form), RestPinForm(request.form)
         pinFormThree, pinFormFour = TransportationPinForm(request.form), ActivityPinForm(request.form)
-        memList = User_Group.query.filter(User_Group.groupId==id).all()
-        for mem in memList:
-            member = User.query.filter(User.id==mem.userId).first()
-            members.append(member.username)
-
+        memList = User_Group.getMembers(id)
+        members = [User.getProfileById(member.userId).username for member in memList]
         if pinForm.submit1.data and pinForm.validate():
             rental = Lodging_Pin(groupId=id, lodgeName=pinForm.rentalName.data, price=pinForm.price.data, rooms=pinForm.rooms.data, description=pinForm.description.data, link=pinForm.link.data, creator=user)
             db.session.add(rental)
@@ -454,7 +453,7 @@ def joinGroup():
             if check:
                 flash('You are already a member of that group!')
             else:
-                u_g = User_Group(groupId=group.id, userId=user.id, status='Pending', type='Member', groupName=form.name.data)
+                u_g = Pending_Member(groupId=group.id, userId=user.id, type='Request')
                 db.session.add(u_g)
                 db.session.commit()
                 flash('A request to join the group has been sent to the group admin. You will have access to the group once the admin approves your request.')
@@ -486,62 +485,78 @@ def groupInviteChoice(id):
 @app.route('/group/<int:id>/get_members', methods=['GET', 'POST'])
 @is_logged_in
 def groupGetMembers(id):
+    # Get the group info and list of all members
     group = Group.getGroupInfo(id)
     members = User_Group.getMembers(id)
-    mems = []
-    pendingMems, pends = [], []
-    for mem in members:
-        if mem.status == 'Accepted':
-            mems.append(mem.userId)
+    mems = [User.getProfileById(x.userId).username for x in members]
+    pends = Pending_Member.query.filter(Pending_Member.groupId==id).all()
+    invitePends, displayPends, pendingMems =  [], [], []
+    for pend in pends:
+        if pend.type == 'Invite':
+            invitePends.append(pend.userId)
+            pendingMems.append(pend.userId)
         else:
-            user = User.getProfileById(mem.userId)
-            pends.append(user)
-            pendingMems.append(mem.userId)
+            user = User.getProfileById(pend.userId)
+            # app.logger.info(user.username)
+            displayPends.append(user)
+            pendingMems.append(pend.userId)
+    # Form for users that have requested to join group, Accept or Decline
     requestForm = UserGroupJoinDecisionForm(request.form)
+    # requestForm.accept.data = False
+    # requestForm.decline.data = False
+    # Form for admin invite users without account, by email. TODO
     formOne = InviteGroupNoAccountForm(request.form)
+    # Form to look up users by username and send a request to join the group
     formTwo = InviteGroupByUsernameForm(request.form)
+    # Form to look up users by email and send a request to join the group
     formThree = InviteGroupByEmailForm(request.form)
-    if requestForm.accept.data and requestForm.validate():
-        app.logger.info(requestForm.data)
+    if requestForm.accept.data == True and requestForm.validate():
+        # requestForm.accept.data = False
         user = User.getProfile(requestForm.username.data)
-        u_g = User_Group.query.filter(and_(User_Group.userId==user.id), (User_Group.groupId==id)).update(dict(status='Accepted'))
+        displayPends = [x for x in displayPends if x.id!=user.id]
+        pender = Pending_Member.query.filter(and_(Pending_Member.groupId==group.id), (Pending_Member.userId==user.id)).first()
+        db.session.delete(pender)
+        db.session.commit()
+        u_g = User_Group(groupId=id, userId=user.id, type='Member', groupName=group.groupName)
+        db.session.add(u_g)
         db.session.commit()
         flash(requestForm.username.data + " has been added to the group!!")
-        return render_template('get_members.html', requestForm=requestForm, pends=pends, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
-        # flash('accept submitted username: ' + requestForm.username.data)
-    if requestForm.decline.data and requestForm.validate():
+        return redirect(url_for('groupGetMembers', id=id))
+
+    if requestForm.decline.data == True and requestForm.validate_on_submit():
+        # requestForm.decline.data = False
         user = User.getProfile(requestForm.username.data)
-        u_g = User_Group.query.filter(and_(User_Group.userId==user.id), (User_Group.groupId==id)).first()
-        db.session.delete(u_g)
+        pender = Pending_Member.query.filter(and_(Pending_Member.groupId==group.id), (Pending_Member.userId==user.id)).first()
+        displayPends = [x for x in displayPends if x.id!=user.id]
+        db.session.delete(pender)
         db.session.commit()
         flash("User " + requestForm.username.data + " request to join has been declined")
-        return render_template('get_members.html', requestForm=requestForm, pends=pends, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
-
+        return redirect(url_for('groupGetMembers', id=id))
     if formOne.submit1.data and formOne.validate():
-        flash('Form one submitted')
+        pass
     if formTwo.submit2.data and formTwo.validate():
         user = User.query.filter(User.username==formTwo.username.data).first()
         if user is not None:
             if user.id in mems:
                 flash('That user is already in the group!!')
                 formTwo.username.data = ''
-                return render_template('get_members.html', requestForm=requestForm, pends=pends, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
+                return render_template('get_members.html', requestForm=requestForm, displayPends=displayPends, invitePends=invitePends, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
             if user.id in pendingMems:
                 flash('That user already has a pending invite to the group. You must for them to respond')
                 formTwo.username.data = ''
-                return render_template('get_members.html', requestForm=requestForm, pends=pends, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
+                return render_template('get_members.html', requestForm=requestForm, displayPends=displayPends, invitePends=invitePends, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
             else:
-                u_g = User_Group(groupId=group.id, userId=user.id, status='Pending', type='Member', groupName=group.groupName)
+                u_g = Pending_Member(groupId=group.id, userId=user.id, type='Request')
                 db.session.add(u_g)
                 db.session.commit()
                 formTwo.username.data = ''
                 flash('An invitation to join the group has been sent to ' + user.username + "'s dashboard. They must accept accept the invite in order to access the group")
-                return render_template('get_members.html', requestForm=requestForm, pends=pends, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
+                return render_template('get_members.html', requestForm=requestForm, displayPends=displayPends, invitePends=invitePends, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
 
         else:
             formTwo.username.data = ''
             flash('User not found')
-            return render_template('get_members.html', requestForm=requestForm, pends=pends, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
+            return render_template('get_members.html', requestForm=requestForm, displayPends=displayPends, invitePends=invitePends, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
 
     if formThree.submit3.data and formThree.validate():
         user = User.query.filter(User.email==formThree.email2.data).first()
@@ -549,25 +564,25 @@ def groupGetMembers(id):
             if user.id in mems:
                 flash('That user is already in the group!!')
                 formThree.email2.data = ''
-                return render_template('get_members.html', requestForm=requestForm, pendingMems=pendingMems, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
+                return render_template('get_members.html', requestForm=requestForm, displayPends=displayPends, invitePends=invitePends, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
             if user.id in pendingMems:
-                flash('That user already has a pending invite to the group. You must for them to respond')
+                flash('That user already has a pending invite to the group. You must wait for them to respond')
                 formThree.email2.data = ''
-                return render_template('get_members.html', requestForm=requestForm, pends=pends, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
+                return render_template('get_members.html', requestForm=requestForm, displayPends=displayPends, invitePends=invitePends, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
             else:
-                u_g = User_Group(groupId=group.id, userId=user.id, status='Pending', type='Member', groupName=group.groupName)
+                u_g = Pending_Member(groupId=group.id, userId=user.id, type='Request')
                 db.session.add(u_g)
                 db.session.commit()
                 formThree.email2.data = ''
                 flash('An invitation to join the group has been sent to ' + user.username + "'s dashboard. They must accept accept the invite in order to access the group")
-                return render_template('get_members.html', requestForm=requestForm, pends=pends, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
+                return render_template('get_members.html', requestForm=requestForm, displayPends=displayPends, invitePends=invitePends, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
         else:
             flash('User not found')
             formThree.email2.data = ''
-            return render_template('get_members.html', requestForm=requestForm, pends=pends, formOne=formOne, formTwo=formTwo, formThree=formThree,group=group)
+            return render_template('get_members.html', requestForm=requestForm, displayPends=displayPends, invitePends=invitePends, formOne=formOne, formTwo=formTwo, formThree=formThree,group=group)
 
 
-    return render_template('get_members.html', requestForm=requestForm, pends=pends, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
+    return render_template('get_members.html', pends=pends, requestForm=requestForm, displayPends=displayPends, invitePends=invitePends, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group)
 
 @app.route('/group/<int:id>/calendar', methods=['GET', 'POST'])
 @is_logged_in

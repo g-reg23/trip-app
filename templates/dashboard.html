@@ -4,9 +4,9 @@
     <section class="dash">
       <div class="dashhead" align="center"><h1 style="font-size: 3rem;">Dashboard <br><small><small>Welcome {{session.username}}</small></small></h1></div><hr />
       <h2 class="infoTitles" text-decoration="underline">Your Groups:</h2><br />
-      {% if groups %}
+      {% if groupies %}
         <ul class="groupList">
-          {% for group in groups %}
+          {% for group in groupies %}
             <li class="buttonList"><a class="groupButton" href="group/{{ group.groupId }}">{{ group.groupName }}</a></li><br />
           {% endfor %}
         </ul><br /><hr />
@@ -14,9 +14,9 @@
         <h5>You are not currently a member of any groups</h5><br /><hr />
       {% endif %}
       <h2 class="infoTitles" text-decoration="underline">Group Invites:</h2><br />
-      {% if pends %}
-        {% for pend in pends %}
-          <li class="buttonList"><a class="groupButton" href="group/{{ pend.groupId }}/join">{{ pend.groupName }}</a></li><br />
+      {% if invitePends %}
+        {% for pend in invitePends %}
+          <li class="buttonList"><a class="groupButton" href="group/{{ pend.id }}/join">{{ pend.groupName }}</a></li><br />
         {% endfor %}
       {% else %}
         <h5>You currently have no pending group invites</h5>

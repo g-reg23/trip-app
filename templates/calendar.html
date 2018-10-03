@@ -475,7 +475,7 @@
         const names = document.querySelectorAll('.listName');
         const dates = document.querySelectorAll('.listDate');
         // Today is first day of trip
-        let today = new Date(startDate.innerHTML);
+        let today = new Date(startDate.textContent);
         //firstMonth is the month that contains first day of trip, month is the global that
         // defines the current month being displayed
         let firstMonth = today.getMonth();
@@ -873,6 +873,13 @@
             calendarClass.textContent = '';
             month_menu.calendar();
             document.querySelector('.yearSelect').value = nextYear - 1;
+        }
+
+        function loadIndDayNotes() {
+          let arr = [];
+          dates.forEach(function() {
+
+          })
         }
 
         function dayNote(e) {

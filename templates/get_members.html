@@ -4,16 +4,16 @@
     <div class="pageContainer">
         <h1 style="text-align: center; margin-bottom: 9%; text-decoration: underline;">{{group.groupName}}<h1>
         <h1>Requests to Join:</h1>
-        {% if pends %}
+        {% if displayPends %}
           <h6>The following users have requested to join the group:</h6>
           <div class="requestProfile">
-            {% for pend in pends %}
+            {% for pend in displayPends %}
               <form class="" action="" method="POST">
                 <p><strong>Username:</strong> {{ pend.username }}</p>
                 <p><strong>Full Name:</strong> {{ pend.firstName }} {{ pend.lastName }}</p>
                 <p>{{ requestForm.hidden_tag() }}</p>
                 <input type="hidden" value={{ pend.username }} name="username">
-                <p>{{ requestForm.accept(class='sign-logSubmit') }}  {{ requestForm.decline(class='sign-logSubmit') }}</p>
+                <p>{{ requestForm.accept(class='sign-logSubmit accept') }}  {{ requestForm.decline(class='sign-logSubmit deny') }}</p>
               </form>
             {% endfor %}
           </div>
@@ -47,8 +47,7 @@
             <div>{{ formThree.email2(class='sign-logInput') }}</div>
             <div>{{ formThree.submit3(class='sign-logSubmit') }}</div>
         </form>
-
-    </div>
+      </div>
     <script src="{{url_for('static', filename = 'app.js')}}"></script>
 
 

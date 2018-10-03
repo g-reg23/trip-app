@@ -60,11 +60,11 @@ th {
 .flashMessage {
   margin-top: 8%;
   margin-left: 4%;
-  background-color: cadetblue;
+  background-color: burlywood;
   padding: 2%;
   border-radius: .5rem;
   margin-right: 3%;
-  color: white;
+  /* color: white; */
   text-align: center;
 }
 .groupFlash {
@@ -219,7 +219,6 @@ th {
 .daySpan {
   position: absolute;
   top: 0;
-  color: white;
 }
 .dayNoteDate {
   position: absolute;

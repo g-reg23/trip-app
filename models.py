@@ -1,3 +1,4 @@
+from sqlalchemy import and_, or_, update
 from sqlalchemy.sql import func
 from time import time
 from confi import db
@@ -92,6 +93,8 @@ class User_Group(db.Model):
         return User_Group.query.filter(User_Group.userId==userId).all()
     def getMembers(groupId):
         return User_Group.query.filter(User_Group.groupId==groupId).all()
+    def getIndividualMember(userId, groupId):
+        return User_Group.query.filter(and_(User_Group.groupId==groupId), (User_Group.userId==userId))
 
 class Pending_Member(db.Model):
     __tablename__ = "pending_members"
@@ -99,6 +102,10 @@ class Pending_Member(db.Model):
     userId = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
     groupId = db.Column(db.Integer, db.ForeignKey("groups.id", ondelete="CASCADE"))
     type = db.Column(db.Enum('Request', 'Invite'))
+
+    # def getIndividualPend(userId, groupId):
+    #     return Pending_Member.query.filter(and_(Pending_Member.groupId==groupId), (Pending_Member.userId==userId))
+
 
 class Lodging_Pin(db.Model):
     __tablename__ = "lodgingPins"
