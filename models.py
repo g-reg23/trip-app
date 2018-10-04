@@ -106,6 +106,11 @@ class Pending_Member(db.Model):
     # def getIndividualPend(userId, groupId):
     #     return Pending_Member.query.filter(and_(Pending_Member.groupId==groupId), (Pending_Member.userId==userId))
 
+class Invite_New_Account_Group(db.Model):
+    __tablename__ = 'new_invite_group'
+    id = db.Column(db.Integer, primary_key=True)
+    groupId = db.Column(db.Integer, db.ForeignKey("groups.id", ondelete="CASCADE"))
+    email = db.Column(db.String(50))
 
 class Lodging_Pin(db.Model):
     __tablename__ = "lodgingPins"
@@ -172,3 +177,19 @@ class Calendar_Note(db.Model):
 
     def getNotes(groupId):
         return Calendar_Note.query.filter(Calendar_Note.groupId==groupId)
+
+class Budget(db.Model):
+    __tablename__ = 'budgets'
+    id = db.Column(db.Integer, primary_key=True)
+    groupId = db.Column(db.Integer, db.ForeignKey("groups.id", ondelete="CASCADE"))
+    userId = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
+    total = db.Column(db.Integer)
+
+class Expense(db.Model):
+    __tablename__ = 'expenses'
+    id = db.Column(db.Integer, primary_key=True)
+    groupId = db.Column(db.Integer, db.ForeignKey("groups.id", ondelete="CASCADE"))
+    userId = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
+    name = db.Column(db.String(30))
+    cost = db.Column(db.Integer)
+    payments = db.Column(db.Integer)

@@ -21,16 +21,17 @@
           <p>There are currently no pending requests to join the group</p>
         {% endif %}
         <h1>Invite Trip Members</h1>
+        <h3>Email a new user</h3>
         <p>If a trip member does not have a TripLounge account, provide their email
           address, we'll send them an email, and get them all set up to join the group!!
          </p>
-        <h3>Email a new user</h3>
         <form method="POST" action="">
             <div>{{ formOne.hidden_tag() }}</div>
             <div>{{ formOne.email1(class='sign-logInput') }}</div>
             <div>{{ formOne.submit1(class='sign-logSubmit') }}</div>
         </form>
         <br />
+        <h2>Invite users with TripLounge account</h2>
         <p>If a trip member is already signed up with TripLounge, please use either their email, or
         their username on TripLounge to send an invite to the trip group</p>
         <h3>Invite a user by username</h3>

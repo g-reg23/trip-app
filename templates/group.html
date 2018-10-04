@@ -131,7 +131,7 @@
         <!-- <input type="text" class="sign-logInput calcName" placeholder="Name"> -->
         <form class="expenseForm">
           <input type="number" class="sign-logInput" id="calcPrice" placeholder="Price">
-          <input type="number" class="sign-logInput" id="calcDays" placeholder="Recurring payments">
+          <input type="number" class="sign-logInput" id="calcDays" placeholder="# of Payments">
           <input type="number" class="sign-logInput" id="calcDivideBy" placeholder="# of people to split">
           <select class="sign-logInput" id="calcSelect">
             <option align="center" selected value="">Type:</option>
@@ -141,7 +141,7 @@
             <option value="activity">Activity</option>
             <option value="other">Other</option>
           </select>
-          <button class="sign-logSubmit" id="calcSubmit" style="width: 45%;">Calculate</button>
+          <input class="sign-logSubmit" id="calcSubmit" style="width: 45%;" value='Calculate' type='submit'>
         </form>
       </div>
       <div class="calcDiv results">
@@ -308,7 +308,7 @@
         // Function for submitting chat message, sends message to server
         function sendMessage(e) {
           e.preventDefault();
-          socket.emit('send message', message.value, id.innerHTML);
+          socket.emit('send message', message.value);
           message.value = ('');
         }
         // On connect, adds user to users, sends message saying user connected
@@ -321,19 +321,20 @@
             elem.scrollIntoView();
             // Empty out the list of members online in html list.
             while(online.firstChild ){
-                online.removeChild(online.firstChild );
+                online.removeChild(online.firstChild);
             }
             // Remove all non unique users
             newUsers = Array.from(new Set(data.users));
-
             // Create elements to display all online users
+            let fragment = document.createDocumentFragment();
             for(i=0; i < newUsers.length;i++) {
                   let item = document.createElement('li');
                   item.className = 'onlineMember';
                   let tnode = document.createTextNode(data.users[i]);
                   item.appendChild(tnode);
-                  online.appendChild(item);
+                  fragment.appendChild(item);
             }
+            online.appendChild(fragment);
         })
         // On disconnect, takes user out of users, sends message saying user disconnected
         socket.on('on disconnect', function(data) {
