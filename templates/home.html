@@ -1,7 +1,13 @@
 {% extends 'layout.html' %}
 
+
 {% block body %}
-    <img class="homePic" src={{url_for('static', filename = 'images/download.jpg')}} alt="home-page-pic" />
+  <div class='pageContainer'>
+    <div class='top-page-div'>
+      <img class="top-page-pic" style='width:94%;' src={{url_for('static', filename = 'images/adventure-alberta-alpine-533658.jpg')}} alt="top-page-pic" />
+      <a href='https://www.pexels.com/'>Photo by Pok Rie from Pexels</a>
+    </div>
+    <!-- <img class="homePic" src={{url_for('static', filename = 'images/aerialshot.jpg')}} alt="home-page-pic" /> -->
     <div class="nameDiv">
         <h1 class="pageHeader">TripLounge</h1>
     </div>
@@ -10,17 +16,19 @@
         <h3>A trip planning web application, for groups!</h3>
     </div>
     <br>
-    <div class="homeDiv">
-        <h4 class="homeInfo">Form groups with travel partners, to chat, set itineraries,
-            share rental information and plan nights out! TripHub makes it
-            easy for all travel members to stay connected before, during and after
-            your adventures!
-        </h4>
-    </div>
-    <div class="homeButtonDiv">
-        {% if session.logged_in == NULL %}
+    <div class='home-pic-div'>
+      <img class="home-page-pic" src={{url_for('static', filename = 'images/adult-backlit-bottles-697244.jpg')}} alt="top-page-pic" />
+        {% if current_user.is_anonymous %}
             <a href="/login" class="homeButtons logBut" align="center">Login</a>
             <a href="/signup" class="homeButtons signBut">Sign Up</a>
         {% endif %}
+
+        <p class="homeInfo">Form groups with travel partners, to chat, set itineraries,
+            share rental information and plan nights out! TripHub makes it
+            easy for all travel members to stay connected before, during and after
+            your adventures!
+        </p>
     </div>
+  </div>
+    <script src="{{url_for('static', filename = 'app.js')}}"></script>
 {% endblock %}

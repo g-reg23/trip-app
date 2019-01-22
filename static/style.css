@@ -8,8 +8,9 @@ body {
   /* background-image: url("../images/circles-light/circles-light/circles-light.png"); */
   /* background-image: linear-gradient(-20deg, #e9defa 0%, #fbfcdb 100%); */
   /* font-family: 'Amaranth', sans-serif; */
-  background: whitesmoke;
-  background: linear-gradient(to right bottom, #b3b3b3, #333333) fixed;
+
+  /* background: linear-gradient(to right bottom, #b3b3b3, #333333) fixed; */
+  background: lightsteelblue;
   padding-bottom: 8rem;
 }
 /* .homeContainer {*/
@@ -22,7 +23,7 @@ body {
   display: inline;
 }
 input {
-  font-family: 'Space Mono', monospace;
+  font-family: sans-serif;
 
 }
 ::-webkit-input-placeholder {
@@ -50,22 +51,29 @@ h6 {
   font-size: 1.5rem;
 }
 th {
-  background: #42914a;
+  background: grey;
+  color: white;
 }
-.homePic {
-  margin-top: 15%;
-  width: 100%;
-  border-radius: .7rem;
+.photo-credit-line {
+  margin-left: 4%;
+}
+.titleInPic {
+  position: absolute;
+  top: 20%;
+  left: 33%;
+  font-weight: 900;
 }
 .flashMessage {
   margin-top: 8%;
   margin-left: 4%;
-  background-color: burlywood;
+  background-color: lightgoldenrodyellow;
   padding: 2%;
   border-radius: .5rem;
   margin-right: 3%;
-  /* color: white; */
+  /* color: white;  */
   text-align: center;
+  font-weight: 700;
+  font-size: 1.15rem;
 }
 .groupFlash {
   margin-left: 30%;
@@ -78,8 +86,15 @@ th {
   margin-bottom: 1%;
   width: 85.5%;
   margin-left: 5.8%;
+  font-size: 1.4rem;
+  text-align: center;
+}
+.picCredit {
+  margin-left: 4%;
+  font-size: .88rem;
 }
 .success {
+  margin-top: 1%;
   background-color: green;
 }
 .error {
@@ -103,16 +118,29 @@ th {
   height: auto;
   list-style-type: none;
   padding: 0;
-  background: #343a40;
+  /* background: #343a40; */
+  background: black;
+  max-height: 2.5rem;
+  z-index: 9999;
+}
+.navSubList {
+  list-style-type: none;
+  display: none;
+  z-index: 9999;
+}
+
+.navSubList:hover {
+  display: block;
 }
 .nav-item {
   text-align: center;
   float: left;
   padding: 1% 1.2%;
+  border-radius:.25rem;
 }
 .nav-link {
   display: block;
-  color: white;
+  color: whitesmoke;
   font-size: 1.12rem;
   font-family: rakkas;
   text-decoration: none;
@@ -127,6 +155,9 @@ th {
   background: green;
   border-radius: 1%;ho
 }
+.subLink {
+  margin-left: -40%;
+}
 .groupDiv {
   margin-top: 2% 1%;
 }
@@ -137,27 +168,26 @@ th {
   margin: 5% 2.8%;
 }
 /* Dashboard */
-.infoTitles {
+/* .infoTitles {
   font-size: 2rem;
 }
 .dash {
   border: 3px solid black;
   margin: 2.5%;
   padding: 2%;
-}
-.dashTables {
-  font-size: .835rem;
-}
+} */
+
 /* Inputs and Submit buttons*/
 .buttonList{
   margin-bottom: 3.5%;
 }
 .homeButtons {
-  color: white;
+  color: whitesmoke;
   background: #2c5ba5;
   padding: 2% 2.5%;
-  margin: 1% 6%;
+  margin: 4% 3%;
   border-radius: .5rem;
+  position:absolute;
 }
 .signBut{
   background:#236337;
@@ -170,12 +200,15 @@ th {
   border-radius: .5rem;
   height: 1.9rem;
   margin-bottom: .8%;
+  background: whitesmoke;
+  font-size: 1rem;
+  font-weight: 500;
 }
 .sign-logSubmit {
   border-radius: .5rem;
   background: #2c5ba5;
   padding: .75% 1%;
-  color: white;
+  color: whitesmoke;
 }
 .logBut:hover {
   background: #4a7dcf;
@@ -188,6 +221,118 @@ th {
   background: red;
   border-radius: .5rem;
 }
+/* Home Page  */
+.nameDiv {
+  text-align: center;
+}
+.subtitleDiv {
+  display: block;
+  text-align: center;
+}
+.top-page-pic, .home-page-pic {
+  border-radius: .5rem;
+}
+.top-page-pic {
+  margin-left: 4%;
+}
+.home-page-pic {
+  width:60%;
+}
+.homeInfo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  width: 35%;
+  margin-left: 65%;
+  margin-top: -25%;
+}
+
+/* Dashboard */
+.hiddenPends {
+  display: none;
+}
+.leaveGroupModal, .leaveGroupAdModal {
+  display: none;
+  position: fixed;
+  width: 35%;
+  height: auto;
+  left: 29%;
+  top: 25%;
+  color: white;
+  padding: 2.5%;
+  border-radius: .5rem;
+  background: #516991;
+  z-index: 9999;
+}
+.dashTables, table{
+    background: lightgoldenrodyellow;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+.groupAdDelName, .accountNameModal, .editAccNameModal {
+  font-weight: 700;
+  background: #516991;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  position: absolute;
+  top: 8%
+}
+.yesNoBut {
+  padding: 3% 4%;
+  font-size: 1.05rem;
+  margin-left: 10%;
+  margin-top: 5%;
+}
+.modalHeader {
+  margin-bottom: -2%;
+}
+
+/* Grt group members page */
+.groupMemList {
+  width:50%;
+  background: whitesmoke;
+  overflow-y: scroll;
+  height: 6rem;
+  padding: 2%;
+  border-radius: .5rem;
+  list-style-type: none;
+}
+.groupMemsHeader {
+  font-size: 3rem;
+  font-weight: 900;
+}
+.memberListName {
+  width:85%;
+}
+.memRemoveButton {
+  padding: 1.15%;
+  float: right;
+  background: cadetblue;
+  border-radius: .5rem;
+    /* font-weight: 550; */
+  color: whitesmoke;
+}
+.memberListFullName {
+  margin-top: -2%;
+  border-bottom: 1.5px solid;
+}
+.memberInfo {
+  font-size: .75rem;
+  margin: -2%;
+  text-decoration: underline;
+}
+.memberToRemove {
+  font-weight: 900;
+  font-size: 1.25rem;
+  text-align: center;
+}
+.pendModName {
+  text-decoration: underline;
+}
+.pendModLoc {
+  margin-top: 18%;
+}
+
 /*Calendar*/
 .calendar {
   text-align: center;
@@ -197,21 +342,65 @@ th {
   right: 4%;
   top: 25%;
   table-layout: fixed;
+  background: lightsteelblue;
 }
 .calDay {
   position: relative;
   background: burlywood;
   border: 1px solid;
-  font-size: 1.35rem;
+  font-size: 1.1rem;
   width: 14.285%;
   text-align: left;
   height: auto;
+  min-height: 17.5%;
   /* text-shadow: 3px 2px white; */
 }
+
 .dayTable  {
   position: sticky;
   table-layout: fixed;
   top: 25%;
+  margin-bottom:15%;
+}
+.weekTable {
+  position: absolute;
+  table-layout: fixed;
+  top: 31.5%;
+  left: 1.9%;
+  width:96%;
+  display:block;
+  height: 65%;
+  overflow:auto;
+}
+.weekTable {
+  display:table;
+  width:96%;
+  table-layout:fixed;/* even columns width , fix width of table too*/
+  margin-top: .6%;
+}
+.weekTableH {
+  table-layout: fixed;
+  width: 96%;
+  position: absolute;
+  top: 20%;
+  left: 2%;
+}
+table, .chat ::-webkit-scrollbar {
+  width: 0px;
+  background: transparent; /* make scrollbar transparent */
+}
+
+.weekCell, .weekHead {
+  height: 75px;
+  background: cadetblue;
+}
+.weekTableHour {
+  width: 5rem;
+  background: burlywood;
+}
+.weekHeadTitle {
+  background: whitesmoke;
+  color: black;
 }
 .dayCalRow {
   background: burlywood;
@@ -219,6 +408,31 @@ th {
 .daySpan {
   position: absolute;
   top: 0;
+}
+.weekDiv {
+  display: none;
+}
+.dayWeekDate {
+  display:block;
+}
+.dayNoteEditName {
+  position: absolute;
+  top: 17.5%;
+  text-align: left;
+  margin-top: 10%;
+  font-weight: 800;
+  margin-bottom: 8%;
+  margin-left: -3%;
+  font-size: 1.25rem;
+}
+.noteForm {
+  margin-top: 30%;
+}
+.weekMonthTitle {
+  position: absolute;
+  left: 27.5%;
+  font-size: 1.75rem;
+  top: 14%;
 }
 .dayNoteDate {
   position: absolute;
@@ -234,30 +448,101 @@ th {
   font-family: revert;
   width: 50%;
 }
-.modal {
+.dayViewText {
+  color: white;
+  display: inline-block;
+  margin-left: 2%;
+  text-decoration: none;
+  /* overflow-x: auto; */
+}
+.weekTextDiv {
+  text-decoration: none;
+}
+/* .dayNoteText {
+  padding: 3% 1% 3% 1%;
+  background: burlywood;
+  width: 20%;
+  margin-left: 10%;
+  margin-top: -2.75%;
+  border-radius: .5rem;
+} */
+.pendModName {
+  position: absolute;
+  top: 0;
+}
+.modal, .expenseAllModal, .expenseOneModal, .noteModal, .deleteAccountModal, .editAccountModal, .editGroupModal, .editNoteModal, .pendModal, .removeMemberModal {
   display: none;
   position: fixed;
   width: 60%;
   height: auto;
-  left: 12%;
+  left: 17%;
   top: 25%;
   color: white;
-  padding: 10%;
+  padding: 2.5% 5%;
   border-radius: .5rem;
   background: #516991;
+  z-index: 9999;
+  overflow-y:scroll;
 }
-.noteFlash {
-  width: 15.5%;
+.pendModal {
+  font-weight: 900;
+}
+.cornerX {
   position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 1rem;
+  border-radius: .25rem;
+}
+.noteModal, .deleteAccountModal, .editAccountModal {
+  padding: 5%;
   height: auto;
-  top: -38%;
-  right: 27.5%;
-  padding: 1.25%;
+}
+.calModalTitle {
+  margin-left: 24%;
+}
+
+.editGroupModal {
+  padding: 3%;
+  width: 50%;
+  top: 10%;
+  left: 25%;
+}
+.editGroupLoc, .editGroupDesc, .editGroupEnd, .editGroupStart, .editGroupName, .editGroupUserPass, .editGroupGroupPass {
+  width: 90%;
+  border-radius: .5rem;
+  height: 1.9rem;
+  margin-bottom: .8%;
+  background: whitesmoke;
+  font-size: 1rem;
+  font-weight: 500;
+}
+.modInput{
+  width:85%;
+  border-radius: .5rem;
+  height: 1.9rem;
+  margin-bottom: .8%;
+  background: whitesmoke;
+  font-size: 1rem;
+  font-weight: 500;
+}
+.editAccountModal {
+  top: 12%;
+}
+
+.noteFlash {
+  background: lightgoldenrodyellow;
+  border-radius: .5rem;
+  margin-left: 1%;
+  padding: 1%;
+  width:26%;
+  font-size: .7rem;
 }
 .monthNoteButton {
   padding: 1.5%;
   background: cadetblue;
   display: none;
+  font-size: .6rem;
 }
 .calNoteName {
   display: block;
@@ -269,8 +554,9 @@ th {
 .noteTime {
   margin-top: 3%;
 }
-.submitNote {
+.submitNote, .cancelEditNote, .editNote, .closeNote, .submitEditNote {
   margin-top: 3%;
+  padding: 1.5%;
 }
 .cancelNote {
   padding: 1.38%;
@@ -280,12 +566,22 @@ th {
   top: 12%;
   margin-top: 6%;
 }
+.noteNameModal, .noteTimeModal, .noteLengthModal, .noteDateModal {
+  margin-top: -6.5%
+}
+.noteNameModal {
+  margin-top: 3%;
+}
+.noteTimeModal, .noteLengthModal {
+  font-size: 1.45rem;
+  margin-top:2%;
+}
 .calTableTr {
   float: left;
   display: block
 }
 .dayCalTextArea {
-  width: 5rem;
+  width: 11rem;
   background: cadetblue;
 }
 /* .dayCalRow:hover {
@@ -303,12 +599,14 @@ th {
   position: absolute;
   bottom: 2%;
   left: 5%;
-  font-size: 1rem;
+  font-size: .55rem;
   text-decoration: none;
   color: wheat;
   background: black;
   border-radius: .5rem;
   padding: 1.5%;
+  line-height: .75rem;
+  height: .75rem;
 }
 
 .clicker {
@@ -318,28 +616,57 @@ th {
 .calInfo {
   display: none
 }
-.dayText {
-  position: relative;
-  top: 70%;
+.dayText, .firstDay, .lastDay {
+  position: absolute;
   background: black;
-  font-size: .65rem;
+  font-size: .6rem;
   padding: 2.725%;
-  margin-left: 5%;
+  margin-left: 10%;
   border-radius: .25rem;
   border: white 1px;
   margin-bottom: 2%;
   width: 82%;
   color: wheat;
+  line-height: .65rem;
+  height: .75rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-decoration: none;
+  display: block;
+  top: 35%;
 }
-.prevButton {
+.buttonDiv {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: -.5%;
+  font-weight: 900;
+}
+.weekTextDiv {
+  font-size: .75rem;
+  width: 82%;
+  color: wheat;
+  line-height: .65rem;
+  height: .75rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  background: black;
+  border-radius: .25rem;
+  padding: 2.5%;
+}
+.prevButton, .prevWeekButton{
   position: absolute;
-  left: 22%;
+  left: 12%;
   top:18%;
 }
-.nextButton {
+.nextButton, .nextWeekButton {
   position: absolute;
-  left: 65%;
+  left: 85%;
   top:18%;
+}
+.prevWeekButton, .nextWeekButton {
+  top: 14%;
 }
 .blankDay {
   border: 1px solid black;
@@ -354,30 +681,32 @@ th {
 
 .calTitle {
   position: fixed;
-  top: 17%;
-  font-size: 2rem;
-  left: 38%;
+  top: 19%;
+  font-size: 1.65rem;
+  left: 30%;
 }
 .calForm {
   overflow-wrap: break-word;
 }
 #month_items {
   position: absolute;
-  right: 6%;
-  top: 7%;
-  width: 24%;
+  right: 1%;
+  top: 6%;
+  width: 16%;
   height: 3.5%;
   border-radius: .5rem;
   text-align: center;
+  background: whitesmoke;
 }
 .yearSelect {
   position: absolute;
-  right: 6%;
-  top: 12%;
-  width: 24%;
+  right: 1%;
+  top: 10%;
+  width: 16%;
   height: 3.5%;
   border-radius: .5rem;
   text-align: center;
+  background: whitesmoke;
 }
 .dayRow {
   position: relative;
@@ -386,6 +715,7 @@ th {
 .dayRowTitle {
   position: absolute;
   top: 0;
+  font-size: .7rem;
 }
 /* Groups page */
 .groupList {
@@ -399,11 +729,14 @@ th {
   list-style-type: none;
 }
 .groupButton {
-  background: linear-gradient(#103b56, #2894d7);
+  /* background: linear-gradient(#103b56, #2894d7); */
+  background: whitesmoke;
   border-radius: 6px;
-  color: white;
+  color: black;
   padding: 1% 5%;
   text-decoration: none;
+  margin-left:2%;
+  height: 8%;
 }
 .finalDeleteButtons {
   padding: .45% 1.8%;
@@ -429,12 +762,23 @@ th {
   background: #4a7dcf;
 }
 /* Group page styling small screen */
+.userNameHid {
+  display:none;
+}
 .groupDiv{
   margin-top: 6%;
 }
+.pinHeader {
+  text-decoration: underline;
+  margin-bottom: -2.5%;
+}
+.pinImage {
+  margin-bottom: -8%;
+}
 #groupHeader {
   border-radius: 8px;
-  background: linear-gradient(#004466, #66ccff);
+  /* background: linear-gradient(#004466, #66ccff); */
+  background: dimgray;
   color: white;
   font-family: 'Roboto', sans-serif;
   padding: 1.5% 6% 2% 2%;
@@ -442,6 +786,9 @@ th {
   border-radius: 2%;
   height: auto;
   text-align: center;
+}
+.pinP {
+  font-size: 1.5rem;
 }
 .groupHeadDesc{
   font-size: 2.15rem;
@@ -454,7 +801,8 @@ th {
 }
 
 .chat {
-  background: linear-gradient(#004466, #66ccff);;
+  /* background: linear-gradient(#004466, #66ccff); */
+  background:black;
   margin: 2% 3%;
   height: 29rem;
   position: relative;
@@ -470,6 +818,7 @@ th {
   margin-top: -2%;
   border-radius: 0 0 0 .75rem;
   height: 3.42rem;
+  background: whitesmoke;
 }
 #message:focus {
   outline: none;
@@ -485,7 +834,8 @@ th {
   outline: none;
 }
 #chat_message {
-  background: #e6f0c7;
+  /* background: #e6f0c7; */
+  background: lightgoldenrodyellow;
   margin: 12px 12px 12px 12px;
   padding: 12px 0px 12px 12px;
   /*color: white;*/
@@ -501,14 +851,18 @@ th {
   margin-left: 3.7%;
   margin-bottom: 2%;
   width: 91.5%;
-  background: linear-gradient(#004466, #66ccff);
+  /* background: linear-gradient(#004466, #66ccff); */
+  background: whitesmoke;
   color: white;
   border: outset 1px;
   border-radius: 19px;
   position: relative;
 }
 .noPinLink {
-  color: white;
+  color: darkblue;
+}
+.pinLink {
+  color: darkblue;
 }
 .formErrorPin {
   width: 89%;
@@ -518,22 +872,23 @@ th {
 .pinList {
   display: block;
   font-family: 'Roboto', sans-serif;
-  padding: 3% 2%;
+  padding: 1%;
   margin-bottom: 2%;
   margin-left: 4%;
   width: 92%;
-  background: linear-gradient(#004466, #66ccff);
-  color: white;
+  /* background: linear-gradient(#004466, #66ccff); */
+  background: whitesmoke;
+  color: black;
   border: outset 1px;
   border-radius: 15%;
   position: relative;
   text-align: center;
   transition: 2s ease;
 }
-.pinList:nth-child(even) {
-  background: linear-gradient(#ffeee6, #ffccb3);
-  color: black;
-}
+ /* .pinList:nth-child(even) {
+  background: black;
+  color: whitesmoke;
+} */
 .pinnerForm {
   margin-top: 3.5%;
 }
@@ -541,6 +896,7 @@ th {
   border-radius: 6px;
   width: 75%;
   border: inset 1px;
+  background: whitesmoke;
 }
 .pinSubmit {
   color: white;
@@ -552,8 +908,9 @@ th {
   padding-top: 2%;
   padding-bottom: 2%;
   border: 3% solid SlateGrey;
-  background: linear-gradient(#004466, #66ccff););
-  color: white;
+  /* background: linear-gradient(#004466, #66ccff);); */
+  background: black;
+  color: whitesmoke;
   overflow-y: auto;
   border-radius: 12px 12px 12px 12px;
   list-style-type: none;
@@ -566,8 +923,9 @@ th {
   padding-top: 2%;
   padding-bottom: 2%;
   border: 3% solid SlateGrey;
-  background: linear-gradient(#004466, #66ccff);;
-  color: white;
+  /* background: linear-gradient(#004466, #66ccff); */
+  background: whitesmoke;
+  color: black;
   overflow-y: auto;
   border-radius: 12px 12px 12px 12px;
   list-style-type: none;
@@ -590,10 +948,6 @@ th {
   margin: 8% 3%;
   font-size: .88rem;
 }
-.descriptionPin {
-  height: 1.85rem;
-  margin-bottom: -.32%;
-}
 .descriptionPin:hover {
   height: 3.5rem;
 }
@@ -608,7 +962,9 @@ th {
   margin-top: 10.5%;
 }
 .descriptionPin{
-  width: 89.65%;
+  width: 89%;
+  height: 1.85rem;
+  margin-bottom: -.32%;
 }
 .pinSubmit {
   width: 90%;
@@ -631,9 +987,6 @@ th {
   background: #d6d6c2;
   padding: 2%;
   border-radius: .5rem;
-}
-.expenseDelete {
-  background: #775249;
 }
 .calculatorResults, .grandTotal {
   background: #a3a375;
@@ -665,6 +1018,9 @@ th {
   padding: 1% 1% 3% 1%;
   font-size: 1.05rem;
   color: white;
+  background: #775249;
+  margin-top: 5%;
+  margin-left: 27.5%;
 }
 .deleteX {
   display: inline-block;
@@ -677,16 +1033,109 @@ th {
   text-decoration: none;
   float: right;
   color:#632212;
-  background: #a3a375;
+  background: burlywood;
   float: right;
   border: none;
 }
 .deleteX:hover {
   text-decoration: underline;
 }
+.budgetInput {
+  margin-left: 25%;
+}
+.budgetSubmit, .budgetSubmit2 {
+  margin-left: 35%;
+  width: 25%;
+}
+.budgetSubmit2 {
+  margin-top: 5%;
+}
+.finTitle {
+  text-align: center;
+}
+.budget {
+  width:75%;
+  margin-left: 10%;
+  text-align: center;
+  background: dimgray;
+}
+.budgetForm {
+  display:none;
+}
+.displayExName {
+  position: relative;
+  margin-top: 2%;
+  margin-bottom: 2%;
+}
+.displayTots, .extras {
+  text-align: center;
+}
+.displayExDiv {
+  position:relative;
+  margin-top: 2%;
+  background: burlywood;
+  padding: 2%;
+  border-radius: .5rem;
+  text-align: center;
+  padding-bottom: 6.5%;
+}
+.expModalTitle {
+  display: block;
+  font-size: 1.5rem;
+  margin-bottom: 10%;
+}
+.yesExpAll, .noExpAll, .yesExpOne, .noExpOne {
+  font-size: 1.25rem;
+  padding: 2%;
+  margin-left:10%;
+}
+.resultsTitle {
+  text-align: center;
+}
+.displayTotNum {
+  text-align: center;
+  background: burlywood;
+  width: 60%;
+  margin-left: 18%;
+  padding: 3%;
+  border-radius: .5rem;
+  margin-top: 2%;
+}
+.budget{
+  font-size: 2rem;
+}
+/*  Create new group page*/
+.groupImgHeader {
+  margin-bottom: 3%;
+  padding: .6%;
+  background: burlywood;
+  width: auto;
+  border-radius: .5rem;
+}
+.groupImgUploader {
+  background: cadetblue;
+  height: 5%;
+  width: 45%;
+  font-size: 1rem;
+}
+.memListItem {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+.groupHeadDesc {
+  font-weight: 700;
+}
+.onlineMember {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
 @media only screen and (min-width: 26rem) {
   .dayCalTextArea {
-    width: 12rem;
+    width: 16rem;
+  }
+  .dayRowTitle {
+    font-size: 1.1rem;
   }
   #message {
     width: 80%;
@@ -695,7 +1144,18 @@ th {
     width: 13%;
   }
 }
-@media only screen and (min-width: 45rem){
+@media only screen and (min-width: 33rem) {
+  .dayCalTextArea {
+    width: 25rem;
+  }
+  .noteFlash {
+    font-size: .85rem;
+  }
+}
+@media only screen and (min-width: 47rem){
+  .noteFlash {
+    font-size: 1rem;
+  }
   .monthNoteButton {
     display: block;
     position:absolute;
@@ -703,7 +1163,7 @@ th {
     right: 0;
   }
   .dayCalTextArea {
-    width: 28rem;
+    width: 34rem;
   }
   .flashMessage {
     margin-top: 6%;
@@ -722,16 +1182,6 @@ th {
     width: 56%;
     margin-right: 1.5%;
 
-  }
-  .homePic {
-    margin-top: 15%;
-    width: 100%;
-    border-radius: .7rem;
-  }
-  .pageHeader {
-    margin-left: 2%;
-    position: absolute;
-    top: 1%;
   }
   .chatLabel {
     position: fixed;
@@ -766,15 +1216,23 @@ th {
   .groupFooter{
     left: -4%;
   }
+  .calTitle {
+    font-size: 2rem;
+    left: 33.5%;
+    top: 18%;
+  }
 }
 @media only screen and (min-width: 53rem) {
   .dayCalTextArea {
-    width: 32rem;
+    width: 40rem;
   }
   .modal {
     width: 35%;
     left: 23.5%;
-
+  }
+  .modal, .expenseAllModal, .expenseOneModal, .noteModal, .deleteAccountModal, .editAccountModal, .editGroupModal, .editNoteModal, .pendModal, .removeMemberModal {
+    width: 40%;
+    left: 30%;
   }
 }
 @media only screen and (min-width: 70rem){
@@ -782,48 +1240,7 @@ th {
     width: 25%;
   }
   .dayCalTextArea {
-    width: 47rem;
-  }
-  .logBut {
-    margin-left: 0%;
-  }
-  .subtitleDiv {
-    position: absolute;
-    width: auto;
-    left:73%;
-    top:30%;
-  }
-  .homeDiv {
-    margin-top: 18%;
-  }
-  .pageHeader {
-    position: absolute;
-    width: auto;
-    left:73%;
-    top: 14.5%;
-    margin: 0;
-  }
-  .homeContainer {
-    margin-top: -1.5%;
-    margin-left: -1%;
-  }
-  .homePic {
-    width: 70%;
-    margin-top: 6%;
-    margin-left: 2%;
-    border-radius: .7rem;
-  }
-  .homeInfo {
-    position: absolute;
-    top: 68%;
-    left: 6.5%;
-    right: 30%;
-  }
-  .homeButtons {
-    position: absolute;
-    left: 75%;
-    top: 75%;
-    padding: 1.2%;
+    width: 55rem;
   }
   .signBut {
     margin-left: 10%;
@@ -912,31 +1329,12 @@ th {
     #sendChat {
       height: 4.55rem;
     }
-    .homeInfo {
-      top: 70%;
-    }
     .dayCalTextArea {
-      width: 55rem;
+      width: 65rem;
     }
 }
 @media only screen and (min-width: 82rem) {
-    .homeInfo {
-      top: 76%;
-    }
     .dayCalTextArea {
-      width: 60rem;
+      width: 70rem;
     }
-}
-@media only screen and (min-width: 88rem) {
-  .homeInfo {
-    top: 82%;
-  }
-}
-@media only screen and (min-width: 97rem) {
-  .homeInfo {
-    top: 87%;
-  }
-  .homePic {
-    margin-top: 3%;
-  }
 }

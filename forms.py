@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms.validators import InputRequired, Length, EqualTo, Email, DataRequired
-from wtforms import Form, StringField, SelectField, TextAreaField, PasswordField, IntegerField, SubmitField, DateField, validators
-
+from wtforms.validators import InputRequired, Length, EqualTo, Email, DataRequired, Optional
+from wtforms import Form, StringField, SelectField, TextAreaField, PasswordField, IntegerField, SubmitField, DateField, FileField, validators
+from wtforms.fields.html5 import EmailField
 
 class LoginForm(FlaskForm):
     username = StringField([validators.Length(min=1, max=30)], render_kw={"placeholder": "Username"})
@@ -61,20 +61,21 @@ class SignupForm(FlaskForm):
 class EditProfileForm(FlaskForm):
     firstName = StringField('First Name:', [validators.Length(min=1, max=30)], render_kw={"placeholder": "First Name"})
     lastName = StringField('Last Name:', [validators.Length(min=1, max=30)], render_kw={"placeholder": "Last Name"})
-    email = StringField('Email:', [validators.Email()], render_kw={"placeholder": "Email"})
-    password = PasswordField([validators.InputRequired()], render_kw={"placeholder": "Password"})
+    email = EmailField('Email:', [validators.Email()], render_kw={"placeholder": "Email"})
+    password2 = PasswordField([validators.InputRequired()], render_kw={"placeholder": "Password"})
     submit = SubmitField('Submit')
 
 class GroupForm(FlaskForm):
     groupName = StringField('Group Name:', [validators.Length(min=2, max=30, message=("Group name must be between 2 and 30 characters"))], render_kw={"placeholder": "Group Name"})
     location = StringField('Location', [validators.Length(min=2, max=35, message=("Location must be between 2 and  35 characters"))], render_kw={"placeholder": "Location"})
-    startDate = StringField('Start date:', render_kw={"placeholder": "Start date"})
-    endDate = StringField('End date:', render_kw={"placeholder": "End date"})
+    startDate = DateField('Start date:', render_kw={"placeholder": "Start date"})
+    endDate = DateField('End date:', render_kw={"placeholder": "End date"})
     password = PasswordField('Password:', [
     validators.InputRequired(),
     validators.EqualTo('confirm', message='Passwords do not match.')], render_kw={"placeholder": "Password"})
     confirm = PasswordField('Confirm Password:', render_kw={"placeholder": "Confirm password"})
     description = TextAreaField('Description/Message:', [validators.Length(min=10, max=500)], render_kw={"placeholder": "Description/Message"})
+    # image = FileField('Image(Optional)', [validators.Optional()], render_kw={'placeholder': 'Image(Optional)'})
     submit = SubmitField('Submit')
 
 class DeleteProfileForm(FlaskForm):
@@ -114,13 +115,12 @@ class ActivityPinForm(FlaskForm):
     description = TextAreaField('Description', [validators.Length(min=4)], render_kw={"placeholder": "Description"})
     price = IntegerField('Price:', [validators.NumberRange(min=0, max=10000)], render_kw={"placeholder": "Price"})
     link = StringField('Link', [validators.Length(min=6, max=500)], render_kw={"placeholder": "Link"})
-    type = SelectField('Type', choices=[('Indoor', 'Indoor'), ('Outdoor', 'Outdoor')])
+    type = SelectField('Type', choices=[('Indoor', 'Indoor'), ('Outdoor', 'Outdoor')], render_kw={'placeholder': 'Type'})
     submit4 = SubmitField('Submit')
 
 class TransportationPinForm(FlaskForm):
     name = StringField('Name',[validators.Length(min=3, max=45)], render_kw={"placeholder": "Name"})
     price3 = IntegerField('Description',[validators.NumberRange(min=0, max= 1000000)], render_kw={"placeholder": "Price"})
-    date = StringField('Date', render_kw={"placeholder": "Date"})
     link3 = StringField('Link', [validators.Length(min=5, max=500)], render_kw={"placeholder": "Link"})
     description3 = TextAreaField('Description',[validators.Length(min=10, max=500)], render_kw={"placeholder": "Description"})
     type = SelectField("Type", choices=[('Flight', 'Flight'), ('Train', 'Train'), ('Bus', 'Bus'), ('Rental Car', 'Rental Car'), ('Other', 'Other')])
@@ -138,7 +138,6 @@ class EditGroupForm(FlaskForm):
 
 class DeleteGroupForm(FlaskForm):
     passwordUser = PasswordField([validators.InputRequired()], render_kw={'placeholder': 'User Password'})
-    passwordGroup = PasswordField([validators.InputRequired()], render_kw={'placeholder': 'Group Password'})
     yes = SubmitField('Yes')
 
 class JoinGroupForm(FlaskForm):
@@ -147,7 +146,7 @@ class JoinGroupForm(FlaskForm):
     submit = SubmitField()
 
 class JoinGroupRequestForm(FlaskForm):
-    name = StringField([validators.Length(min=2, max=35)], render_kw={"placeholder": "Group Name"})
+    name2 = StringField([validators.Length(min=2, max=35)], render_kw={"placeholder": "Group Name"})
     messageJoin = StringField([validators.Length(min=15, max=255)], render_kw={"placeholder": "Message"})
     submit2 = SubmitField('Submit')
 
@@ -181,3 +180,14 @@ class CalendarEventForm(FlaskForm):
     dayNoteDate = StringField()
     name = StringField('Event Name',[validators.Length(min=3, max=30)], render_kw={'placeholder': 'Event Name'})
     inputTime = StringField()
+class BudgetForm(FlaskForm):
+    budget = IntegerField([validators.NumberRange(min=10)], render_kw={'placeholder': 'My Trip Budget'})
+    submit5 = SubmitField('Submit')
+
+class ExpenseForm(FlaskForm):
+    name = StringField([validators.Length(min=1, message="The expense name must be at least 2 characters long.")], render_kw={'placeholder': 'Expense Name'})
+    cost = IntegerField([validators.NumberRange(min=1)], render_kw={'placeholder': 'Price'})
+    payments = IntegerField([validators.NumberRange(min=1)], render_kw={'placeholder': '# of Payments'})
+    splits = IntegerField([validators.NumberRange(min=1)], render_kw={'placeholder': '# People to Split'})
+    type = SelectField('Type', choices=[('Rental', 'Rental'), ('Food/Drink', 'Food/Drink'), ('Transportation', 'Transportation'), ('Activity', 'Activity')])
+    submit6 = SubmitField('Calculate')

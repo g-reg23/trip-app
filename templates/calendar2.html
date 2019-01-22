@@ -1,0 +1,2163 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  <div class='fullCalDiv'>
+    <div class="calInfo">
+      <h5 class="calStart">{{ fullStartDate }}</h5>
+      <h5 class="calEnd">{{ fullEndDate }}</h5>
+      <p class='calUser'>{{ current_user.username}}</p>
+    </div>
+    <p>&nbsp;</p>
+    {% for note in listNotes %}
+      <div class='listName' style='display: none'>{{ note.name }}</div>
+      <div class='listDate' style='display: none'>{{ note.date }}</div>
+      <div class='listUserName' style='display: none'>{{ note.username }}</div>
+      <div class='listLength' style='display: none'>{{ note.event_length }}</div>
+      <div class='listTime' style='display: none'>{{ note.time }}</div>
+    {% endfor %}
+    <div id="show_calendar" class='calendarClass'>&nbsp;</div>
+    <div class='hiddenMonth' style='display: none;'></div>
+    <div class="buttonDiv">
+      <a class='groupButton monthView' href='#' style='width:15%; display:inline-block;' margin-left:7%;>Month View</a>
+      <a class='groupButton weekView' style='width:15%; display:inline-block;' href='#'>Week View</a>
+      <div class="noteFlash">
+</div>
+    </div>
+    <button class='sign-logSubmit prevButton'>Prev</button>
+    <button class='sign-logSubmit nextButton'>Next</button>
+    <form class='monthForm'>
+      <select onchange='month_picker()' class='monthSelect' id='month_items'>
+        <!-- <option value="0">January</option>
+        <option value="1">February</option>
+        <option value="2">March</option>
+        <option value="3">April</option>
+        <option value="4">May</option>
+        <option value="5">June</option>
+        <option value="6">July</option>
+        <option value="7">August</option>
+        <option value="8">September</option>
+        <option value="9">October</option>
+        <option value="10">November</option>
+        <option value="11">Decembers</option> -->
+      </select>
+    </form>
+    <select onchange='year_picker()' class='yearSelect'>
+      <option value="2018">2018</option>
+      <option value="2019">2019</option>
+      <option value="2020">2020</option>
+      <option value="2021">2021</option>
+      <option value="2022">2022</option>
+      <option value="2023">2023</option>
+      <option value="2024">2024</option>
+      <option value="2025">2025</option>
+      <option value="2026">2026</option>
+      <option value="2027">2027</option>
+      <option value="2028">2028</option>
+      <option value="2029">2029</option>
+    </select>
+    <!-- <div class='groupButton' style='width:15%; display:inline-block;'>Day View</div> -->
+
+    <div class='dayDiv'>
+      <table class='dayTable' border="0" cellpadding="5" cellspacing="0">
+      <tr id='0000'>
+        <th height='75' width='75' class='dayCalRow' style='float:left; display:inline-block;'>12:00 AM</th>
+        <td height='75' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='0'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='0030'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>12:30 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='1'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='0100'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>1:00 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='2'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='0130'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>1:30 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='3'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='0200'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>2:00 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='4'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='0230'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>2:30 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='5'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='0300'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>3:00 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='6'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='0330'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>3:30 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='7'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='0400'>
+        <th height='75' class='dayCalRow' width='75' style='float:left ;display:inline-block;'>4:00 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='8'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='0430'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>4:30 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='9'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='0500'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>5:00 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='10'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='0530'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>5:30 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='11'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='0600'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>6:00 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='12'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='0630'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>6:30 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='13'>Add Event</button>
+        </td>
+        <!-- <td height='100' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='0700'>
+        <th height='75' class='dayCalRow' width='75' id='startTime' style='float:left; display:inline-block;'>7:00 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='14'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='0730'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>7:30 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='15'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='0800'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>8:00 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='16'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='0830'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>8:30 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='17'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='0900'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>9:00 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='18'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='0930'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>9:30 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='19'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='1000'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>10:00 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='20'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='1030'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>10:30 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='21'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='1100'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>11:00 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='22'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='1130'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>11:30 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='23'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='1200'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>12:00 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='24'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='1230'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>12:30 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='25'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='1300'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>1:00 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='26'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='1330'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>1:30 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='27'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='1400'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>2:00 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='28'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='1430'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>2:30 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='29'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='1500'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>3:00 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='30'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='1530'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>3:30 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='31'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='1600'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>4:00 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='32'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='1630'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>4:30 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='33'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='1700'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>5:00 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='34'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='1730'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>5:30 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='35'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='1800'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>6:00 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='36'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='1830'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>6:30 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='37'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='1900'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>7:00 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='38'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='1930'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>7:30 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='39'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='2000'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>8:00 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='40'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='2030'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>8:30 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='41'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='2100'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>9:00 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='42'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='2130'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>9:30 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='43'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='2200'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>10:00 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='44'>Add Event</button>
+        </td>
+
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='2230'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>10:30 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='45'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='2300'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>11:00 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='46'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      <tr id='2330'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>11:30 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='47'>Add Event</button>
+        </td>
+        <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
+      </tr>
+      </table>
+    </div>
+    <div class='weekDiv'>
+      <span class='weekMonthTitle'></span>
+      <button class='sign-logSubmit prevWeekButton'>Prev</button>
+      <button class='sign-logSubmit nextWeekButton'>Next</button>
+        <table class='weekTableH' border="1" cellpadding="5" cellspacing="1" style='table-layout: fixed;'>
+            <tr class='stickyHeader'>
+              <th class='weekHead weekTableHour'>Week</th>
+              <th class='weekHead weekHeadTitle'><span class='titleSpan'>SUN</span></th>
+              <th class='weekHead weekHeadTitle'><span class='titleSpan'>MON</span></th>
+              <th class='weekHead weekHeadTitle'><span class='titleSpan'>TUES</span></th>
+              <th class='weekHead weekHeadTitle'><span class='titleSpan'>WED</span></th>
+              <th class='weekHead weekHeadTitle'><span class='titleSpan'>THURS</span></th>
+              <th class='weekHead weekHeadTitle'><span class='titleSpan'>FRI</span></th>
+              <th class='weekHead weekHeadTitle'><span class='titleSpan'>SAT</span></th>
+            </tr>
+        </table>
+        <table class='weekTable' border="1" cellpadding="5" cellspacing="1" style='table-layout: fixed;'>
+            <tr class='0000'>
+              <td class='weekCell weekTableHour'>12:00 AM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='0030'>
+              <td class='weekCell weekTableHour'>12:30 AM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='0100'>
+              <td class='weekCell weekTableHour'>1:00 AM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='0130'>
+              <td class='weekCell weekTableHour'>1:30 AM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='0200'>
+              <td class='weekCell weekTableHour'>2:00 AM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='0230'>
+              <td class='weekCell weekTableHour'>2:30 AM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='0300'>
+              <td class='weekCell weekTableHour'>3:00 AM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='0330'>
+              <td class='weekCell weekTableHour'>3:30 AM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='0400'>
+              <td class='weekCell weekTableHour'>4:00 AM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='0430'>
+              <td class='weekCell weekTableHour'>4:30 AM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='0500'>
+              <td class='weekCell weekTableHour'>5:00 AM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='0530'>
+              <td class='weekCell weekTableHour'>5:30 AM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='0600'>
+              <td class='weekCell weekTableHour'>6:00 AM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='0630'>
+              <td class='weekCell weekTableHour'>6:30 AM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='0700'>
+              <td class='weekCell weekTableHour'>7:00 AM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='730'>
+              <td class='weekCell weekTableHour'>7:30 AM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='0800'>
+              <td class='weekCell weekTableHour'>8:00 AM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='830'>
+              <td class='weekCell weekTableHour'>8:30 AM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='0900'>
+              <td class='weekCell weekTableHour'>9:00 AM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='0930'>
+              <td class='weekCell weekTableHour'>9:30 AM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='1000'>
+              <td class='weekCell weekTableHour'>10:00 AM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='1030'>
+              <td class='weekCell weekTableHour'>10:30 AM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='1100'>
+              <td class='weekCell weekTableHour'>11:00 AM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='1130'>
+              <td class='weekCell weekTableHour'>11:30 AM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='1200'>
+              <td class='weekCell weekTableHour'>12:00 PM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='1230'>
+              <td class='weekCell weekTableHour'>12:30 PM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='1300'>
+              <td class='weekCell weekTableHour'>1:00 PM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='1330'>
+              <td class='weekCell weekTableHour'>11:30 PM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='1400'>
+              <td class='weekCell weekTableHour'>2:00 PM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='1430'>
+              <td class='weekCell weekTableHour'>2:30 PM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='1500'>
+              <td class='weekCell weekTableHour'>3:00 PM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='1530'>
+              <td class='weekCell weekTableHour'>3:30 PM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='1600'>
+              <td class='weekCell weekTableHour'>4:00 PM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='1630'>
+              <td class='weekCell weekTableHour'>4:30 PM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='1700'>
+              <td class='weekCell weekTableHour'>5:00 PM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='1730'>
+              <td class='weekCell weekTableHour'>5:30 PM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='1800'>
+              <td class='weekCell weekTableHour'>6:00 PM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='1830'>
+              <td class='weekCell weekTableHour'>6:00 PM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='1900'>
+              <td class='weekCell weekTableHour'>7:00 PM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='1930'>
+              <td class='weekCell weekTableHour'>7:30 PM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='2000'>
+              <td class='weekCell weekTableHour'>8:00 PM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='2030'>
+              <td class='weekCell weekTableHour'>8:30 PM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='2100'>
+              <td class='weekCell weekTableHour'>9:00 PM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='2130'>
+              <td class='weekCell weekTableHour'>9:30 PM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='2200'>
+              <td class='weekCell weekTableHour'>10:00 PM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='2230'>
+              <td class='weekCell weekTableHour'>10:30 PM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='2300'>
+              <td class='weekCell weekTableHour'>11:00 PM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+            <tr class='2330'>
+              <td class='weekCell weekTableHour'>11:30 PM</td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+              <td class='weekCell weekText'></td>
+            </tr>
+        </table>
+    </div>
+    <div class="modal">
+      <form method='POST' class="noteForm" name='modalForm'>
+        <input class='dayNoteDate' name='dayNoteDate' value='dayNoteDate' type='text' readonly>
+        <span class='calModalTitle'>Add Day Note</span>
+        <div>{{ eventForm.hidden_tag() }}</div>
+        <div>
+          {{ eventForm.name(class='calNoteName') }}
+        </div>
+        {% for message in eventForm.name.errors %}
+          <div class='formError'>  {{ message }} </div>
+        {% endfor %}
+        <select class='sign-logInput noteTime' value='inputTime' name='inputTime' type='time' style='display:block'>
+          <option value='00:00:00'>12:00 AM</option>
+          <option value='00:30:00'>12:30 AM</option>
+          <option value='01:00:00'>1:00 AM</option>
+          <option value='01:30:00'>1:30 AM</option>
+          <option value='02:00:00'>2:00 AM</option>
+          <option value='02:30:00'>2:30 AM</option>
+          <option value='03:00:00'>3:00 AM</option>
+          <option value='03:30:00'>3:30 AM</option>
+          <option value='04:00:00'>4:00 AM</option>
+          <option value='04:30:00'>4:30 AM</option>
+          <option value='05:00:00'>5:00 AM</option>
+          <option value='05:30:00'>5:30 AM</option>
+          <option value='06:00:00'>6:00 AM</option>
+          <option value='06:30:00'>6:30 AM</option>
+          <option value='07:00:00'>7:00 AM</option>
+          <option value='07:30:00'>7:30 AM</option>
+          <option value='08:00:00'>8:00 AM</option>
+          <option value='08:30:00'>8:30 AM</option>
+          <option value='09:00:00'>9:00 AM</option>
+          <option value='09:30:00'>9:30 AM</option>
+          <option value='10:00:00' selected>10:00 AM</option>
+          <option value='10:30:00'>10:30 AM</option>
+          <option value='11:00:00'>11:00 AM</option>
+          <option value='11:30:00'>11:30 AM</option>
+          <option value='12:00:00'>12:00 PM</option>
+          <option value='12:30:00'>12:30 PM</option>
+          <option value='13:00:00'>1:00 PM</option>
+          <option value='13:30:00'>1:30 PM</option>
+          <option value='14:00:00'>2:00 PM</option>
+          <option value='14:30:00'>2:30 PM</option>
+          <option value='15:00:00'>3:00 PM</option>
+          <option value='15:30:00'>3:30 PM</option>
+          <option value='16:00:00'>4:00 PM</option>
+          <option value='16:30:00'>4:30 PM</option>
+          <option value='17:00:00'>5:00 PM</option>
+          <option value='17::30:00'>5:30 PM</option>
+          <option value='18:00:00'>6:00 PM</option>
+          <option value='18:30:00'>6:30 PM</option>
+          <option value='19:00:00'>7:00 PM</option>
+          <option value='19:30:00'>7:30 PM</option>
+          <option value='20:00:00'>8:00 PM</option>
+          <option value='20:30:00'>8:30 PM</option>
+          <option value='21:00:00'>9:00 PM</option>
+          <option value='21:30:00'>9:30 PM</option>
+          <option value='22:00:00'>10:00 PM</option>
+          <option value='22:30:00'>10:30 PM</option>
+          <option value='23:00:00'>11:00 PM</option>
+          <option value='23:30:00'>11:30 PM</option>
+        </select>
+        <select class='sign-logInput noteLength' value='inputLength' name='inputLength' type='time' style='display:block;'>
+          <option value='1 hour'>Short(1 hour or less)</option>
+          <option value='3 hours'>Medium(3 hours or less)</option>
+          <option value='6 hours'>Long(6 hours or less )</option>
+          <option value='Rest of the Day'>All Day</option>
+        </select>
+        <button class='sign-logSubmit submitNote'>Submit</button>
+        <button class='sign-logSubmit cancelNote'>Cancel</button>
+      </form>
+    </div>
+    <div class="editNoteModal">
+      <form method='POST' class="noteForm" name='modalForm'>
+        <span class='dayNoteEditDate dayNoteDate'></span>
+        <span class='dayNoteEditName'></span>
+        <span class='calModalTitle'>Edit This Note</span>
+        <div>{{ eventForm.hidden_tag() }}</div>
+        <div>
+          {{ eventForm.name(class='calNoteName') }}
+        </div>
+        {% for message in eventForm.name.errors %}
+          <div class='formError'>  {{ message }} </div>
+        {% endfor %}
+        <select class='sign-logInput noteTime' value='inputTime' name='inputTime' type='time' style='display:block'>
+          <option value='00:00:00'>12:00 AM</option>
+          <option value='00:30:00'>12:30 AM</option>
+          <option value='01:00:00'>1:00 AM</option>
+          <option value='01:30:00'>1:30 AM</option>
+          <option value='02:00:00'>2:00 AM</option>
+          <option value='02:30:00'>2:30 AM</option>
+          <option value='03:00:00'>3:00 AM</option>
+          <option value='03:30:00'>3:30 AM</option>
+          <option value='04:00:00'>4:00 AM</option>
+          <option value='04:30:00'>4:30 AM</option>
+          <option value='05:00:00'>5:00 AM</option>
+          <option value='05:30:00'>5:30 AM</option>
+          <option value='06:00:00'>6:00 AM</option>
+          <option value='06:30:00'>6:30 AM</option>
+          <option value='07:00:00'>7:00 AM</option>
+          <option value='07:30:00'>7:30 AM</option>
+          <option value='08:00:00'>8:00 AM</option>
+          <option value='08:30:00'>8:30 AM</option>
+          <option value='09:00:00'>9:00 AM</option>
+          <option value='09:30:00'>9:30 AM</option>
+          <option value='10:00:00' selected>10:00 AM</option>
+          <option value='10:30:00'>10:30 AM</option>
+          <option value='11:00:00'>11:00 AM</option>
+          <option value='11:30:00'>11:30 AM</option>
+          <option value='12:00:00'>12:00 PM</option>
+          <option value='12:30:00'>12:30 PM</option>
+          <option value='13:00:00'>1:00 PM</option>
+          <option value='13:30:00'>1:30 PM</option>
+          <option value='14:00:00'>2:00 PM</option>
+          <option value='14:30:00'>2:30 PM</option>
+          <option value='15:00:00'>3:00 PM</option>
+          <option value='15:30:00'>3:30 PM</option>
+          <option value='16:00:00'>4:00 PM</option>
+          <option value='16:30:00'>4:30 PM</option>
+          <option value='17:00:00'>5:00 PM</option>
+          <option value='17::30:00'>5:30 PM</option>
+          <option value='18:00:00'>6:00 PM</option>
+          <option value='18:30:00'>6:30 PM</option>
+          <option value='19:00:00'>7:00 PM</option>
+          <option value='19:30:00'>7:30 PM</option>
+          <option value='20:00:00'>8:00 PM</option>
+          <option value='20:30:00'>8:30 PM</option>
+          <option value='21:00:00'>9:00 PM</option>
+          <option value='21:30:00'>9:30 PM</option>
+          <option value='22:00:00'>10:00 PM</option>
+          <option value='22:30:00'>10:30 PM</option>
+          <option value='23:00:00'>11:00 PM</option>
+          <option value='23:30:00'>11:30 PM</option>
+        </select>
+        <select class='sign-logInput noteLength' value='inputLength' name='inputLength' type='time' style='display:block;'>
+          <option value='1 hour'>Short(1 hour or less)</option>
+          <option value='3 hours'>Medium(3 hours or less)</option>
+          <option value='6 hours'>Long(6 hours or less )</option>
+          <option value='Rest of the Day'>All Day</option>
+        </select>
+        <button class='sign-logSubmit submitEditNote'>Submit</button>
+        <button class='sign-logSubmit cancelEditNote'>Cancel</button>
+      </form>
+    </div>
+    <div class="noteModal">
+      <h4 class='noteNameModal'></h4>
+      <h6 class='noteDateModal'></h6>
+      <p class='noteTimeModal'></p>
+      <div><p class='noteLengthModal'></p><p class='noteCreatorModal'></p></div>
+      <button class='sign-logSubmit editNote'>Edit</button>
+      <button class='sign-logSubmit closeNote'>Close</button>
+    </div>
+  </div>
+  <script src="{{url_for('static', filename = 'app.js')}}"></script>
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+    <!-- <script src="{{url_for('static', filename = 'calendar.js')}}"></script> -->
+  <script type="text/javascript" charset="utf-8">
+    {
+        function CalApp() {
+          this.socket = io.connect('http://' + document.domain + ':' + location.port + '/calendar');
+          this.user = '{{ current_user.username }}';
+          this.page = document.querySelector('.fullCalDiv');
+          this.startDate = document.querySelector('.calStart');
+          this.endDate = document.querySelector('.calEnd');
+          this.firstDayTrip = new Date(this.startDate.textContent + ', 12:00:00').getDate();
+          this.lastDayTrip = new Date(this.endDate.textContent + ', 12:00:00').getDate();
+          // this.firstDayString = new Date(this.startDate.textContent + ', 12:00:00').toDateString();
+          // this.lastDayString = new Date(this.endDate.textContent + ).toDateString();
+          this.yearTripStart = new Date(this.startDate.textContent).getFullYear;
+          this.prevButton = document.querySelector('.prevButton');
+          this.nextButton = document.querySelector('.nextButton');
+          this.calendarClass = document.querySelector('.calendarClass');
+          this.calendar = document.querySelector('.calendar');
+          this.dayDiv = document.querySelector('.dayDiv');
+          this.dayTable = this.dayDiv.querySelector('.dayTable')
+          this.weekDiv = document.querySelector('.weekDiv');
+          this.modal = document.querySelector('.modal');
+          this.editModal = document.querySelector('.editNoteModal');
+          this.monthSelect = document.querySelector('.monthSelect');
+          this.yearSelected = document.querySelector('.yearSelect');
+          this.names = document.querySelectorAll('.listName');
+          this.dates = document.querySelectorAll('.listDate');
+          this.usernames = document.querySelectorAll('.listUserName');
+          this.lengths = document.querySelectorAll('.listLength');
+          this.times = document.querySelectorAll('.listTime');
+          this.noteIndex = 0;
+
+          this.Note = function(date, name, user, length, time) {
+            this.name = name;
+            this.date = date;
+            this.user = user;
+            this.length = length;
+            this.time = time;
+          }
+          this.notes = [];
+          // this.dates.forEach(function(date, index) {
+          //   this.note = new this.Note(new Date(date.textContent), this.names[index].textContent, this.usernames[index].textContent, this.lengths[index].textContent);
+          //   this.notes.push(note);
+          // })
+        // Today is first day of trip
+          console.log(this.startDate.textContent)
+          this.today = new Date(this.startDate.textContent + ' 12:00:00');
+          this.lastDay = new Date(this.endDate.textContent + ' 12:00:00');
+          //firstMonth is the month that contains first day of trip, month is the global that
+          // defines the current month being displayed
+          this.firstMonth = this.today.getMonth();
+          this.firstDate = this.today.getDate();
+          this.lastMonth = this.lastDay.getMonth();
+          this.month = this.today.getMonth();
+          this.year = this.today.getFullYear();
+          this.weekMonthTitle = document.querySelector('.weekMonthTitle');
+          this.days = document.querySelectorAll('.weekHeadTitle');
+          this.noteMod = document.querySelector('.noteModal');
+          this.noteModName = document.querySelector('.noteNameModal');
+          this.noteModTime = document.querySelector('.noteTimeModal');
+          this.noteModLength = document.querySelector('.noteLengthModal');
+          this.noteModDate = document.querySelector('.noteDateModal');
+          this.noteModCreator = document.querySelector('.noteCreatorModal');
+          this.weekFirstDay = 0;
+          this.weekLastDay = 0;
+          this.daysInMonth = 0;
+        }
+        Date.prototype.getMonths = function() {
+          return [ 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December' ];
+        }
+
+        Date.prototype.getDays = function() {
+            return new Date( this.getFullYear(), this.getMonth() + 1, 0 ).getDate();
+        }
+
+        CalApp.prototype.getNotes = function() {
+          app.dates.forEach(function(date, index) {
+            app.note = new app.Note(new Date(date.textContent), app.names[index].textContent, app.usernames[index].textContent, app.lengths[index].textContent, app.times[index].textContent);
+            app.notes.push(app.note);
+          })
+          return app.notes;
+        }
+        // Add Event Listeners
+        CalApp.prototype.loadEventListeners = function() {
+          // let that = this;
+          // let events = ['touchend', 'click'];
+          this.calendarClass.addEventListener('click', dayNote);
+          document.querySelector('.closeNote').addEventListener('click', clearNoteModal)
+          this.calendarClass.addEventListener('click', viewIndNote);
+          this.nextButton.addEventListener('click', nextMonth);
+          this.nextButton.addEventListener('touch', nextMonth);
+          this.prevButton.addEventListener('click', prevMonth);
+          // this.prevButton.addEventListener('click', prevMonth);
+          document.querySelector('.monthView').addEventListener('click', monthViewFunc);
+          document.querySelector('.weekView').addEventListener('click', weekViewFunc);
+          this.calendarClass.addEventListener('click', addNote);
+          this.calendarClass.addEventListener('click', moreButton);
+          document.querySelector('.dayTable').addEventListener('click', addADayNote);
+          document.querySelector('.submitNote').addEventListener('click', submitANote);
+          document.querySelector('.cancelNote').addEventListener('click', cancelANote);
+          document.querySelector('.nextWeekButton').addEventListener('click', nextWeek);
+          document.querySelector('.prevWeekButton').addEventListener('click', prevWeek);
+          this.noteMod.querySelector('.editNote').addEventListener('click', editANote);
+          this.editModal.querySelector('.cancelEditNote').addEventListener('click', cancelEditNote);
+          this.editModal.querySelector('.submitEditNote').addEventListener('click', submitEditNote);
+          this.dayTable.addEventListener('click', dayViewNote);
+          this.weekDiv.querySelector('.weekTable').addEventListener('click', weekNoteView);
+        }
+
+
+
+        var app = new CalApp();
+        app.notes = app.getNotes();
+        app.loadEventListeners();
+        console.log(app.notes)
+        // console.log('hi')
+        // console.log(app.firstDayString);
+
+        Date.prototype.calendar = function() {
+            let numOfDays = this.getDays();
+            let startDay = new Date(this.getFullYear(), this.getMonth(), 1).getDay();
+            let thisYear = this.getFullYear();
+            let thisMonth = this.getMonths()[this.getMonth()];
+            let calendarTable = document.createElement('table');
+            calendarTable.className = 'calendar';
+            let calSpan = document.createElement('span')
+            calSpan.className = 'calTitle';
+            calSpan.textContent = thisMonth + '  ' + thisYear;
+            console.log(app.firstDayTrip)
+            document.querySelector('.hiddenMonth').textContent = thisMonth + '  ' + thisYear;
+            calendarTable.appendChild(calSpan);
+            let calDayRow = document.createElement('tr');
+            calDayRow.className = 'dayRow';
+            let calSun = document.createElement('td');
+            let sunTitle = document.createElement('span');
+            sunTitle.textContent = 'SUN'
+            sunTitle.className = 'dayRowTitle';
+            calSun.appendChild(sunTitle);
+            calDayRow.appendChild(calSun)
+            let calMon = document.createElement('td');
+            let monTitle = document.createElement('span');
+            monTitle.textContent = 'MON';
+            monTitle.className = 'dayRowTitle';
+            calMon.appendChild(monTitle);
+            calDayRow.appendChild(calMon)
+            let calTues = document.createElement('td');
+            let tuesTitle = document.createElement('span');
+            tuesTitle.textContent = 'TUE'
+            tuesTitle.className = 'dayRowTitle';
+            calTues.appendChild(tuesTitle);
+            calDayRow.appendChild(calTues);
+            let calWed = document.createElement('td');
+            let wedTitle = document.createElement('span');
+            wedTitle.textContent = 'WED';
+            wedTitle.className = 'dayRowTitle';
+            calWed.appendChild(wedTitle);
+            calDayRow.appendChild(calWed);
+            let calThurs = document.createElement('td');
+            let thursTitle = document.createElement('span');
+            thursTitle.textContent = 'THU';
+            thursTitle.className = 'dayRowTitle';
+            calThurs.appendChild(thursTitle);
+            calDayRow.appendChild(calThurs);
+            let calFri = document.createElement('td');
+            let friTitle = document.createElement('span');
+            friTitle.textContent = 'FRI'
+            friTitle.className = 'dayRowTitle';
+            calFri.appendChild(friTitle);
+            calDayRow.appendChild(calFri);
+            let calSat = document.createElement('td');
+            let satTitle = document.createElement('span');
+            satTitle.textContent = 'SAT'
+            satTitle.className = 'dayRowTitle';
+            calSat.appendChild(satTitle);
+            calDayRow.appendChild(calSat);
+            calendarTable.appendChild(calDayRow);
+            // For loop to figure out how many weeks in tbis month
+            let weekCounter = 0;
+            let daycounter = 0;
+            let blankCounter = 0;
+            for (i=0;i<6;i++) {
+              	for(j=0;j<7;j++){
+                  	if (i==0 && blankCounter < startDay) {
+                      	blankCounter += 1;
+                      }else {
+              			daycounter += 1;
+                      }
+                  }
+              	weekCounter += 1;
+              	if (daycounter >= numOfDays) {
+              		break;
+                  }
+              }
+
+            let counter = 0;
+            let usernames = document.querySelectorAll('.listUserName')
+            for (let i=0;i<weekCounter;i++) {
+                let row = document.createElement('tr');
+                for (let j=0;j<7;j++) {
+                    let day = document.createElement('td');
+                    let fragment = document.createDocumentFragment();
+                    if (counter>=numOfDays) {
+                        day.textContent = '';
+                        day.className = 'blankDay';
+                    }else if (i===4 && counter>=numOfDays){
+                        day.textContent = '';
+                        day.className = 'blankDay';
+                    }else if (i>0 || j>=startDay) {
+                        counter++;
+                        let span = document.createElement('span');
+                        span.textContent = counter
+                        span.classList = 'daySpan';
+                        day.appendChild(span);
+                        day.className = 'calDay';
+                        let button = document.createElement('button');
+                        button.textContent = 'Add Event';
+                        button.classList = 'sign-logSubmit monthNoteButton';
+
+                        day.appendChild(button);
+                    }else if (i>4 && counter>numOfDays){
+                        day.textContent = '';
+                        day.className = 'blankDay';
+                    }else{
+                        day.textContent = '';
+                        day.className = 'blankDay';
+                    }
+                    row.appendChild(day);
+                }
+                calendarTable.appendChild(row);
+            }
+            app.calendarClass.appendChild(calendarTable);
+            app.loadMonthNotes();
+        }
+        // let app = new CalApp();
+        window.onload = function() {
+            app.yearSelected.value = app.today.getFullYear();
+            document.querySelector('.calNoteName').value = '';
+            app.dayDiv.style.display = 'none'
+            let fragment = document.createDocumentFragment();
+            let option;
+            for ( var x = 0; x < app.today.getMonths().length; x++ ) {
+                option = document.createElement('OPTION');
+                option.value = app.today.getMonths()[x] + ' 1, ' + app.today.getFullYear();
+                option.textContent = app.today.getMonths()[x];
+                fragment.appendChild(option);
+            }
+            app.today.calendar();
+            app.monthSelect.appendChild(fragment);
+            app.monthSelect.selectedIndex = app.month;
+        }
+        CalApp.prototype.loadDayNotes = function(date) {
+          let dayNotes = app.dayTable.querySelectorAll('dayViewText');
+          console.log(dayNotes);
+          app.notes.forEach(function(note, index) {
+            if (note.date.getDate() === date.getDate() && note.date.getMonth() === date.getMonth() && note.date.getFullYear() === date.getFullYear()) {
+              let hours = note.date.getHours()
+              let stringHours
+              if (hours < 10) {
+                stringHours = '0' + hours.toString()
+              }else {
+                stringHours = hours.toString();
+              }
+              let minutes = note.date.getMinutes();
+              let stringMinutes;
+              if (minutes < 10) {
+                stringMinutes = '0' + minutes.toString();
+              }else {
+                stringMinutes = minutes.toString();
+              }
+              let time = stringHours + stringMinutes;
+              console.log(typeof hours);
+              let timeSlot = document.getElementById(time);
+              let textArea = timeSlot.querySelector('.dayCalTextArea');
+              textArea.style.background = 'black';
+              let div = document.createElement('a');
+              div.href = '#';
+              let node = document.createTextNode(note.name + ': (' + note.length + ')');
+              var br = document.createElement("br");
+              div.appendChild(node);
+              div.appendChild(br);
+              let newNode = document.createTextNode('Posted by: ' + note.user);
+              div.appendChild(newNode)
+              let counter;
+              switch (note.length) {
+                case '1 hour':
+                  counter = 1;
+                  break;
+                case '3 hours':
+                  counter = 5;
+                  break;
+                case '6 hours':
+                  counter = 11;
+                  break;
+                default:
+                  counter = 48;
+              }
+
+              let newSlot = timeSlot.nextElementSibling;
+              // let textArea;
+              for (i=0;i<counter;i++) {
+                if (newSlot === null) {
+                  break;
+                }
+                let textArea = newSlot.querySelector('.dayCalTextArea')
+                textArea.style.background = 'black';
+                let div = document.createElement('a');
+                div.href = '#';
+                let node = document.createTextNode(note.name);
+                div.appendChild(node);
+                textArea.appendChild(div);
+                div.className = 'dayViewText'
+                newSlot = newSlot.nextElementSibling;
+              }
+              div.className = 'dayViewText'
+              textArea.appendChild(div);
+              timeSlot.scrollIntoView()
+            }
+          })
+        }
+
+        CalApp.prototype.loadWeekNotes = function(dates) {
+          let dayNotes = [];
+          let textArea = document.querySelectorAll('.weekText');
+          let timeSlot;
+          let slots;
+          textArea.forEach(function(cell) {
+            while (cell.firstChild) {
+              cell.removeChild(cell.firstChild);
+
+            }
+          })
+          dates.forEach(function(date, index) {
+            app.notes.forEach(function(note) {
+              if (date.getDate() === note.date.getDate() && note.date.getMonth() === date.getMonth() && note.date.getFullYear() === date.getFullYear()) {
+                dayNotes.push(note)
+              }
+            })
+            if (dayNotes.length > 0) {
+              dayNotes.forEach(function(dnote) {
+                // let time = dnote.date.getHours().toString() + dnote.date.getMinutes().toString();
+                let hours = dnote.date.getHours()
+                let stringHours
+                if (hours < 10) {
+                  stringHours = '0' + hours.toString()
+                }else {
+                  stringHours = hours.toString();
+                }
+                let minutes = dnote.date.getMinutes();
+                let stringMinutes;
+                if (minutes < 10) {
+                  stringMinutes = '0' + minutes.toString();
+                }else {
+                  stringMinutes = minutes.toString();
+                }
+                let time = stringHours + stringMinutes;
+                timeSlot = document.getElementsByClassName(time);
+                slots = timeSlot[0].querySelectorAll('.weekText');
+                let div = document.createElement('a');
+                div.href = '#'
+                let node = document.createTextNode(dnote.name + ': ' + dnote.length);
+                div.appendChild(node);
+                slots[index].appendChild(div);
+                div.className = 'weekTextDiv';
+                // timeSlot[0].scrollIntoView();
+              })
+            }
+            dayNotes = [];
+          })
+        }
+
+        CalApp.prototype.loadMonthNotes = function() {
+          let arr = [];
+          let nameArr = [];
+          app.notes.forEach(function(note, index) {
+            if (new Date(note.date).getMonth()  === app.month && note.date.getFullYear() === parseInt(app.yearSelected.value)) {
+              arr.push(note.date.getDate())
+              nameArr.push(note.name);
+            }
+          })
+          console.log(arr + ' - ' + nameArr);
+          let fragment = document.createDocumentFragment();
+          let days = document.querySelectorAll('.daySpan');
+          let dayParent = document.querySelectorAll('.calDay');
+          days.forEach(function(day, index) {
+            let children = dayParent[index].getElementsByTagName('A');
+            if (children.length > 0) {
+              for (i=0; i<children.length; i++) {
+                dayParent[index].removeChild(children[i]);
+              }
+            }
+            // if (parseInt(day.textContent) === firstDayTrip && month === firstMonth && yearTripStart === parseInt(yearelected.value)) {
+            if (app.firstDayTrip === parseInt(day.textContent) && app.firstMonth === app.month && new Date(app.startDate.textContent).getFullYear() === parseInt(app.yearSelected.value)) {
+              let div = document.createElement('a');
+              div.className = 'firstDay';
+              let node = document.createTextNode('First Day of Trip!!');
+              div.href = '#';
+              div.appendChild(node);
+              fragment.appendChild(div);
+            } else if (app.lastDayTrip === parseInt(day.textContent) && app.lastMonth === app.month && new Date(app.endDate.textContent).getFullYear() === parseInt(app.yearSelected.value)){
+              let div = document.createElement('a');
+              div.className = 'lastDay';
+              div.href = '#';
+              let node = document.createTextNode('Last Day of Trip!!');
+              div.appendChild(node);
+              fragment.appendChild(div);
+            }
+            if (arr.includes(parseInt(day.textContent))) {
+              arr.forEach(function(item, index) {
+                if (item === parseInt(day.textContent)) {
+                  if (fragment.children.length < 1) {
+                    let aTag = document.createElement('a');
+                    aTag.className = 'dayText';
+                    let node = document.createTextNode(nameArr[index]);
+                    aTag.href = '#';
+                    aTag.appendChild(node);
+                    fragment.appendChild(aTag)
+                  }else {
+                    console.log(fragment.children);
+                    let more = document.createElement('a');
+                    more.textContent = '-More Notes-';
+                    more.className = 'moreButton';
+                    more.href = '#';
+                    fragment.appendChild(more);
+                  }
+                }
+              })
+            }
+            day.parentElement.appendChild(fragment);
+            while (fragment.firstChild) {
+              fragment.removeChild(fragment.firstChild)
+            }
+          })
+        }
+        function dayViewNote(e) {
+          e.preventDefault();
+          if (e.target.classList.contains('dayViewText')) {
+            let spl = e.target.textContent.split(':')
+            // console.log(spl[0]);
+            let currentNote;
+            app.notes.forEach(function(note, index) {
+              if (note.name == spl[0]) {
+                currentNote = note;
+                app.noteIndex = index;
+              }
+            })
+            app.noteModName.textContent = currentNote.name;
+            app.noteModTime.textContent = currentNote.time;
+            app.noteModLength.textContent = currentNote.length;
+            app.noteMod.style.display = 'block';
+            app.noteModDate.textContent = new Date().getMonths()[app.month] + ' ' + currentNote.date.getDate() + ', ' + app.yearSelected.value;
+          } else {
+            return;
+          }
+        }
+        function weekNoteView(e) {
+          e.preventDefault();
+          if (e.target.classList.contains('weekTextDiv')) {
+            let spl = e.target.textContent.split(':')
+            // console.log(spl[0]);
+            let currentNote;
+            app.notes.forEach(function(note, index) {
+              if (note.name == spl[0]) {
+                currentNote = note;
+                app.noteIndex = index;
+              }
+            })
+            app.noteModName.textContent = currentNote.name;
+            app.noteModTime.textContent = currentNote.time;
+            app.noteModLength.textContent = currentNote.length;
+            app.noteMod.style.display = 'block';
+            app.noteModDate.textContent = new Date().getMonths()[app.month] + ' ' + currentNote.date.getDate() + ', ' + app.yearSelected.value;
+          } else {
+            return;
+          }
+        }
+        function viewIndNote(e) {
+          //let noteMod = document.querySelector('.noteModal');
+          //document.querySelector('.noteModalInfo').textContent = '';
+          e.preventDefault();
+          if (e.target.classList.contains('dayText') || e.target.classList.contains('firstDay') || e.target.classList.contains('lastDay')) {
+            app.noteModDate.textContent = new Date().getMonths()[app.month] + ' ' + e.target.parentElement.firstChild.textContent + ', ' + app.yearSelected.value;
+            if (e.target.className === 'firstDay') {
+              app.noteModName.textContent = 'First Day of the Trip!!!';
+              app.noteModTime.textContent = 'Have fun!';
+            }else if (e.target.className === 'lastDay'){
+              app.noteModName.textContent = 'Last Day of the Trip!!';
+              app.noteModTime.textContent = 'Hope you had a great trip!';
+              app.noteModCreator.textContent = ' Creator: Admin';
+            } else {
+              let thisNote;
+              let noteIndex;
+              app.notes.forEach(function(note, index) {
+                if (note.name === e.target.textContent && note.date.getMonth() === app.month && note.date.getFullYear() === parseInt(app.yearSelected.value)) {
+                  thisNote = note;
+                  noteIndex = index;
+                }
+              });
+              app.noteIndex = noteIndex;
+              app.noteModName.textContent = thisNote.name;
+              app.noteModTime.textContent = thisNote.time;
+              app.noteModLength.textContent = thisNote.length;
+              app.noteModCreator.textContent = 'Creator: ' + thisNote.user;
+            }
+          app.noteMod.style.display = 'block';
+          } else {
+              app.noteMod.style.display = 'none';
+          }
+        }
+        function clearNoteModal(e) {
+          app.noteMod = document.querySelector('.noteModal');
+          app.noteMod.style.display = 'none';
+        }
+
+        function month_picker() {
+            app.dayDiv.style.display = 'none';
+            app.weekDiv.style.display = 'none';
+            app.calendarClass.style.display = 'block';
+            let month_menu = new Date(app.monthSelect.value);
+            app.calendarClass.textContent = '';
+            month = app.monthSelect.selectedIndex;
+            month_menu.calendar();
+            let frag = document.createDocumentFragment();
+            let option;
+            app.monthSelect.appendChild(frag);
+            app.prevButton.style.display = 'block';
+            app.nextButton.style.display = 'block';
+            app.month = app.monthSelect.selectedIndex;
+            console.log(app.month)
+        }
+
+        function year_picker() {
+            app.weekDiv.style.display = 'none';
+            app.dayDiv.style.display = 'none';
+            app.calendarClass.style.display = 'block';
+            app.prevButton.style.display = 'block';
+            app.nextButton.style.display = 'block';
+            let num = app.monthSelect.selectedIndex;
+            let num2 = num + 1
+            let year = app.yearSelected.value
+            let months = new Date(num2 + '/01/' + year);
+            app.calendarClass.textContent = '';
+            months.calendar();
+            app.monthSelect.textContent = '';
+            let frag = document.createDocumentFragment();
+            let option;
+            for ( var x = 0; x < months.getMonths().length; x++ ) {
+                option = document.createElement('OPTION');
+                option.value = months.getMonths()[x] + ' 1, ' + year;
+                option.textContent = app.today.getMonths()[x];
+                frag.appendChild(option);
+            }
+            app.monthSelect.appendChild(frag);
+            app.monthSelect.selectedIndex = num;
+        }
+
+        function monthViewFunc(e) {
+          app.dayDiv.style.display = 'none';
+          app.calendarClass.style.display = 'block';
+          app.prevButton.style.display = 'block';
+          app.nextButton.style.display = 'block';
+          app.weekDiv.style.display = 'none';
+          app.noteMod.style.display = 'none';
+        }
+
+        function weekViewFunc(e) {
+          app.weekDiv.style.display = 'block';
+          app.dayDiv.style.display = 'none';
+          app.calendarClass.style.display = 'none';
+          app.prevButton.style.display = 'none';
+          app.nextButton.style.display = 'none';
+          app.noteMod.style.display = 'none';
+          app.daysInMonth = new Date(app.monthSelect.value).getDays();
+          let thisDate = new Date(app.monthSelect.value);
+          app.weekMonthTitle.textContent = thisDate.getMonths()[app.month];
+          let startDay = new Date(thisDate.getFullYear(), thisDate.getMonth(), 1).getDay();
+          let days = document.querySelectorAll('.weekHeadTitle');
+          let dayTitles = document.querySelectorAll('.titleSpan');
+          let lastMonth = new Date(thisDate.getFullYear(), (thisDate.getMonth()-1));
+          let lengthLastMonth = new Date(lastMonth).getDays();
+          //console.log(new Date( app.yearSelected.value, lastMonth).getDate());
+          let counter = 1;
+          let revCounter = startDay - 1;
+          let firstDCount = 0 - revCounter;
+          let thisMonth = thisDate.getMonths()[app.month];
+          let prevMonth = thisDate.getMonths()[app.month-1]
+          let x = 0;
+          app.weekFirstDay = lengthLastMonth - (startDay-1);
+          if (app.month < 0) {
+            firstD = thisDate.getMonths()[11] + ' ' + app.weekFirstDay;
+          }else {
+            firstD = thisDate.getMonths()[app.month-1] + ' ' + app.weekFirstDay;
+          }
+          app.days.forEach(function(day, index) {
+            if (day.firstChild.className === 'dayWeekDate') {
+              day.removeChild(day.firstChild);
+            }
+            if (index === startDay) {
+              let span = document.createElement('span');
+              span.textContent = thisMonth + ' ' + counter;
+              span.className = 'dayWeekDate';
+              day.insertBefore(span, dayTitles[index]);
+              x = counter;
+              counter += 1;
+            }else if (index >= startDay) {
+              let span = document.createElement('span');
+              span.textContent = thisMonth + ' ' + counter;
+              day.appendChild(span);
+              span.className = 'dayWeekDate';
+              day.insertBefore(span, dayTitles[index]);
+              counter += 1
+            }else {
+              let span = document.createElement('span');
+              if (app.month - 1 < 0) {
+                span.textContent = thisDate.getMonths()[11] + ' ' + (lengthLastMonth-revCounter);
+              }else {
+                span.textContent = prevMonth + ' ' + (lengthLastMonth-revCounter);
+              }
+              span.className = 'dayWeekDate';
+              day.insertBefore(span, dayTitles[index]);
+              revCounter -= 1
+            }
+          });
+          //lastD = new Date(app.monthSelect.value).getMonths()[app.month] + ' ' + (counter-1);
+          app.weekLastDay = counter;
+          app.weekFirstDay = firstDCount;
+          //app.weekMonthTitle.textContent = thisDate.getMonths()[app.month] + ' ' + x + '-' + (app.weekLastDay-1);
+          let dates = document.querySelectorAll('.dayWeekDate');
+          let arr = [];
+          dates.forEach(function(date) {
+            arr.push(new Date(app.yearSelected.value + ', ' + date.textContent));
+          });
+          app.weekMonthTitle.textContent = dates[0].textContent + '-' + dates[6].textContent;;
+          app.loadWeekNotes(arr);
+        }
+
+        function nextWeek(e) {
+          let dayTitles = document.querySelectorAll('.titleSpan');
+          e.preventDefault();
+          app.daysInMonth = new Date(app.monthSelect.value).getDays();
+          app.weekFirstDay = app.weekLastDay;
+          let endFlag = 0;
+          if (app.weekFirstDay === (app.daysInMonth+1)) {
+            nextMonth();
+            app.weekFirstDay = 1;
+            app.daysInMonth + new Date(app.monthSelect.value).getDays();
+            endFlag = 1;
+          } else if (app.weekFirstDay > app.daysInMonth) {
+            nextMonth();
+            app.weekFirstDay = (app.weekLastDay - app.daysInMonth);
+            app.daysInMonth = new Date(app.monthSelect.value).getDays();
+          }
+          app.weekLastDay = app.weekFirstDay + 7;
+          let counter = app.weekFirstDay;
+          let thisDate = new Date(app.monthSelect.value);
+          let x = counter;
+          let newCount = 1;
+          //firstD = thisDate.getMonths()[app.month] + ' ' + app.weekFirstDay;
+          let firstMonth = thisDate.getMonths()[app.month];
+          let secondMonth = thisDate.getMonths()[app.month];
+          if (app.weekLastDay >= app.daysInMonth) {
+            if (app.month === 11) {
+              secondMonth = 'January';
+            }else {
+              secondMonth = thisDate.getMonths()[app.month+1];
+            }
+          }
+          app.days.forEach(function(day, index) {
+            if (day.firstChild.className === 'dayWeekDate') {
+              day.removeChild(day.firstChild);
+            }
+            if (counter > app.daysInMonth) {
+              let span = document.createElement('span');
+              span.textContent = secondMonth + ' ' + newCount;
+              span.className = 'dayWeekDate';
+              counter += 1;
+              newCount += 1;
+              day.insertBefore(span, dayTitles[index]);
+            }else {
+              let span = document.createElement('span');
+              span.textContent = thisDate.getMonths()[app.month] + ' ' + counter;
+              span.className = 'dayWeekDate';
+              counter += 1;
+              day.insertBefore(span, dayTitles[index]);
+            }
+          })
+          //app.weekMonthTitle.textContent = firstMonth + ' ' + x +'-' + lastD;
+          let dates = document.querySelectorAll('.dayWeekDate');
+          app.weekMonthTitle.textContent = dates[0].textContent + '-' + dates[6].textContent;
+          app.weekLastDay = (counter);
+          app.weekFirstDay = x;
+          let arr = [];
+          dates.forEach(function(date) {
+            arr.push(new Date(app.yearSelected.value + ', ' + date.textContent));
+          });
+          app.weekMonthTitle.textContent = dates[0].textContent + '-' + dates[6].textContent;;
+          app.loadWeekNotes(arr);
+        }
+
+        function prevWeek(e) {
+          e.preventDefault();
+          let dayTitles = document.querySelectorAll('.titleSpan');
+          //app.weekFirstDay = app.weekFirstDay;
+          //let counter = app.weekFirstDay;
+          app.weekFirstDay -= 7;
+          let endFlag = 0;
+          if (app.weekFirstDay < 0) {
+            prevMonth();
+            app.daysInMonth = new Date(app.monthSelect.value).getDays();
+            app.weekFirstDay = app.weekFirstDay + app.daysInMonth;
+            endFlag = 1;
+          } else if (app.weekFirstDay === 0) {
+            prevMonth();
+            app.daysInMonth = new Date(app.monthSelect.value).getDays();
+            app.weekFirstDay = app.daysInMonth;
+            endFlag = 1;
+          }
+          let thisDate = new Date(app.monthSelect.value);
+          let counter = app.weekFirstDay;
+          let thisMonth = thisDate.getMonths()[app.month];
+          let nextMonth = thisDate.getMonths()[app.month +1]
+          app.daysInMonth = new Date(app.monthSelect.value).getDays();
+          let x = counter;
+          let newCount = 1;
+          let firstMonth = thisDate.getMonths()[app.month];
+          let secondMonth = thisDate.getMonths()[app.month];
+          if (endFlag === 1) {
+            if (app.month === 11) {
+              secondMonth = 'January';
+            }else {
+              secondMonth = thisDate.getMonths()[app.month+1];
+            }
+          }
+          app.days.forEach(function(day, index) {
+            if (day.firstChild.className === 'dayWeekDate') {
+              if (counter > app.daysInMonth) {
+                day.removeChild(day.firstChild);
+                let span = document.createElement('span');
+                span.textContent = secondMonth + ' ' + newCount;
+                span.className = 'dayWeekDate';
+                counter += 1;
+                newCount += 1;
+                day.insertBefore(span, dayTitles[index]);
+              } else {
+                day.removeChild(day.firstChild);
+                let span = document.createElement('span');
+                span.textContent = thisMonth + ' ' + counter;
+                span.className = 'dayWeekDate';
+                counter += 1;
+                day.insertBefore(span, dayTitles[index]);
+              }
+            }
+          })
+        //  let flag = 0;
+          //if (counter > app.daysInMonth) {
+            //counter = newCount;
+            //flag = 1;
+          //}
+          //if (flag === 1) {
+          //  lastD = nextMonth + (counter-1);
+          //} else {
+          //  if (app.month === 0){
+            //  lastD = 'January ' + (counter-1);
+            //}else {
+              //lastD = secondMonth + ' ' + (counter-1);
+            //}
+        //  }
+          //let lastDayMonth = new Date(app.monthSelect.value).getDays()
+          //console.log(lastDayMonth);
+          let lastD;
+          if (counter <= (app.daysInMonth)) {
+            lastD = secondMonth + ' ' + (counter-1)
+          } else if (counter === app.daysInMonth) {
+            lastD = secondMonth + ' 1';
+          }else {
+            lastD = secondMonth + ' ' + (newCount-1)
+          }
+          app.weekFirstDay = x;
+          app.weekLastDay = counter;
+          //app.weekMonthTitle.textContent = firstMonth + ' ' + x + '-' + lastD;
+          let dates = document.querySelectorAll('.dayWeekDate');
+          app.weekMonthTitle.textContent = dates[0].textContent + '-' + dates[6].textContent;
+          let arr = [];
+          dates.forEach(function(date) {
+            arr.push(new Date(app.yearSelected.value + ', ' + date.textContent));
+          });
+          app.weekMonthTitle.textContent = dates[0].textContent + '-' + dates[6].textContent;;
+          app.loadWeekNotes(arr);
+        }
+
+        function cancelANote(e) {
+          e.preventDefault();
+          app.modal.style.display = 'none';
+        }
+
+        function addADayNote(e){
+          if (e.target.classList.contains('dayNoteButton')) {
+            app.modal.style.display = 'block';
+            let index = e.target.id;
+            let timeOpt = app.modal.querySelector('.noteTime');
+            timeOpt.selectedIndex= index
+            app.modal.querySelector('.noteLength').selectedIndex = 0;
+            let firstOfMonth = new Date(app.monthSelect.value);
+            let dayTitle = document.querySelector('.dayNoteDate')
+            dayTitle.value = document.querySelector('.dayTitle').textContent;
+          }else {
+            return;
+          }
+        }
+
+        function moreButton(e) {
+          if (e.target.classList.contains('moreButton')) {
+            if (document.querySelector('.dayTitle') != null) {
+                let elem = document.querySelector('.dayTitle');
+                elem.parentNode.removeChild(elem);
+            }
+            let date = e.target.parentElement.firstChild.textContent;
+            app.prevButton.style.display = 'none';
+            app.nextButton.style.display = 'none';
+            app.dayDiv.style.display = 'block';
+            app.calendarClass.style.display = 'none';
+            // let calSpan = document.createElement('span')
+            let calSpan = document.createElement('span');
+            calSpan.className = 'dayTitle';
+            let fullDate = new Date(app.monthSelect.value);
+            let dateNumber = fullDate.getMonth();
+            calSpan.textContent = fullDate.getMonths()[dateNumber] + ' ' + date + ', ' + fullDate.getFullYear();
+            // let dayCalendar = document.querySelector('.dayTable');
+            app.dayDiv.appendChild(calSpan);
+            document.querySelector('#startTime').scrollIntoView();
+            app.loadDayNotes(new Date(fullDate.getMonths()[dateNumber] + ' ' + date + ', ' + fullDate.getFullYear()));
+          }else {
+            return;
+          }
+          e.preventDefault();
+        }
+
+        function addNote(e) {
+          if (e.target.classList.contains('monthNoteButton')){
+            app.modal.style.display = 'block';
+            let timeOpt = app.modal.querySelector('.noteTime');
+            app.modal.querySelector('.noteLength').selectedIndex = 0;
+            timeOpt.selectedIndex = 21;
+            let firstOfMonth = new Date(app.monthSelect.value);
+            // let box = document.querySelector('.modal');
+            let currentMonth = firstOfMonth.getMonths()[firstOfMonth.getMonth()];
+            let currentYear = firstOfMonth.getFullYear();
+            let day = e.target.parentElement.firstChild.textContent;
+            let dayTitle = document.querySelector('.dayNoteDate')
+            dayTitle.value = currentMonth + ' ' + day + ', ' + currentYear;
+            e.preventDefault();
+          }
+        }
+
+        function submitANote(e) {
+          let name = app.modal.querySelector('.calNoteName');
+          let length = app.modal.querySelector('.noteLength');
+          let time = app.modal.querySelector('.noteTime');
+          let date = app.modal.querySelector('.dayNoteDate');
+          if (name.value.length < 3 || name.value.length >30) {
+            // document.querySelector('.modal').style.display = 'block';
+            e.preventDefault();
+            let error = document.createElement('div');
+            error.textContent = 'The event name must be between 3 and 30 characters';
+            app.modal.appendChild(error);
+            setTimeout(function(){
+                error.remove();
+            },5000)
+            name.value = '';
+          }else {
+            e.preventDefault();
+            app.socket.emit('store note', name.value, time.value, date.value, length.value);
+            app.modal.style.display = 'none';
+            name.value = ('');
+            // if (app.dayDiv.style.display === 'block') {
+            //   let thisDate = dayDiv.querySelector('.dayTitle').textContent
+            //   loadDayNotes(new Date(thisDate));
+            //   // loadDayNotes(new Date(da);
+            // } else
+            //   app.loadMonthNotes();
+            // }
+          }
+        }
+        function cancelEditNote(e) {
+          e.preventDefault();
+          app.editModal.style.display = 'none';
+        }
+
+        function submitEditNote(e) {
+          e.preventDefault();
+          let name = app.editModal.querySelector('.calNoteName');
+          let length = app.editModal.querySelector('.noteLength');
+          let time = app.editModal.querySelector('.noteTime');
+          let originalName = app.editModal.querySelector('.dayNoteEditName').textContent;
+          app.socket.emit('edit note', name.value, time.value, length.value, originalName)
+          app.notes.forEach(function(note, index) {
+            if (note.name === originalName) {
+              app.noteIndex = index;
+            }
+          })
+          app.editModal.style.display = 'none';
+        }
+
+        function editANote(e) {
+          e.preventDefault();
+          let noteName = app.noteModName.textContent;
+          let currentNote;
+          let creator;
+          app.notes.forEach(function(note, index) {
+            if (note.name === noteName) {
+              currentNote = note;
+              creator = currentNote.user;
+            }
+          })
+          if (currentNote === undefined) {
+            creator = 'admin';
+          }
+            // date = currentNote.date.toDateString()
+         if (creator === app.user) {
+            app.noteMod.style.display = 'none';
+            app.noteMod.style.display = 'none';
+            app.editModal.style.display = 'block';
+            app.editModal.querySelector('.calNoteName').value = noteName;
+            app.editModal.querySelector('.dayNoteEditName').textContent = noteName;
+            app.editModal.querySelector('.dayNoteEditDate').textContent = currentNote.date.toDateString();
+          }else if (creator == 'admin') {
+            app.editModal.style.display = 'none';
+            let message = 'You cannot edit the first or last day of the trip from the calendar.'
+            showErrorMessage(message, 'error', app.noteMod, app.noteMod.querySelector('.noteNameModal'), '1.05rem', '95%');
+          } else {
+            let message = 'Sorry you can only edit or delete a note if you created it.'
+            showErrorMessage(message, 'error', app.noteMod, app.noteMod.querySelector('.noteNameModal'), '1.05rem', '95%');
+          }
+        }
+        // console.log(notes);
+        app.socket.on('on connect', function(data) {
+          // let calendar = document.querySelector('.buttonDiv');
+          let alert = document.querySelector('.noteFlash')
+          let mess = 'You are now connected to ' + data.name + " calendar!";
+          // let div = document.createElement('div');
+          alert.textContent = mess;
+          // div.style.fontSize = '.85rem';
+          // div.classList = 'flashMessage noteFlash';
+          // div.style.left = '49%';
+          // div.style.marginTop = '32%';
+          // div.style.width = '18%';
+          // calendar.appendChild(div);
+          // app.page.appendChild(div);
+          // div.style.marginTop = '27.5%'
+          // setTimeout(function(){
+          //     document.querySelector('.noteFlash').remove();
+          // },7000);
+        })
+
+        app.socket.on('not note creator', function(data) {
+          // let calendar = document.querySelector('.calendar');
+          let alert = document.querySelector('.noteFlash');
+          alert.textContent = 'Only the note creator can edit or delete a note!'
+          // calendar.removeChild(alert);
+          // let div = document.createElement('div');
+          // div.classList = 'flashMessage noteFlash'
+          // div.textContent = 'Only the note creator may edit or delete a calendar note.';
+          // div.style.left = '49%';
+          // div.style.marginTop = '28%';
+          // div.style.width = '18%';
+          div.style.fontSize = '.95rem';
+          calendar.appendChild(div);
+        })
+
+        app.socket.on('note saved', function(data) {
+            let alert = document.querySelector('.noteFlash');
+            alert.textContent = data.msg;
+            app.notes.push(new app.Note(new Date(data.date + ' ' + data.time), data.name, app.user, data.length, data.time))
+            app.loadMonthNotes();
+            if (app.dayDiv.style.display === 'block') {
+              let thisDate = app.dayDiv.querySelector('.dayTitle').textContent
+              app.loadDayNotes(new Date(thisDate));
+            }
+        });
+        app.socket.on('note edited', function(data) {
+          // let calendar = document.querySelector('.calendar');
+          let alert = document.querySelector('.noteFlash');
+
+          // let div = document.createElement('div');
+          // div.classList = 'flashMessage noteFlash'
+          // div.textContent = 'Note Edited!';
+          // div.style.fontSize = '.9rem';
+          app.notes[app.noteIndex].name = data.name;
+          app.notes[app.noteIndex].time = data.time;
+          app.notes[app.noteIndex].length = data.length;
+          // console.log(app.notes[app.noteIndex]);
+          app.loadMonthNotes();
+          alert.textContent = 'Note Edited!!'
+          // calendar.appendChild(div)
+          // if (app.dayDiv.style.display === 'block') {
+          //   console.log('hi');
+          //   div.classList += ' dayViewFlash'
+          //   app.loadDayNotes(new Date(app.notes[app.noteIndex].date));
+          //   app.page.appendChild(div);
+          //   div.style.marginTop = '27.5%';
+          // } else if (app.weekDiv.style.display === 'block') {
+          //   console.log('hi');
+          //   app.page.appendChild(div);
+          //   div.style.marginTop = '27.5%';
+          // }
+          // app.weekDiv.appendChild(div);
+        })
+
+        app.socket.on('note name used', function(data) {
+          // let calendar = document.querySelector('.buttonDiv');
+          let alert = document.querySelector('.noteFlash');
+          alert.textContent = 'You are already using ' + data.name;
+        })
+
+        function prevMonth(e) {
+            let fullDate = new Date(app.monthSelect.value);
+            let prevYear = fullDate.getFullYear() - 1;
+            if (prevYear < 2018) {
+                prevYear = 2018;
+            }
+            app.monthSelect.selectedIndex -= 1;
+            app.month -= 1
+            if (app.monthSelect.selectedIndex < 0) {
+                app.yearSelected.selectedIndex -= 1;
+                app.monthSelect.textContent = '';
+                let frag = document.createDocumentFragment();
+                let option;
+                for ( var x = 0; x < app.today.getMonths().length; x++ ) {
+                    option = document.createElement('OPTION');
+                    option.value = app.today.getMonths()[x] + ' 1, ' + app.yearSelected.value;
+                    option.textContent = app.today.getMonths()[x];
+                    frag.appendChild(option);
+                }
+                app.monthSelect.appendChild(frag);
+                app.monthSelect.selectedIndex = 11;
+                app.month = 11;
+            }
+            let month_menu = new Date(app.monthSelect.value);
+            app.calendarClass.textContent = '';
+            month_menu.calendar();
+        }
+
+        function nextMonth(e) {
+            let fullDate = new Date(app.monthSelect.value);
+            let nextYear = fullDate.getFullYear() + 1;
+            app.monthSelect.selectedIndex += 1;
+            app.month += 1
+            if (app.monthSelect.selectedIndex === -1) {
+              app.yearSelected.selectedIndex += 1;
+              app.monthSelect.textContent = '';
+              let frag = document.createDocumentFragment();
+              let option;
+              for ( var x = 0; x < app.today.getMonths().length; x++ ) {
+                  option = document.createElement('OPTION');
+                  option.value = app.today.getMonths()[x] + ' 1, ' + app.yearSelected.value;
+                  option.textContent = app.today.getMonths()[x];
+                  frag.appendChild(option);
+              }
+              app.monthSelect.appendChild(frag);
+              app.monthSelect.selectedIndex = 0;
+              app.month = 0
+            }
+            let month_menu = new Date(app.monthSelect.value);
+            console.log(app.monthSelect.value);
+            app.calendarClass.textContent = '';
+            month_menu.calendar();
+        }
+
+        function dayNote(e) {
+            let date = e.target.firstChild.textContent;
+            if (e.target.className === 'calDay' && e.target.className != 'monthNoteButton') {
+                if (document.querySelector('.dayTitle') != null) {
+                    let elem = document.querySelector('.dayTitle');
+                    elem.parentNode.removeChild(elem);
+                }
+                app.prevButton.style.display = 'none';
+                app.nextButton.style.display = 'none';
+                app.dayDiv.style.display = 'block';
+                app.calendarClass.style.display = 'none';
+                app.noteMod.style.display = 'none';
+                let calSpan = document.createElement('span')
+                calSpan.className = 'dayTitle';
+                let fullDate = new Date(app.monthSelect.value);
+                let dateNumber = fullDate.getMonth();
+                calSpan.textContent = fullDate.getMonths()[dateNumber] + ' ' + date + ', ' + fullDate.getFullYear();
+                // let dayCalendar = document.querySelector('.dayTable');
+                app.dayDiv.appendChild(calSpan);
+                document.querySelector('#startTime').scrollIntoView();
+                app.loadDayNotes(new Date(fullDate.getMonths()[dateNumber] + ' ' + date + ', ' + fullDate.getFullYear()))
+            }else {
+                return;
+            }
+            e.preventDefault();
+        }
+        function showErrorMessage(message, type, parent, before, size, width, flag) {
+          let div = document.createElement('div');
+          div.className = (type);
+          div.classList += ' alert';
+          div.style.fontSize = (size);
+          div.style.width = (width);
+          div.style.marginLeft = '-2.5%';
+          // div.style.marginTop = '-6%';
+          div.appendChild(document.createTextNode(message));
+          parent.insertBefore(div, before);
+          setTimeout(function(){
+              document.querySelector('.alert').remove();
+          },5000);
+        }
+    }
+  </script>
+  {% endblock %}

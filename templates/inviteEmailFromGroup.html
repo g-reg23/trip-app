@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <h1>Hello from TripLounge!!</h1>
+    <h5><strong>You are invited to join group:</strong> {{ group.groupName }}</h5>
+    <h5><strong>GroupDescription:</strong> {{ group.description }}</h5>
+    <h5><strong>Group Admin Username:</strong>{{ group.admin }}</h5>
+    <p style="display: block;">Hi, you have been invited to join TripLounge! TripLounge is a trip planning application.
+      One of your friends is planning a trip and would like you to join the trip to help plan. At TripLounge you can
+      chat with your travelmates, keep track of expected budget and expenses, stay organized with all dates, and share
+      rentals, accomodation, activities and food information with the whole group. Follow the link below and signup for a new account.
+      In order to receive the group invite, you must sign up using this email. However, if you decide to use a different email, you can
+      easily just send a request to join this group, after you have signed up.
+    </p>
+    <a href="{{ url_for('signup', _external=True) }}">TripLounge Signup</a>
+    <p>Alternativley, you can paste this url into your browser, if you feel uncomfortable clicking the link.</p>
+    <p>{{ url_for('signup', _external=True) }}</p>
+  </body>
+</html>

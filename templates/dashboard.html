@@ -1,81 +1,711 @@
 {% extends 'layout.html' %}
 {% block body %}
   <div class="pageContainer">
-    <section class="dash">
-      <div class="dashhead" align="center"><h1 style="font-size: 3rem;">Dashboard <br><small><small>Welcome {{session.username}}</small></small></h1></div><hr />
-      <h2 class="infoTitles" text-decoration="underline">Your Groups:</h2><br />
-      {% if groupies %}
-        <ul class="groupList">
-          {% for group in groupies %}
-            <li class="buttonList"><a class="groupButton" href="group/{{ group.groupId }}">{{ group.groupName }}</a></li><br />
-          {% endfor %}
-        </ul><br /><hr />
+    <div class="groupAdminInfo" style='display: none;'>
+      {% for group in admin_group_info %}
+      <p class='adName'>{{group.groupName}}</p>
+      <p class='adLocation'>{{group.location}}</p>
+      <p class='adStart'>{{group.startDate}}</p>
+      <p class='adEnd'>{{group.endDate}}</p>
+      <p class='adDescription'>{{group.description}}</p>
+      <p class='adId'>{{group.id}}</p>
+      {% endfor %}
+    </div>
+    <div class='top-page-div'>
+      <img class="top-page-pic" style='width:94%;' src={{url_for('static', filename = 'images/adventure-alberta-alpine-533658.jpg')}} alt="top-page-pic" />
+      <a class='picCredit' href='https://www.pexels.com/'>Photo by Pok Rie from Pexels</a>
+    </div>
+    <div class="dashhead" align="center"><h1 style="font-size: 3rem;">Dashboard <br><small><small>Welcome {{profile.username}}</small></small></h1></div>
+    <div class='userDiv' style='display:none;'>{{current_user.username}}</div>
+    <div class='groupTableDiv'>
+      <h2 class="infoTitles" text-decoration="underline">Your Groups:</h2>
+      {% if groupIds %}
+      <table class='groupTable dashTables' border="1" cellpadding="5" cellspacing="0">
+        <tr>
+          <th>Group Name</th>
+          <th>Group #</th>
+          <th>Leave Group</th>
+          <th>Add</th>
+          <th>Admin</th>
+        </tr>
+        {% for group in groupIds %}
+        <tr class='groupTableRow'>
+          <td class='groupNameTable'><a class='memGroupNameLink' href='/group/{{group.id}}'>{{ group.groupName }}</a></td>
+          <td class='groupIdTable'>{{ group.id }}</td>
+          <td><a class='leaveGroupButton' href='#'><div class='hidGroupName' style='display:none;'>{{group.groupName}}</div>Leave Group</a></td>
+          <td><a href="/group/{{ group.groupId }}/get_members">Invite Members</a></td>
+          <td class='groupTypeATable'>{{group.admin}}</td>
+        </tr>
+        {% endfor %}
+      </table>
       {% else %}
-        <h5>You are not currently a member of any groups</h5><br /><hr />
+        <h5 class='noGroupHead'>You are not currently a member of any groups</h5>
+        <table style='display:none;' class='groupHidTable groupTable' border="1" cellpadding="5" cellspacing="0">
+          <tr>
+            <th>Group Name</th>
+            <th>Group #</th>
+            <th>Leave Group</th>
+            <th>Add</th>
+            <th>Admin</th>
+          </tr>
+          <tr>
+
+          </tr>
+        </table>
       {% endif %}
+    </div>
+    <div class="leaveGroupModal">
+      <h3 class="modalHeader">Leave Group</h3>
+      <p class='groupNameModal'></p>
+      <p><strong>Are you sure you would like to leave this group?</strong></p>
+      <form method='POST' action=''>
+        <div>
+          <button class="sign-logSubmit yesNoBut yesGroup">Yes</button>
+          <button class="sign-logSubmit yesNoBut noGroup">No</button>
+        </div>
+      </form>
+    </div>
+    <div class='pendDiv'>
       <h2 class="infoTitles" text-decoration="underline">Group Invites:</h2><br />
       {% if invitePends %}
         {% for pend in invitePends %}
-          <li class="buttonList"><a class="groupButton" href="group/{{ pend.id }}/join">{{ pend.groupName }}</a></li><br />
+          <li class="buttonList"><a class="groupButton pendModalLink" href="#">{{ pend.groupName }}</a></li>
+          <div class='hiddenPends'>
+            <p class='pendGroupName'>{{pend.groupName}}</p>
+            <p class='pendDescription'>{{pend.description}}</p>
+            <p class='pendLocation'>{{pend.location}}</p>
+            <p class='pendStart'>{{pend.startDate}}</p>
+            <p class='pendEnd'>{{pend.endDate}}</p>
+            <p class='pendAdmin'>{{pend.admin}}</p>
+            <p class='pendId'>{{pend.id}}</p>
+          </div>
         {% endfor %}
       {% else %}
         <h5>You currently have no pending group invites</h5>
       {% endif %}
-      <div class="dashTables">
+    </div>
+    <div class='pendModal'>
+      <button class='cornerX'>X</button>
+      <h3 class='pendModName'></h3>
+      <p class='pendModLoc'></p>
+      <p class='pendModDesc'></p>
+      <p class='pendModDates'></p>
+      <p class='pendModAdmin'></p>
+      <div><button class='yesNoBut joinPend sign-logSubmit'>Join Group</button><button class='sign-logSubmit yesNoBut declinePend'>Decline</button></div>
+    </div>
+    <div class='adminTableDiv'>
+      {% if admins %}
+        <h3 class="infoTitles"  text-decoration="underline">Group Admin:</h3>
+        <table class='adminTable dashTables' border="1" cellpadding="5" cellspacing="5">
+        <tr>
+          <th class='adminNames'>Group Name</th>
+          <th>Group #</th>
+          <th>Add</th>
+          <th>Edit Group</th>
+          <th>Delete Group</th>
+        </tr>
+      {% for admin in admins %}
+        <tr>
+          <td><a href='/group/{{admin.id}}' class='adGNames'>{{ admin.groupName }}</a></td>
+          <td>{{ admin.id }}</td>
+          <td><a href="/group/{{ admin.id }}/get_members">Add Members</a></td>
+          <td><a href='#' class='editGroupLink'><div class='hiddenAdminNameEd' style='display:none;'>{{admin.groupName}}</div>Edit Group</a></td>
+          <td><a class='adminDelete' href="#"><div class='hiddenAdminNameDel' style='display:none;'>{{admin.groupName}}</div>Delete Group</a></td>
+        </tr>
+      {% endfor %}
+        </table>
+      {% else %}
+        <br />
+        <h5>You are not the admin of any groups.</h5>
+        <table class='adminTable' border="1" cellpadding="5" cellspacing="5"></table>
+      {% endif %}
+    </div>
+    <div class="leaveGroupAdModal">
+      <h3 class="modalHeader">Delete Group</h3>
+      <p class='groupNameModal'></p>
+      <p><strong>Are you sure you would like to delete this group?</strong></p>
+      <form method='POST' action=''>
+        <div type='text' class='groupAdDelName'></div>
         <div>
-          {% if admins %}
-            <h2 class="infoTitles"  text-decoration="underline">Group Admin:</h2>
-            <table border="1" cellpadding="5" cellspacing="5">
-              <tr>
-                <th>Group Name</th>
-                <th>Group #</th>
-                <th>Add</th>
-                <th>Edit Group</th>
-                <th>Delete Group</th>
-              </tr>
-              {% for admin in admins %}
-                <tr>
-                  <td>{{ admin.groupName }}</td>
-                  <td>{{ admin.groupId }}</td>
-                  <td><a href="/group/{{ admin.groupId }}/get_members">Add Members<a></td>
-                  <td><a href="/edit_group/{{ admin.groupId }}">Edit Group</a></td>
-                  <td><a href="/delete_group/{{ admin.groupId }}">Delete Group</a></td>
-                </tr>
-              {% endfor %}
-            </table>
-          {% else %}
-            <br />
-            <h5>You are not the admin of any groups.</h5>
-          {% endif %}
+          <input type='password' class="sign-logInput adminPass" placeholder='User Password'>
+          <input type='password' class="sign-logInput groupPass" placeholder='Group Password'>
         </div>
+        <br />
         <div>
-          <br /><hr />
-          <h2 class="infoTitles"  text-decoration="underline"> Profile:</h2>
-          <table border="1" cellpadding="5" cellspacing="5">
-            <tr>
-              <th>Your Name</th>
-              <th>Email</th>
-              <th>Registration Date</th>
-              <th>Edit</th>
-              <th>Delete</th>
-            </tr>
-            <tr>
-              <td>{{profile.firstName}}  {{profile.lastName}}</td>
-              <td>{{profile.email}}
-              <td>{{profile.registerDate}}</td>
-              <td><a href="/edit_profile" id="editProfileButton">Edit Info</a></td>
-              <td><a href="/delete_profile" id="deleteProfileButton">Delete Account</a></td>
-            </tr>
-          </table>
+          <button class="sign-logSubmit yesNoBut yesAdminLeave">Yes</button>
+          <button class="sign-logSubmit yesNoBut noAdminLeave">No</button>
         </div>
-      </div>
+      </form>
+    </div>
+    <div class='editGroupModal'>
+      <h3 class="modalHeader">Edit Group</h3>
+      <p class='groupNameEditMod'></p>
+      <form method='POST' action='' class="editForm">
+        <input class="editGroupName" placeholder='Group Name'>
+        <input class="editGroupLoc" placeholder='Location'>
+        <input class="editGroupStart" placeholder='Start Date' type='date'>
+        <input class="editGroupEnd" placeholder='End Date' type='date'>
+        <textarea class="editGroupDesc" placeholder='Description' style='height: 3.5rem;'></textarea>
+        <input class="editGroupUserPass" type='password' placeholder='User Password'>
+        <input class="editGroupGroupPass" type='password' placeholder='Group Password'>
+        <button class='sign-logSubmit yesNoBut editGroupSubmit'>Submit</button>
+        <button class='sign-logSubmit yesNoBut editGroupCancel'>Cancel</button>
+        <p class='groupAdId' style='display: none'></p>
+      </form>
+    </div>
+    <div class='profileDiv'>
+      <h2 class="infoTitles profileHead"  text-decoration="underline"> Profile:</h2>
+      <table class='dashTables profileTable' border="1" cellpadding="5" cellspacing="5">
+        <tr>
+          <th>Your Name</th>
+          <th>Email</th>
+          <th>Registration Date</th>
+          <th>Edit</th>
+          <th>Delete</th>
+        </tr>
+        <tr class='adGroupTableRow'>
+          <td class='profileName'>{{profile.firstName}}  {{profile.lastName}}</td>
+          <td class='profileEmail'>{{profile.email}}
+          <td>{{profile.registerDate}}</td>
+          <td><a href="#" id="editProfileButton">Edit Info</a></td>
+          <td><a href="#" class='delProfButton' id="deleteProfileButton">Delete Account</a></td>
+        </tr>
+      </table>
+    </div>
+    <div class="deleteAccountModal">
+      <h3 class="modalHeader">Delete Account</h3>
+      <p class='accountNameModal'></p>
+      <p><strong>Are you sure you would like to delete your account?</strong></p>
+      <form method='POST' action='' class='delAccForm'>
+        <div type='text' class='groupAdDelName'></div>
+        {{ deleteAccountForm.hidden_tag() }}
+        <div>
+          {{ deleteAccountForm.password(class="sign-logInput deleteAccPassInput") }}
+        </div>
+          {{ deleteAccountForm.yes(class='finalDelete sign-logSubmit yesNoBut') }}
+        <button method='post' class="noAccountDelete sign-logSubmit yesNoBut">No</button>
+      </form>
+    </div>
+    <div class="editAccountModal">
+      <h3 class="modalHeader">Edit Account</h3>
+      <p class='editAccNameModal'></p>
+      <p><strong>Changing your username is currently disabled</strong></p>
+      <form class='editAccForm' action='#'>
+            <!-- {{ editAccountForm.hidden_tag() }} -->
+          <div>{{ editAccountForm.firstName(class="modInput accModFName") }}</div>
+          <div>{{ editAccountForm.lastName(class="modInput accModLName") }}</div>
+            <!-- <div>{{ editAccountForm.email(class=" modInput accModEmail") }}</div> -->
+          <div><input required type="email" name='email' placeholder='Email' class="modInput accModEmail"></div>
+          <div>{{editAccountForm.password2(class="modInput editAccPassInput")}}</div>
+          <div>{{ editAccountForm.submit(class="sign-logSubmit yesNoBut editAccSubmit") }}
+          <button class="cancelAccountEdit sign-logSubmit yesNoBut">Cancel</button></div>
+      </form>
+    </div
       <hr /><br />
-      <div class=dashButtonDiv>
-        <a href="/newGroup" class="groupButton" alt="Make a group">Make A New Group!</a>
-        <a href="/joinGroup" class="groupButton" alt="Join a group">Join A Group!</a>
-      </div>
-    </section>
+    <div class=dashButtonDiv>
+      <a href="/newGroup" class="groupButton" alt="Make a group">Make A New Group!</a>
+      <a href="/joinGroup" class="groupButton" alt="Join a group">Join A Group!</a>
+    </div>
   </div>
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+  <script src="{{url_for('static', filename = 'app.js')}}"></script>
+  <script type="text/javascript" charset="utf-8">
+    {
+      function DashGlobals() {
+        // this.user = document.querySelector('.navUser').textContent;
+        this.socket = io.connect('http://' + document.domain + ':' + location.port + '/dash');
+        this.page = document.querySelector('.pageContainer');
+        this.leaveGroupModal = document.querySelector('.leaveGroupModal');
+        this.leaveGroupButton = document.querySelectorAll('.leaveGroupButton');
+        this.groupTable = document.querySelector('.groupTable');
+        this.groupNames = document.querySelectorAll('.groupNameTable');
+        this.groupIds = document.querySelectorAll('.groupIdTable');
+        this.groupAdmins = document.querySelectorAll('.groupTypeATable');
+        this.delAccMod = document.querySelector('.deleteAccountModal');
+        this.memberGroups = [];
+        this.user = document.querySelector('.userDiv').textContent;
+        this.adminTable = document.querySelector('.adminTable');
+        this.adminDeleteModal = document.querySelector('.leaveGroupAdModal');
+        this.accountDeleteBut = document.querySelector('.delProfButton');
+        this.accountDeleteModal = document.querySelector('.deleteAccountModal');
+        this.editAccModal = document.querySelector('.editAccountModal');
+        this.accModFName = document.querySelector('.accModFName');
+        this.accModLName = document.querySelector('.accModLName');
+        this.accModEmail = document.querySelector('.accModEmail');
+        this.profileDiv = document.querySelector('.profileDiv');
+        this.editGroupModal = document.querySelector('.editGroupModal');
+        this.adInfo = document.querySelector('.groupAdminInfo');
+        this.pendDiv = document.querySelector('.pendDiv');
+        this.pendModal = document.querySelector('.pendModal');
+        this.pendGroupName = document.querySelectorAll('.pendGroupName');
+        this.pendLocation = document.querySelectorAll('.pendLocation');
+        this.pendStart = document.querySelectorAll('.pendStart');
+        this.pendEnd = document.querySelectorAll('.pendEnd');
+        this.pendDesc = document.querySelectorAll('.pendDescription');
+        this.pendAdmin = document.querySelectorAll('.pendAdmin');
+        this.pendId = document.querySelectorAll('.pendId');
+        this.adGroupNames = this.adInfo.querySelectorAll('.adName');
+        this.adGroupLocs = this.adInfo.querySelectorAll('.adLocation');
+        this.adGroupStarts = this.adInfo.querySelectorAll('.adStart');
+        this.adGroupEnds = this.adInfo.querySelectorAll('.adEnd');
+        this.adGroupDescript = this.adInfo.querySelectorAll('.adDescription');
+        this.adGroupIds = this.adInfo.querySelectorAll('.adId');
+        this.gId = this.editGroupModal.querySelector('.groupAdId');
+        this.gName = this.editGroupModal.querySelector('.editGroupName');
+        this.gLocation = this.editGroupModal.querySelector('.editGroupLoc');
+        this.gStart = this.editGroupModal.querySelector('.editGroupStart');
+        this.gEnd = this.editGroupModal.querySelector('.editGroupEnd');
+        this.gDescript = this.editGroupModal.querySelector('.editGroupDesc');
+        this.adTableIndex = 0;
+        this.adGNames = this.adminTable.querySelectorAll('.adGNames');
+        this.profile = {
+          username: '{{current_user.username}}',
+          firstName: '{{current_user.firstName}}',
+          lastName: '{{current_user.lastName}}',
+          email: '{{current_user.email}}',
+          registerDate: '{{current_user.registerDate}}'
+        };
+        this.AdminGroup = function(name, location, start, end, description, id) {
+          this.name = name;
+          this.location = location;
+          this.start = start;
+          this.end = end;
+          this.description = description;
+          this.id = id
+        }
+        this.Group = function(name, id) {
+          this.name = name;
+          this.id = id;
+        }
+        this.Pend = function(name, location, description, admin, start, end, id) {
+          this.name = name;
+          this.location = location;
+          this.description = description;
+          this.admin = admin;
+          this.start = start;
+          this.end = end;
+          this.id = id;
+        }
+        this.adminGroups = [];
+        this.groups = [];
+        this.pends = [];
+        this.pendIndex = 0;
+      }
+      DashGlobals.prototype.getPends = function() {
+        dash.pendGroupName.forEach(function(name, index) {
+          dash.pends.push(new dash.Pend(name.textContent, dash.pendLocation[index].textContent, dash.pendDesc[index].textContent, dash.pendAdmin[index].textContent, dash.pendStart[index].textContent, dash.pendEnd[index].textContent, dash.pendId[index].textContent));
+        })
+        return dash.pends
+      }
+      DashGlobals.prototype.getAdminGroups = function () {
+        dash.adGroupNames.forEach(function(group, index) {
+          dash.adminGroups.push(new dash.AdminGroup(group.textContent, dash.adGroupLocs[index].textContent, dash.adGroupStarts[index].textContent, dash.adGroupEnds[index].textContent, dash.adGroupDescript[index].textContent, dash.adGroupIds[index].textContent));
+        })
+        return dash.adminGroups;
+      }
+      DashGlobals.prototype.getGroups = function () {
+        dash.groupNames.forEach(function(group, index) {
+          dash.groups.push(new dash.Group( group.textContent, dash.groupIds[index].textContent))
+        })
+      };
 
+      DashGlobals.prototype.MemberGroup = function(name, id, admin) {
+        this.name = name;
+        this.id = id;
+        this.admin = admin;
+      }
+      DashGlobals.prototype.getMemberGroups = function() {
+        dash.groupNames.forEach(function(name, index) {
+          dash.memberGroups.push(new dash.MemberGroup(name.textContent, dash.groupIds[index].textContent, dash.groupAdmins[index].textContent));
+        })
+        return dash.memberGroups
+      }
+      DashGlobals.prototype.addEventListeners = function() {
+        this.groupTable.addEventListener('click', leaveGroupModal)
+        this.leaveGroupModal.querySelector('.noGroup').addEventListener('click', noGroupModal);
+        this.leaveGroupModal.querySelector('.yesGroup').addEventListener('click', yesGroupModal);
+        this.adminTable.addEventListener('click', leaveGroupAdminModal);
+        this.adminDeleteModal.querySelector('.noAdminLeave').addEventListener('click', noAdminLeaveFunc);
+        this.adminDeleteModal.querySelector('.yesAdminLeave').addEventListener('click', yesAdminLeaveFunc);
+        this.accountDeleteBut.addEventListener('click', deleteAccountModal);
+        document.querySelector('.noAccountDelete').addEventListener('click', noAccountDelBut);
+        this.delAccMod.querySelector('.finalDelete').addEventListener('click', yesAccountDelete);
+        document.querySelector('#editProfileButton').addEventListener('click', editAccModalFunc);
+        this.editAccModal.querySelector('.cancelAccountEdit').addEventListener('click', cancelAccEdit);
+        this.editAccModal.querySelector('.editAccSubmit').addEventListener('click', accEditSubmit);
+        this.adminTable.addEventListener('click', showEditGroupModal);
+        this.editGroupModal.querySelector('.editGroupCancel').addEventListener('click', hideEditGroupModal);
+        this.editGroupModal.querySelector('.editGroupSubmit').addEventListener('click', groupEditSubmit);
+        this.pendDiv.addEventListener('click', showPendModal);
+        this.pendModal.querySelector('.cornerX').addEventListener('click', hidePendModal);
+        this.pendModal.querySelector('.declinePend').addEventListener('click', declinePend);
+        this.pendModal.querySelector('.joinPend').addEventListener('click', joinPend);
+      }
+      var dash = new DashGlobals();
+      dash.memberGroups = dash.getMemberGroups();
+      dash.adminGroups = dash.getAdminGroups();
+      dash.pends = dash.getPends();
+      dash.addEventListeners();
+      console.log(dash.pends);
+      function showEditGroupModal(e) {
+        if (e.target.className === 'editGroupLink') {
+          let currentGroup;
+          dash.adminGroups.forEach(function(group, index) {
+            if (group.name === e.target.firstChild.textContent) {
+              currentGroup = group;
+              dash.adTableIndex = index;
+            }
+          })
+          e.preventDefault();
+          dash.gId.textContent = currentGroup.id;
+          dash.gName.value = currentGroup.name;
+          dash.gLocation.value = currentGroup.location;
+          dash.gStart.value = currentGroup.start;
+          dash.gEnd.value = currentGroup.end;
+          dash.gDescript.value = currentGroup.description;
+          dash.editGroupModal.querySelector('.groupNameEditMod').textContent = currentGroup.name;
+          dash.editGroupModal.style.display = 'block';
+        }
+      }
+      function hidePendModal(e) {
+        dash.pendModal.style.display = 'none';
+      }
+      function showPendModal(e) {
+        e.preventDefault();
+        dash.pendModal.style.display = 'block';
+        let currentPend;
+        dash.pends.forEach(function(pend, index) {
+          if (pend.name === e.target.textContent) {
+            currentPend = pend;
+            dash.pendIndex = index;
+          }
+        })
+        dash.pendModal.querySelector('.pendModName').textContent = currentPend.name;
+        dash.pendModal.querySelector('.pendModLoc').textContent = 'Location: ' + currentPend.location;
+        dash.pendModal.querySelector('.pendModDesc').textContent = 'Description: ' + currentPend.description;
+        dash.pendModal.querySelector('.pendModAdmin').textContent = 'Admin: ' + currentPend.admin;
+        dash.pendModal.querySelector('.pendModDates').textContent = 'Dates: ' + new Date(currentPend.start).toDateString() + '. Through ' + new Date(currentPend.end).toDateString();
+        // dash.pendModal.querySelector('.pendModName').textContent = e.target.textContent;
+      }
+      function joinPend(e) {
+        dash.socket.emit('join pend', dash.pends[dash.pendIndex].id);
+        dash.pendModal.style.display = 'none';
+      }
+      function declinePend(e) {
+        dash.socket.emit('decline pend', dash.pends[dash.pendIndex].id);
+        dash.pendModal.style.display = 'none';
+      }
+      function yesAccountDelete(e) {
+        let pass = document.querySelector('.deleteAccPassInput');
+        if (pass.value.length < 3) {
+          let mess = 'The password must be at least 3 characters';
+          showErrorMessage(mess, 'error', dash.delAccMod, dash.delAccMod.querySelector('.delAccForm'), '1rem', '88%');
+          pass.value = '';
+          e.preventDefault();
+          return;
+        }
+      }
+      function groupEditSubmit(e) {
+        e.preventDefault();
+        console.log(dash.gDescript.value.length)
+        let uPass = dash.editGroupModal.querySelector('.editGroupUserPass');
+        let gPass = dash.editGroupModal.querySelector('.editGroupGroupPass');
+        if (uPass.value.length < 3 || gPass.value.length < 3) {
+          let mess = 'Both passwords must be at least 3 characters';
+          showErrorMessage(mess, 'error', dash.editGroupModal, dash.editGroupModal.querySelector('.editForm'), '1rem', '90%')
+          uPass.value = '';
+          gPass.value = '';
+          return;
+        }
+        if (dash.gDescript.value.length < 10 || dash.gDescript.value.length > 200) {
+          let mess = 'Sorry, the Group Description must be at least 10 characters long, and no longer than 200 characters';
+          showErrorMessage(mess, 'error', dash.editGroupModal, dash.editGroupModal.querySelector('.editForm'), '1rem', '90%')
+          uPass.value = '';
+          gPass.value = '';
+          return;
+        }
+        if ((dash.gName.value.length > 2) && (dash.gName.value.length < 36) && (dash.gLocation.value.length > 2) && (dash.gLocation.value.length < 36)) {
+          dash.socket.emit('group edit', dash.gName.value, dash.gLocation.value, dash.gStart.value, dash.gEnd.value, dash.gDescript.value, dash.gId.textContent, uPass.value, gPass.value)
+          dash.editGroupModal.querySelector('.editGroupUserPass').value = '';
+          dash.editGroupModal.querySelector('.editGroupGroupPass').value = '';
+          dash.editGroupModal.style.display = 'none';
+        }
+        else {
+          let message = 'Sorry, the Group Name and the Group Location must be between 3 and 35 characters long';
+          showErrorMessage(message, 'error', dash.editGroupModal, dash.editGroupModal.querySelector('.editForm'), '1rem', '90%');
+          uPass.value = '';
+          gPass.value = '';
+          return;
+        }
+      }
+      function hideEditGroupModal(e) {
+        e.preventDefault();
+        dash.editGroupModal.style.display = 'none';
+      }
+      function yesAdminLeaveFunc(e) {
+        e.preventDefault();
+        dash.socket.emit('delete group', dash.adminDeleteModal.querySelector('.groupAdDelName').textContent, dash.adminDeleteModal.querySelector('.adminPass').value)
+        dash.adminDeleteModal.style.display = 'none';
+      }
+      function cancelAccEdit(e) {
+        e.preventDefault();
+        dash.editAccModal.style.display = 'none';
+      }
+      function accEditSubmit(e) {
+        let pass = dash.editAccModal.querySelector('.editAccPassInput');
+        e.preventDefault();
+        if (pass.value.length < 3) {
+          let mess = ' The password must be at least 3 characters';
+          showErrorMessage(mess, 'error', dash.editAccModal, dash.editAccModal.querySelector('.editAccForm'), '1rem', '88%');
+          pass.value = '';
+          return;
+        }
+        if (dash.accModFName.value.length < 1 || dash.accModLName.value.length < 1 ) {
+          let message = 'Your first name and last name must be at least 1 character in length.';
+          showErrorMessage(message, 'error', dash.editAccModal, dash.editAccModal.querySelector('.editAccForm'), '1rem', '88%');
+          dash.editAccModal.querySelector('.editAccPassInput').value = '';
+          return;
+        }else if(dash.accModLName.value.length > 40 || dash.accModFName.value.length > 40) {
+          let message = 'Sorry first and last names cannot exceed 40 characters';
+          showErrorMessage(message, 'error', dash.editAccModal, dash.editAccModal.querySelector('.editAccForm'), '1rem', '88%');
+          pass.value = '';
+          return;
+        }
+        if (quickEmailCheck(dash.accModEmail.value) === true) {
+          dash.socket.emit('edit account', dash.accModFName.value, dash.accModLName.value, dash.accModEmail.value, dash.editAccModal.querySelector('.editAccPassInput').value);
+          dash.profile.firstName = dash.accModFName.value;
+          dash.profile.lastName = dash.accModLName.value;
+          dash.profile.email = dash.accModEmail.value;
+          dash.editAccModal.style.display = 'none';
+        } else {
+          let message = 'The email is not in proper email format.';
+          dash.editAccModal.querySelector('.editAccPassInput').value = '';
+          showErrorMessage(message, 'error', dash.editAccModal, dash.editAccModal.querySelector('.editAccForm'), '1rem', '88%')
+        }
+        e.preventDefault();
+      }
+      function editAccModalFunc(e) {
+        e.preventDefault();
+        dash.editAccModal.style.display = 'block';
+        dash.editAccModal.querySelector('.editAccNameModal').textContent = dash.profile.username;
+        dash.editAccModal.querySelector('.accModFName').value = dash.profile.firstName;
+        dash.editAccModal.querySelector('.accModLName').value = dash.profile.lastName;
+        dash.editAccModal.querySelector('.accModEmail').value = dash.profile.email;
+      }
+      function noAccountDelBut(e) {
+        e.preventDefault();
+        dash.accountDeleteModal.style.display = 'none';
+      }
+      function deleteAccountModal(e){
+        e.preventDefault();
+        dash.accountDeleteModal.style.display = 'block';
+        dash.accountDeleteModal.querySelector('.accountNameModal').textContent = dash.user;
+      }
+      function noAdminLeaveFunc(e){
+        e.preventDefault();
+        dash.adminDeleteModal.style.display = 'none';
+      }
+      function leaveGroupAdminModal(e) {
+        if (e.target.className === 'adminDelete') {
+          e.preventDefault();
+          dash.adminDeleteModal.style.display = 'block';
+          let groupName = dash.adminDeleteModal.querySelector('.groupAdDelName');
+          groupName.textContent = (e.target.firstChild.textContent);
+        } else {
+          return;
+        }
+      }
+      function leaveGroupModal(e) {
+        if (e.target.className === 'leaveGroupButton') {
+          e.preventDefault();
+          let groupName = dash.leaveGroupModal.querySelector('.groupNameModal');
+          groupName.textContent = (e.target.firstChild.textContent);
+          dash.memberGroups.forEach(function(group, index) {
+            if (group.name === groupName.textContent && group.admin === dash.user){
+              let message = 'You are the group Admin, you cannot leave the group. You can, however, delete the group. Look in the Admin table below.'
+              showErrorMessage(message, 'error', document.querySelector('.groupTableDiv'), dash.groupTable, '1rem', '60%');
+            }else if (group.name === groupName.textContent) {
+              console.log(e.target.firstChild.textContent)
+              dash.leaveGroupModal.style.display = 'block';
+              let groupName = dash.leaveGroupModal.querySelector('.groupNameModal');
+              dash.groupIndex = index
+            }
+          });
+        } else {
+          return;
+        }
+      }
+      function noGroupModal(e) {
+        e.preventDefault();
+        dash.leaveGroupModal.style.display = 'none';
+      }
+      function yesGroupModal(e) {
+        e.preventDefault();
+        dash.socket.emit('leave group', dash.memberGroups[dash.groupIndex].id, dash.leaveGroupModal.querySelector('.groupNameModal').textContent);
+        dash.leaveGroupModal.style.display = 'none';
+      }
 
+      dash.socket.on('on connect', function(data) {
+        // console.log(data.profile);
+        // dash.profile.push(JSON.parse(data.profile))
+        // console.log(data.profile.username)
+        return;
+      });
+      dash.socket.on('account edited', function(data) {
+        console.log('came back');
+        let message = 'Account successfully updated!!!'
+        showErrorMessage(message, 'success', dash.profileDiv, dash.profileDiv.querySelector('.profileTable'), '1rem', '60%;');
+        dash.profileDiv.querySelector('.profileName').textContent = dash.profile.firstName + ' ' + dash.profile.lastName;
+        dash.profileDiv.querySelector('.profileEmail').textContent = dash.profile.email;
+        dash.editAccModal.querySelector('.editAccPassInput').value = '';
+      })
+      dash.socket.on('group left', function(data) {
+        let message = 'You have left ' + data.name;
+        showErrorMessage(message, 'success', document.querySelector('.groupTableDiv'), dash.groupTable, '1rem', '60%');
+        dash.memberGroups.splice(dash.groupIndex, 1);
+        let rows = dash.groupTable.querySelectorAll('.groupTableRow');
+        rows[dash.groupIndex].remove();
+        console.log(dash.memberGroups);
+        dash.groupIndex = 0;
+      })
+      dash.socket.on('pend joined', function(data) {
+        let mess = 'You have joined ' + dash.pends[dash.pendIndex].name;
+        showErrorMessage(mess, 'success', dash.pendDiv, dash.pendDiv.querySelector('.buttonList', '1rem', '60%'))
+        let newGroup = dash.pends[dash.pendIndex];
+        dash.pends.splice(dash.pendIndex, 1);
+        let oldPends = dash.pendDiv.querySelectorAll('.buttonList')
+        oldPends[dash.pendIndex].remove();
+        dash.memberGroups.push(new dash.MemberGroup(newGroup.name, newGroup.id, newGroup.admin));
+        dash.groupIndex = 0;
+        console.log(dash.memberGroups)
+        // let frag = document.createDocumentFragment();
+        let tr = document.createElement('tr');
+        tr.className = 'groupTableRow';
+        let td1 = document.createElement('td');
+        let td2 = document.createElement('td');
+        let td3 = document.createElement('td');
+        let td4 = document.createElement('td');
+        let td5 = document.createElement('td');
+        td1.className = 'groupNameTable';
+        td2.className = 'groupIdTable';
+        td3.className = 'leaveGroupButton';
+        td5.className = 'groupTypeATable';
+        let a1 = document.createElement('A');
+        let a2 = document.createElement('A');
+        let a3 = document.createElement('A');
+        a1.className = 'memGroupNameLink';
+        a1.href = '/group/' + newGroup.id;
+        a1.textContent = newGroup.name;
+        a2.className = 'leaveGroupButton';
+        a2.href = '#';
+        let node = document.createTextNode('Leave Group');
+        a3.href = '/group/' + newGroup.id + '/getMembers';
+        a3.textContent = 'Invite Members';
+        let div = document.createElement('div');
+        div.className = 'hidGroupName';
+        div.textContent = newGroup.name;
+        div.style.display = 'none';
+        td2.textContent = newGroup.id;
+        td5.textContent = newGroup.admin;
+        a2.appendChild(div);
+        a2.appendChild(node);
+        td1.appendChild(a1);
+        td3.appendChild(a2);
+        td4.appendChild(a3);
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+        tr.appendChild(td3);
+        tr.appendChild(td4);
+        tr.appendChild(td5);
+        dash.groupTable.appendChild(tr);
+        if (dash.memberGroups.length === 1) {
+          document.querySelector('.noGroupHead').remove();
+          document.querySelector('.groupHidTable').style.display = 'block';
+        }
+      })
+      dash.socket.on('pend declined', function(data) {
+        let message = 'You have declined to join Group: ' + dash.pends[dash.pendIndex].name;
+        showErrorMessage(message, 'success', dash.pendDiv, dash.pendDiv.querySelector('.buttonList'), '1rem', '60%');
+        dash.pends.splice(dash.pendIndex, 1);
+        let oldPends = dash.pendDiv.querySelectorAll('.buttonList')
+        oldPends[dash.pendIndex].remove();
+        console.log(dash.pends)
+      })
+      dash.socket.on('incorrect date format', function(data) {
+        let message = 'Sorry, you used an incorrect date format. Please use the date input format provided.';
+        showErrorMessage(message, 'error', document.querySelector('.adminTableDiv'), dash.adminTable, '1rem', '60%');
+      })
+      dash.socket.on('dates not possible', function(data) {
+        let message = 'Sorry those dates are not possible. Either date cannot be in the past, also the end cannot be before the start and once the trip has begun you cannot edit the dates.';
+        showErrorMessage(message, 'error', document.querySelector('.adminTableDiv'), dash.adminTable, '1.1rem', '80%')
+      })
+      dash.socket.on('not email', function(data) {
+        console.log('not email')
+      })
+      dash.socket.on('group edited', function(data) {
+        let message = 'Group successfully updated!'
+        showErrorMessage(message, 'success', document.querySelector('.adminTableDiv'), dash.adminTable, '1rem', '60%')
+        dash.adGNames[dash.adTableIndex].textContent = dash.gName.value;
+        // dash.adInfo.querySelector('.hiddenAdGName').textContent = dash.gName.value;
+        dash.groupTable.querySelectorAll('.memGroupNameLink')[dash.adTableIndex].textContent = data.name;
+        dash.groupTable.querySelectorAll('.hidGroupName')[dash.adTableIndex].textContent = data.name;
+        dash.adminGroups[dash.adTableIndex].name = data.name;
+        dash.adminGroups[dash.adTableIndex].location = data.location;
+        dash.adminGroups[dash.adTableIndex].start = data.start;
+        dash.adminGroups[dash.adTableIndex].end = data.end;
+        dash.adminGroups[dash.adTableIndex].description = data.description;
+        dash.adminTable.querySelectorAll('.hiddenAdminNameEd')[dash.adTableIndex].textContent = data.name;
+        dash.adminTable.querySelectorAll('.hiddenAdminNameDel')[dash.adTableIndex].textContent = data.name;
+      })
+      dash.socket.on('group name in use', function(data) {
+        let message = 'Sorry, the name ' + data.name + ' is already in use';
+        showErrorMessage(message, 'error', document.querySelector('.adminTableDiv'), dash.adminTable, '1rem', '90%');
+        // dash.editAccModal.querySelector('.editAccPassInput').value = '';
+       })
+      dash.socket.on('group edit bad length', function(data) {
+        let message = 'Sorry, at least one of your input values was of incorrect length. Group name and location must be between 3 and 35 characters, and the group description must be between 10 and 255 characters.'
+        showErrorMessage(message, 'error', document.querySelector('.adminTableDiv'), dash.adminTable, '.95rem', '90%')
+      })
+      dash.socket.on('bad pass edit account', function(data) {
+        let message = 'Incorrect Password';
+        showErrorMessage(message, 'error', dash.profileDiv, dash.profileDiv.querySelector('.profileTable'), '1rem', '60%');
+      })
+
+      dash.socket.on('bad pass group', function(data) {
+        console.log('hi')
+        let message = 'Incorrect password, please try again';
+        showErrorMessage(message, 'error', document.querySelector('.adminTableDiv'), dash.adminTable, '1rem', '60%')
+      })
+
+      dash.socket.on('group deleted', function(data) {
+        console.log('group deleted')
+        let message = data.name + ' was successfully deleted. The page will reload in 5 seconds.';
+        showErrorMessage(message, 'error', document.querySelector('.adminTableDiv'), dash.adminTable, '1rem', '60%');
+        // let adGroups = document.querySelectorAll('adGroupTableRow');
+        // adGroups[dash.adTableIndex].remove();
+        setTimeout(function(){
+            location.reload();
+        },5000);
+      })
+      function showErrorMessage(message, type, parent, before, size, width) {
+        let div = document.createElement('div');
+        div.className = (type);
+        div.classList += ' alert';
+        div.style.fontSize = (size);
+        div.style.width = (width);
+        div.style.marginLeft = '-.75%';
+        div.appendChild(document.createTextNode(message));
+        parent.insertBefore(div, before);
+        setTimeout(function(){
+            document.querySelector('.alert').remove();
+        },12000);
+      }
+      function quickEmailCheck(email) {
+        let re = /\S+@\S+\.\S+/
+        console.log(email + re.test(email))
+        return re.test(email);
+      }
+    }
+
+  </script>
 {% endblock %}

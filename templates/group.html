@@ -7,6 +7,7 @@
           <p class='groupHeadDesc'>{{ group.description }}</p>
           <p>Group Creator: <strong>{{ group.admin }}</strong></p>
           <p><a href="/group/{{group.id}}/calendar" class="noPinLink">Calendar</a></p>
+          <p class='userNameHid'>{{ current_user.username }}</p>
       </div>
       <br /><br />
       <!--<div class="picDiv">
@@ -39,98 +40,121 @@
           {% endfor %}
         </ul>
       </div>
-      <div class="pinRow">
-        <h2 align="center" class="pinTitle" text-decoration="underline">Rentals:</h2><br />
+      <div class="renPinRow pinRow">
+        <h2 align="center" class="pinTitle" text-decoration="underline">Lodgings:</h2><br />
         {% if renPins %}
           {% for pin in renPins %}
-            <div class="pinList" style:"border: 1px solid black">
-              <h3 text-decoration="underline"><large>{{ pin.lodgeName }}:</large></h3>
-              <p> {{ pin.rooms }} Bedrooms, ${{ pin.price }} per night.</p>
-              <p> {{ pin.description }}</p>
-              <p>Posted by: <strong>{{ pin.creator }}</strong></p>
-              <a class="pinLink" target="_blank" href="{{ pin.link }}">View at site</a>
-              <br /><br />
-              {% if user == group.admin or user == pin.creator %}
+            <div class="pinList">
+              <h3 class='pinHeader'><large><a target="_blank" href="{{ pin.link }}" style='color:darksalmon'>{{ pin.lodgeName }}</a></large></h3>
+              <p class='pinP'> {{ pin.rooms }} Bedrooms, ${{ pin.price }} per night.</p>
+              <p class='pinP'> {{ pin.description }}</p>
+              <p class='pinP'>Posted by: <strong>{{ pin.creator }}</strong></p>
+              <a class="pinLinkP" target="_blank" href="{{ pin.link }}">View at site</a>
+              <br />
+              <!-- {% if user == group.admin or user == pin.creator %}
                 <p><a href="/edit_rental_pin/{{ id }}/{{ pin.lodgeName }}" class="pinLink">Edit Pin</a>   <a  href="/delete_rental_pin/{{ id }}/{{ pin.lodgeName }}" class="pinLink">  Delete Pin</a></p>
-              {% endif %}
+              {% endif %} -->
             </div>
           {% endfor %}
         {% else %}
           <div class="noPinDiv"><a class="noPinLink" href="#rentalPin">You can pin rental here!</a></div>
         {% endif %}
       </div><br />
-      <div class="pinRow">
+      <div class="restPinRow pinRow">
         <h2 align="center" class="pinTitle" text-decoration="underline">Restaurants and Clubs:</h2><br />
         {% if restPins %}
           {% for pinTwo in restPins %}
             <div class="pinList">
-              <h3 text-decoration="underline"><large>{{ pinTwo.restName }}:</large></h3>
-              <p> {{pinTwo.type}}</p>
-              <p> {{ pinTwo.description }}</p>
-              <p>Posted by: <strong>{{ pinTwo.creator }}</strong></p>
-              <a class="pinLink" target="_blank" href="{{ pinTwo.link }}">View at site</a>
+              <h3 class='pinHeader'><large><a target="_blank" href="{{ pinTwo.link }}"  style='color:darksalmon'>{{ pinTwo.restName }}</a></large></h3>
+              <p class='pinP'> {{pinTwo.types}}</p>
+              <p class='pinP'> {{ pinTwo.description }}</p>
+              <p class='pinLinkP'><a class="pinLink" target="_blank" href="{{ pinTwo.link }}">View at site</a></p>
               <p>Posted by: <strong>{{ pinTwo.creator }}</strong></p>
               <br />
-              {% if user == group.admin or user == pinTwo.creator %}
+              <!-- {% if user == group.admin or user == pinTwo.creator %}
                 <p><a href="/edit_restaurant_pin/{{ id }}/{{ pinTwo.restName }}" class="pinLink">Edit Pin</a>   <a  href="/delete_restaurant_pin/{{ id }}/{{ pinTwo.restName }}" class="pinLink">  Delete Pin</a></p>
-              {% endif %}
+              {% endif %} -->
             </div>
           {% endfor %}
         {% else %}
           <div class="noPinDiv"><a class="noPinLink" href="#restPin">How about pinning a restaurant or nightclub!</a></div><br />
         {% endif %}
       </div>
-      <div class="pinRow">
+      <div class="transPinRow pinRow">
         <h2 align="center" class="pinTitle" text-decoration="underline">Transportation:</h2><br />
         {% if transpoPins %}
           {% for pinThree in transpoPins %}
             <div class="pinList">
-              <h3 text-decoration="underline"><large>{{ pinThree.transpoName }}:</large></h3>
-              <p>{{ pinThree.date }}</p>
-              <p>{{ pinThree.price }}</p>
-              <p>{{ pinThree.description }}</p>
-              <p>{{ pinThree.types }}</p>
-              <p><a class="pinLink" target="_blank" href="{{ pinThree.link }}">View at site</a></p>
+              <h3 class='pinHeader'><large><a target="_blank" href="{{ pinThree.link }}"  style='color:darksalmon'>{{ pinThree.transpoName }}</a></large></h3>
+              <p class='pinP'>${{ pinThree.price }}</p>
+              <p class='pinP'>{{ pinThree.description }}</p>
+              <p class='pinP'>{{ pinThree.types }}</p>
+              <p class='pinLinkP'><a class="pinLink" target="_blank" href="{{ pinThree.link }}">View at site</a></p>
               <p>Posted by: <strong>{{ pinThree.creator }}</strong></p>
               <br />
-              {% if user == group.admin or user == pinThree.creator %}
-                <p><a href="/edit_transportation_pin/{{ id }}/{{ pinThree.transpoName }}" class="pinLink">Edit Pin</a>   <a  href="/delete_transportation_pin/{{ id }}/{ pinThree.transpoName }}" class="pinLink">  Delete Pin</a></p>
-              {% endif %}
+              <!-- {% if user == group.admin or user == pinThree.creator %}
+                <p><a href="/edit_transportation_pin/{{ id }}/{{ pinThree.transpoName }}" class="pinLink">Edit Pin</a>   <a  href="/delete_transportation_pin/{{ id }}/{{ pinThree.transpoName }}" class="pinLink">  Delete Pin</a></p>
+              {% endif %} -->
             </div>
           {% endfor %}
         {% else %}
           <div class="noPinDiv"><a class="noPinLink" href="#transpoPin">You can pin differrent transportation too!</a></div><br />
         {% endif %}
       </div>
-      <div class="pinRow">
+      <div class="actPinRow pinRow">
         <h2 align="center" class="pinTitle" text-decoration="underline">Activities and Events:</h2><br />
         {% if activityPins %}
           {% for pinFour in activityPins %}
             <div class="pinList">
-              <h3 text-decoration="underline"><large>{{ pinFour.activityName }}:</large></h3>
-              <p>{{ pinFour.type }} activity</p>
-              <p>{{ pinFour.description }}</p>
-              <p><a class="pinLink" target="_blank" href="{{ pinFour.link }}">View at site</a></p>
+              <h3 class='pinHeader'><large><a target="_blank" href="{{ pinFour.link }}" style='color:darksalmon'>{{ pinFour.activityName }}</a></large></h3>
+              <p class='pinP'>${{ pinFour.price }}</p>
+              <p class='pinP'>{{ pinFour.types }} activity</p>
+              <p class='pinP'>{{ pinFour.description }}</p>
+              <p class=pinLinkP><a class="pinLink" target="_blank" href="{{ pinFour.link }}">View at site</a></p>
               <p>Posted by: <strong>{{ pinFour.creator }}</strong></p>
               <br />
-              {% if user == group.admin or user == pinFour.creator %}
+              <!-- {% if user == group.admin or user == pinFour.creator %}
                 <p><a href="/edit_activity_pin/{{ id }}/{{ pinFour.activityName }}" class="pinLink">Edit Pin</a>   <a  href="/delete_activity_pin/{{ id }}/{{ pinFour.activityName }}" class="pinLink">  Delete Pin</a></p>
-              {% endif %}
+              {% endif %} -->
             </div>
           {% endfor %}
         {% else %}
-          <div class="noPinDiv"><a class="noPinLink" href="#activityPin">This area could use an activity pin or two!</a></div><br />
+          <div class="noPinDiv"><a class="noPinLink" href="#activityPin"  style='color:darksalmon'>This area could use an activity pin or two!</a></div><br />
         {% endif %}
       </div>
+      <div class='budgetDiv'>
+        <h3 class='finTitle'>Trip Budget</h3>
+        <div class='calculatorResults budget'>${{ budget.total }}</div>
+        <input type='submit' value='Change Budget' class='budgetSubmit2 sign-logSubmit'>
+        <div class='budgetForm'>
+          <p>Enter your trip budget here, then add your expenses below, and we'll help you stay within budget!!</p>
+          <form class="" action="" method="POST">
+            <div>{{ budgetForm.hidden_tag() }}</div>
+            <div>{{ budgetForm.budget(class='sign-logInput budgetInput') }}</div>
+            <div><button class='sign-logSubmit budgetSubmit'>Calculate</button></div>
+          </form>
+        </div>
+      </div>
       <div class='calcDiv'>
-        <h3 text-align='center'>Expense Calculator</h3>
-        <p>Add different expenses to keep a running estimate of expected expenses.
-          Enter the number of recurring payments, as well as the amount of people
-          you expect to split the cost of each expense, and the calculator will do the math.
+        <h3 class='finTitle'>Expense Calculator</h3>
+        <p>Add your estimated trip expenses here. Enter the number of payments and amount of people which you will split
+        each expense. If it is a one time payment split one way, set both # of payments and # of people to split to 1.
         </p>
         <!-- <input type="text" class="sign-logInput calcName" placeholder="Name"> -->
-        <form class="expenseForm">
-          <input type="number" class="sign-logInput" id="calcPrice" placeholder="Price">
+        <form class="expenseForm" method='POST' action=''>
+          <div>{{ expenseForm.hidden_tag() }}</div>
+          <div><input type='text' placeholder='Expense Name' class='sign-logInput calcName'></div>
+          <input type='number' placeholder='Price $' class='sign-logInput calcPrice'>
+          <input type='number' placeholder='# of Payments' class='sign-logInput calcPays'>
+          <input type='number' placeholder='# of People to Split Cost' class='sign-logInput calcDivideBy'>
+          <select class='sign-logInput calcType'>
+            <option value="Rental">Rental</option>
+            <option value="Food/Drink">Food/Drink</option>
+            <option value="Transportation">Transportation</option>
+            <option value="Activity">Activity</option>
+          </select>
+          <div><button class='sign-logSubmit expenseSubmit'>Calculate</button></div>
+          <!-- <input type="number" class="sign-logInput" id="calcPrice" placeholder="Price">
           <input type="number" class="sign-logInput" id="calcDays" placeholder="# of Payments">
           <input type="number" class="sign-logInput" id="calcDivideBy" placeholder="# of people to split">
           <select class="sign-logInput" id="calcSelect">
@@ -141,122 +165,83 @@
             <option value="activity">Activity</option>
             <option value="other">Other</option>
           </select>
-          <input class="sign-logSubmit" id="calcSubmit" style="width: 45%;" value='Calculate' type='submit'>
+          <input class="sign-logSubmit" id="calcSubmit" style="width: 45%;" value='Calculate' type='submit'> -->
         </form>
       </div>
-      <div class="calcDiv results">
-        <h3>Individual Expenses</h3>
-        <ol class="resultList">
-          <!-- <li cl5ss="calculatorResults" id="expenseResults" type="text" style:"display:none;"></li> -->
-        </ol>
+      <div class='expenseOneModal'>
+        <span class='expModalTitle'>Are You Sure You Want To Delete This Expense?</span>
+        <button class='yesExpOne sign-logSubmit'>Yes</button>
+        <button class='noExpOne sign-logSubmit'>No</button>
+      </div>
+      <div class='expenseAllModal'>
+        <span class='expModalTitle'>Are You Sure You Want To Delete All Expenses?</span>
+        <button class='yesExpAll sign-logSubmit'>Yes</button>
+        <button class='noExpAll sign-logSubmit'>No</button>
+      </div>
+      <div class='budgetNum' style='display:none;'>{{budget.total}}</div>
+      <div class="results">
+        <h3 class='resultsTitle'>Individual Expenses:</h3>
+          {% for expense in expenses %}
+            <ol class="resultList" style="display:none;">
+              <li class='budgetNum'>{{budget.total}}</li>
+              <li class="expenseNames">{{expense.name}}</li>
+              <li class="expenseCosts">{{expense.cost}}</li>
+              <li class="expensePays">{{expense.payments}}</li>
+              <li class="expenseSplits">{{expense.splits}}</li>
+              <li class="expenseTypes">{{expense.type}}</li>
+            </ol>
+          {% endfor %}
         <button class="expenseDelete sign-logInput">Clear All Expenses</button>
-        <div class="totalResult">
-          <h3>Total Expenses</h3>
-        </div>
+        <div class="totalResult"></div>
       </div>
-      <div>
-        <form method="POST" action="" align="center">
-          <div class="pinnerForm" id="rentalPin"><h3 class="pinFormTitle" align="center">Pin a Rental</h3>
-            <div>{{ pinForm.hidden_tag() }}</div>
-            <div>{{ pinForm.rentalName(class="pinInput") }}</div>
-            {% for message in pinForm.rentalName.errors %}
-              <div class='formErrorPin formError'>  {{ message }} </div>
-            {% endfor %}
-            <div>{{ pinForm.price(class="pinInput") }}</div>
-            {% for message in pinForm.price.errors %}
-              <div class='formErrorPin formError'>  {{ message }} </div>
-            {% endfor %}
-            <div>{{ pinForm.rooms(class="pinInput") }}</div>
-            {% for message in pinForm.rooms.errors %}
-              <div class='formErrorPin formError'>  {{ message }} </div>
-            {% endfor %}
-            <div>{{ pinForm.description(class="pinInput descriptionPin") }}</div>
-            {% for message in pinForm.description.errors %}
-              <div class='formErrorPin formError'>  {{ message }} </div>
-            {% endfor %}
-            <div>{{ pinForm.link(class="pinInput") }}</div>
-            {% for message in pinForm.link.errors %}
-              <div class='formErrorPin formError'>  {{ message }} </div>
-            {% endfor %}
-            <div>{{ pinForm.submit1(class="pinInput pinSubmit") }}</div>
+      <div class='renPinDiv'>
+        <form method="POST" action="" align="center" class='renPinForm'>
+          <div class="renPinnerForm pinnerForm" id="rentalPin"><h3 class="pinFormTitle" align="center">Pin a Lodging</h3>
+            <div class='pinStart'>{{ pinForm.hidden_tag() }}</div>
+            <div>{{ pinForm.rentalName(class="pinInput renName") }}</div>
+            <div>{{ pinForm.price(class="pinInput renPrice") }}</div>
+            <div>{{ pinForm.rooms(class="pinInput renRooms") }}</div>
+            <div>{{ pinForm.description(class="pinInput descriptionPin renDescript") }}</div>
+            <div><input type="text" class='pinInput descriptionPin renLink' placeholder='Link to Rental'></div>
+            <div><button class="pinInput pinSubmit renSub">Submit</button></div>
           </div>
         </form>
       </div>
-      <div>
+      <div class='restPinDiv'>
         <form method="POST" action="" align="center">
-          <div class="pinnerForm" id="restPin"><h3 class="pinFormTitle" align="center">Pin a Restaurant or Nightclub</h3>
-            <div>{{ pinFormTwo.hidden_tag() }}</div>
-            <div>{{ pinFormTwo.restName(class="pinInput") }}</div>
-            {% for message in pinFormTwo.restName.errors %}
-              <div class='formErrorPin formError'>  {{ message }} </div>
-            {% endfor %}
-            <div>{{ pinFormTwo.description2(class="pinInput descriptionPin") }}</div>
-            {% for message in pinFormTwo.description2.errors %}
-              <div class='formErrorPin formError'>  {{ message }} </div>
-            {% endfor %}
-            <div>{{ pinFormTwo.link2(class="pinInput") }}</div>
-            {% for message in pinFormTwo.link2.errors %}
-              <div class='formErrorPin formError'>  {{ message }} </div>
-            {% endfor %}
-            <div>{{ pinFormTwo.type(class="pinInput selectorPin") }}</div>
-            {% for message in pinFormTwo.type.errors %}
-              <div class='formErrorPin formError'>  {{ message }} </div>
-            {% endfor %}
-            <div>{{ pinFormTwo.submit2(class="pinInput pinSubmit") }}</div>
+          <div class="pinnerForm restPinnerForm" id="restPin"><h3 class="pinFormTitle" align="center">Pin a Restaurant or Nightclub</h3>
+            <div class=restPinStart>{{ pinFormTwo.hidden_tag() }}</div>
+            <div>{{ pinFormTwo.restName(class="pinInput restName") }}</div>
+            <div>{{ pinFormTwo.description2(class="pinInput descriptionPin restDescript") }}</div>
+            <div>{{ pinFormTwo.link2(class="pinInput restLink") }}</div>
+            <div>{{ pinFormTwo.type(class="pinInput selectorPin restType") }}</div>
+            <div><button class="pinInput pinSubmit restSub">Submit</button></div>
           </div>
         </form>
       </div>
-      <div>
+      <div class='transPinDiv'>
         <form method="POST" action="" align="center">
-          <div class="pinnerForm" id="transpoPin"><h3 class="pinFormTitle" align="center">Pin Transportation</h3>
-            <div>{{ pinFormThree.hidden_tag() }}</div>
-            <div>{{ pinFormThree.name(class="pinInput") }}</div>
-            {% for message in pinFormThree.name.errors %}
-              <div class='formErrorPin formError'>  {{ message }} </div>
-            {% endfor %}
-            <div>{{ pinFormThree.date(class="pinInput") }}</div>
-            {% for message in pinFormThree.date.errors %}
-              <div class='formErrorPin formError'>  {{ message }} </div>
-            {% endfor %}
-            <div>{{ pinFormThree.price3(class="pinInput") }}</div>
-            {% for message in pinFormThree.price3.errors %}
-              <div class='formErrorPin formError'>  {{ message }} </div>
-            {% endfor %}
-            <div>{{ pinFormThree.description3(class="pinInput descriptionPin") }}</div>
-            {% for message in pinFormThree.description3.errors %}
-              <div class='formErrorPin formError'>  {{ message }} </div>
-            {% endfor %}
-            <div>{{ pinFormThree.link3(class="pinInput") }}</div>
-            {% for message in pinFormThree.link3.errors %}
-              <div class='formErrorPin formError'>  {{ message }} </div>
-            {% endfor %}
-            <div>{{ pinFormThree.type(class="pinInput selectorPin") }}</div>
-            <div>{{ pinFormThree.submit3(class="pinInput pinSubmit") }}</div>
+          <div class="pinnerForm transPinnerForm" id="transpoPin"><h3 class="pinFormTitle" align="center">Pin Transportation</h3>
+            <div class='transPinStart'>{{ pinFormThree.hidden_tag() }}</div>
+            <div>{{ pinFormThree.name(class="pinInput transName") }}</div>
+            <div>{{ pinFormThree.price3(class="pinInput transPrice") }}</div>
+            <div>{{ pinFormThree.description3(class="pinInput descriptionPin transDescript") }}</div>
+            <div>{{ pinFormThree.link3(class="pinInput transLink") }}</div>
+            <div>{{ pinFormThree.type(class="pinInput selectorPin transType") }}</div>
+            <div><button class="pinInput pinSubmit transSub">Submit</button></div>
           </div>
         </form>
       </div>
-      <div>
+      <div class='actPinDiv'>
         <form method="POST" action="" align="center">
-          <div class="pinnerForm" id="activityPin"><h3 class="pinFormTitle" align="center">Pin an Activity</h3>
-            <div>{{ pinFormFour.hidden_tag() }}</div>
-            <div>{{ pinFormFour.activityName(class="pinInput") }}</div>
-            {% for message in pinFormFour.activityName.errors %}
-              <div class='formErrorPin formError'>  {{ message }} </div>
-            {% endfor %}
-            <div>{{ pinFormFour.price(class="pinInput") }}</div>
-            {% for message in pinFormFour.price.errors %}
-              <div class='formErrorPin formError'>  {{ message }} </div>
-            {% endfor %}
-            <div>{{ pinFormFour.description(class="pinInput descriptionPin") }}</div>
-            {% for message in pinFormFour.description.errors %}
-              <div class='formErrorPin formError'>  {{ message }} </div>
-            {% endfor %}
-            <div>{{ pinFormFour.link(class="pinInput") }}</div>
-            {% for message in pinFormFour.link.errors %}
-              <div class='formErrorPin formError'>  {{ message }} </div>
-            {% endfor %}
-            <div>{{ pinFormFour.type(class="pinInput selectorPin") }}</div>
-            <div>{{ pinFormFour.submit4(class="pinInput pinSubmit") }}</div>
+          <div class="actPinnerForm pinnerForm" id="activityPin"><h3 class="pinFormTitle" align="center">Pin an Activity</h3>
+            <div class='actPinStart'>{{ pinFormFour.hidden_tag() }}</div>
+            <div>{{ pinFormFour.activityName(class="pinInput actName") }}</div>
+            <div><input type='number' placeholder='Price' class="pinInput actPrice"></div>
+            <div>{{ pinFormFour.description(class="pinInput descriptionPin actDescript") }}</div>
+            <div>{{ pinFormFour.link(class="pinInput actLink") }}</div>
+            <div>{{ pinFormFour.type(class="pinInput selectorPin actType") }}</div>
+            <div><button class="pinInput pinSubmit actSub">Submit</button></div>
           </div>
         </form>
       </div>
@@ -282,46 +267,544 @@
           </table>
         </div>
       </footer>
+      <!-- <div>Icons made by <a href="https://www.flaticon.com/authors/dave-gandy" title="Dave Gandy">Dave Gandy</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div> -->
   </div>
+  <script src="{{url_for('static', filename = 'app.js')}}"></script>
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
   <!-- <script src="http://code.jquery.com/jquery-latest.min.js"></script> -->
-  <script src="{{url_for('static', filename = 'group.js')}}"></script>
+  <!-- <script src="{{url_for('static', filename = 'group.js')}}"></script> -->
   <script type="text/javascript" charset="utf-8">
-    // $(function()
     {
-        // Declare variables
-        let id = document.querySelector('#groupId').textContent;
-        let socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
-        let message = document.querySelector('#message');
-        let chat = document.querySelector('#chat');
-        let groupPageFlash = document.querySelector('.flashMessage');
-        let online = document.querySelector('#online')
-        let arr = [];
-        let arrTwo = [];
-        let mems = document.querySelectorAll('.memListItem');
-        // List of group members
-        for (i=0;i<mems.length;i++) {
-            arr.push(mems[i].innerHTML);
+        // Declare variables in global object
+        function Globals() {
+          this.id = document.querySelector('#groupId').textContent;
+          this.socket = io.connect('http://' + document.domain + ':' + location.port + '/chat');
+          this.message = document.querySelector('#message');
+          this.messageForm = document.querySelector('#messageForm');
+          this.chat = document.querySelector('#chat');
+          this.groupPageFlash = document.querySelector('.flashMessage');
+          this.online = document.querySelector('#online')
+          this.arr = [];
+          this.arrTwo = [];
+          this.username = document.querySelector('.userNameHid').textContent;
+          this.mems = document.querySelectorAll('.memListItem');
+          this.results = document.querySelector('.results');
+          this.totResult = document.querySelector('.totalResult');
+          this.changeBudget = document.querySelector('.budgetSubmit2');
+          this.budgetForm = document.querySelector('.budgetForm');
+          this.expenseForm = document.querySelector('.expenseForm');
+          this.budget = parseInt(document.querySelector('.budgetNum').textContent);
+          this.exNames = document.querySelectorAll('.expenseNames');
+          this.exCosts = document.querySelectorAll('.expenseCosts');
+          this.exPays = document.querySelectorAll('.expensePays');
+          this.exSplits = document.querySelectorAll('.expenseSplits');
+          this.exTypes = document.querySelectorAll('.expenseTypes');
+          this.exDelBut = document.querySelector('.expenseDelete');
+          this.calculate = document.querySelector('#submit6');
+          this.calcDiv = document.querySelector('.calcDiv');
+          this.allExpModal = document.querySelector('.expenseAllModal');
+          this.yesExpAll = document.querySelector('.yesExpAll');
+          this.noExpAll = document.querySelector('.noExpAll');
+          this.oneExpModal = document.querySelector('.expenseOneModal');
+          this.yesExpOne = document.querySelector('.yesExpOne');
+          this.noExpOne = document.querySelector('.noExpOne');
+          this.totExp = 0;
+          this.expenseToDelete;
+          this.price = document.querySelector('.calcPrice');
+          this.pays = document.querySelector('.calcPays');
+          this.divisor = document.querySelector('.calcSplits');
+          this.type = document.querySelector('.calcType');
+          this.exSubmit = document.querySelector('.expenseSubmit');
+          this.budgeSubmit = document.querySelector('.budgetSubmit');
+          this.expenseArray = [];
+          this.budgetDiv = document.querySelector('.budgetDiv');
+          this.budgetInput = document.querySelector('.budgetInput');
+          this.pinInputs = document.querySelectorAll('.pinInput');
         }
-        // Event listener for chat submit
-        document.querySelector('#messageForm').addEventListener('submit', sendMessage);
+        Globals.prototype.exes = function(){
+          let arr = [];
+          if (global.exNames != null) {
+            global.exNames.forEach(function(name, index) {
+              // arr.push(new Expense(name.textContent, global.exCosts[index].textContent, global.exPays[index].textContent, global.exSplits[index].textContent, global.exTypes[index].textContent))
+              arr.push(new Expense(name.textContent, global.exCosts[index].textContent, global.exPays[index].textContent, global.exSplits[index].textContent, global.exTypes[index].textContent))
+            });
+          }
+          return arr;
+        }
+        var global = new Globals();
+        global.pinInputs.forEach(function(input) {
+          if(input.classList.contains('selectorPin')) {
+            input.selectedIndex = 0;
+          }else {
+            input.value = '';
+          }
+        })
+        //Each Expense has a name, cost, amount of payments(pays), amount people splitting(splits), and type(ie 'Rental')
+        function Expense(name, cost, pays, splits, type) {
+          this.name = name;
+          this.cost = cost;
+          this.pays = pays;
+          this.splits = splits;
+          this.totalCost = (cost * pays / splits).toFixed(2);
+          this.type = type;
+        }
+        // Expenses is just the total cost of all expenses and the total number of expenses
+        function Expenses(total, count) {
+          this.total = total;
+          this.count = count
+        }
+        // Load Event Listeners
+        function loadEventListeners() {
+          global.changeBudget.addEventListener('click', newBudget)
+          global.exDelBut.addEventListener('click', showAllModal);
+          global.yesExpAll.addEventListener('click', deleteAllExpenses);
+          global.noExpAll.addEventListener('click', noExpModal);
+          global.noExpOne.addEventListener('click', noExpModalAll);
+          global.results.addEventListener('click', showOneModal)
+          //global.calculate.addEventListener('click', calc);
+          global.yesExpOne.addEventListener('click', deleteOneExpense);
+          global.messageForm.addEventListener('submit', sendMessage);
+          global.exSubmit.addEventListener('click', submitExpense);
+          global.budgeSubmit.addEventListener('click', changeBudget);
+          document.querySelector('.renSub').addEventListener('click', rentalSubmit);
+          document.querySelector('.restSub').addEventListener('click', restSubmit);
+          document.querySelector('.transSub').addEventListener('click', transSubmit);
+          document.querySelector('.actSub').addEventListener('click', actSubmit);
+        }
+        loadEventListeners();
+
+        // If there are expenses; run populateExpenses to display them
+        global.expenseArray = global.exes()
+        if (global.expenseArray.length > 0) {
+          populateExpenses(global.expenseArray);
+        }
+
+        function actSubmit(e) {
+          e.preventDefault();
+          let actName = document.querySelector('.actName');
+          let actPrice = document.querySelector('.actPrice');
+          let actType = document.querySelector('.actType');
+          let actDescript = document.querySelector('.actDescript');
+          let actLink = document.querySelector('.actLink');
+          let type = parseInt(actPrice.value);
+          console.log(typeof type)
+          let message;
+          if ((actName.value === '') || (actPrice.value < 0) || (actDescript.value === '') || (actLink.value === '')) {
+            showErrorMessage('Please Fill in All Inputs', 'error', document.querySelector('.actPinnerForm'), document.querySelector('.actPinStart'));
+          } else {
+            if (actName.value.length < 3 || actName.value.length > 35) {
+              message = 'The activity name must be at least 3 characters, but no longer than 35.'
+              showErrorMessage(message, 'error', document.querySelector('.actPinnerForm'), document.querySelector('.actPinStart'));
+              return;
+            }
+            if (typeof type != 'number') {
+              message = 'Sorry the price field must be in the form of a number';
+              showErrorMessage(message, 'error', document.querySelector('.actPinnerForm'), document.querySelector('.actPinStart'));
+              actPrice.value = '';
+              return;
+            }
+            if (actDescript.value.length < 10 || actDescript.value > 250) {
+              message = 'The Description field must be at least 10 charaters long, but no more than 250.';
+              showErrorMessage(message, 'error', document.querySelector('.actPinnerForm'), document.querySelector('.actPinStart'));
+              return;
+            }
+            // if (actLink.value.length < )
+            global.socket.emit('act submit', actName.value, actPrice.value, actDescript.value, actType.value, actLink.value);
+            let frag = document.createDocumentFragment();
+            let div = document.createElement('div');
+            div.className = 'pinList'
+            let h3 = document.createElement('h3')
+            h3.textContent = actName.value;
+            div.appendChild(h3);
+            let p2 = document.createElement('p');
+            let p3 = document.createElement('p');
+            let p4 = document.createElement('p');
+            let p5 = document.createElement('p');
+            p2.textContent = '$' + actPrice.value;
+            p3.textContent = actDescript.value;
+            p4.textContent = actType.value
+            p5.textContent = 'Posted by: ' + global.username;
+            div.appendChild(p2);
+            div.appendChild(p3);
+            div.appendChild(p4);
+            let anchor = document.createElement('A');
+            anchor.href = actLink.value;
+            anchor.textContent = 'View at site';
+            div.appendChild(anchor);
+            frag.appendChild(div);
+            document.querySelector('.actPinRow').appendChild(frag);
+            actName.value = '';
+            actDescript.value = '';
+            actType.value = '';
+            actLink.value = '';
+            actPrice.value = '';
+          }
+        }
+
+        function transSubmit(e) {
+          e.preventDefault();
+          let transName = document.querySelector('.transName');
+          let transPrice = document.querySelector('.transPrice');
+          let transType = document.querySelector('.transType');
+          let transDescript = document.querySelector('.transDescript');
+          let transLink = document.querySelector('.transLink');
+          if ((transName.value === '') || (transPrice.value <= 0) || (transDescript.value === '') || (transLink.value === '')) {
+            showErrorMessage('Please Fill in All Inputs', 'error', document.querySelector('.transPinnerForm'), document.querySelector('.transPinStart'));
+          } else {
+            global.socket.emit('trans submit', transName.value, transPrice.value, transDescript.value, transType.value, transLink.value);
+            let frag = document.createDocumentFragment();
+            let div = document.createElement('div');
+            div.className = 'pinList'
+            let h3 = document.createElement('h3')
+            h3.textContent = transName.value;
+            div.appendChild(h3);
+            let p2 = document.createElement('p');
+            let p3 = document.createElement('p');
+            let p4 = document.createElement('p');
+            let p5 = document.createElement('p');
+            p2.textContent = '$' + transPrice.value;
+            p3.textContent = transDescript.value;
+            p4.textContent = transType.value
+            p5.textContent = 'Posted by: '; + global.username;
+            div.appendChild(p2);
+            div.appendChild(p3);
+            div.appendChild(p4);
+            let anchor = document.createElement('A');
+            anchor.href = transLink.value;
+            anchor.textContent = 'View at site';
+            div.appendChild(anchor);
+            frag.appendChild(div);
+            document.querySelector('.transPinRow').appendChild(frag);
+            transName.value = '';
+            transDescript.value = '';
+            transType.value = '';
+            transLink.value = '';
+            transPrice.value = '';
+          }
+        }
+
+        function restSubmit(e) {
+          e.preventDefault();
+          let restName = document.querySelector('.restName');
+          let restType = document.querySelector('.restType');
+          let restDescript = document.querySelector('.restDescript');
+          let restLink = document.querySelector('.restLink');
+          if ((restName.value === '') || (restDescript.value === '') || (restLink.value === '')) {
+            let message = 'Please fill in all inputs';
+            let type = 'error';
+            let size = '.9rem';
+            showErrorMessage(message, type, document.querySelector('.restPinnerForm'), document.querySelector('.restPinStart'));
+          } else {
+            global.socket.emit('rest submit', restName.value, restDescript.value, restType.value, restLink.value);
+            let frag = document.createDocumentFragment();
+            let div = document.createElement('div');
+            div.className = 'pinList'
+            let h3 = document.createElement('h3')
+            h3.textContent = restName.value;
+            div.appendChild(h3);
+            let p1 = document.createElement('p');
+            let p2 = document.createElement('p');
+            let p3 = document.createElement('p')
+            p1.textContent = restType.value;
+            p2.textContent = restDescript.value;
+            p3.textContent = 'Posted by: ' + global.username;
+            div.appendChild(p1);
+            div.appendChild(p2);
+            div.appendChild(p3);
+            let anchor = document.createElement('A');
+            anchor.href = restLink.value;
+            anchor.textContent = 'View at site';
+            div.appendChild(anchor);
+            frag.appendChild(div);
+            document.querySelector('.restPinRow').appendChild(frag);
+            restName.value = '';
+            restDescript.value = '';
+            restType.value = '';
+            restLink.value = '';
+          }
+        }
+
+        function rentalSubmit(e) {
+          e.preventDefault();
+          let renName = document.querySelector('.renName');
+          let renPrice = document.querySelector('.renPrice');
+          let renRooms = document.querySelector('.renRooms');
+          let renDescript = document.querySelector('.renDescript');
+          let renLink = document.querySelector('.renLink');
+          if ((renName.value === '') || (renPrice.value <= 0) || (renRooms.value <= 0) || (renDescript.value === '') || (renLink.value === '')) {
+            let message = 'Please fill in all inputs';
+            let type = 'error';
+            let size = '.9rem';
+            showErrorMessage(message, type, document.querySelector('.renPinnerForm'), document.querySelector('.pinStart'));
+          } else {
+            global.socket.emit('rental submit', renName.value, renPrice.value, renRooms.value, renDescript.value, renLink.value);
+            let frag = document.createDocumentFragment();
+            let div = document.createElement('div');
+            div.className = 'pinList'
+            let h3 = document.createElement('h3')
+            h3.textContent = renName.value;
+            div.appendChild(h3);
+            let p1 = document.createElement('p');
+            let p2 = document.createElement('p');
+            let p3 = document.createElement('p')
+            p1.textContent = renRooms.value + ' bedrooms, $' + renPrice.value + ' per night';
+            p2.textContent = renDescript.value;
+            p3.textContent = 'Posted by: ' + global.username;
+            div.appendChild(p1);
+            div.appendChild(p2);
+            div.appendChild(p3);
+            let anchor = document.createElement('A');
+            anchor.href = renLink.value;
+            anchor.textContent = 'View at site';
+            div.appendChild(anchor);
+            frag.appendChild(div);
+            document.querySelector('.renPinRow').appendChild(frag);
+            renName.value = '';
+            renDescript.value = '';
+            renPrice.value = '';
+            renRooms.value = '';
+            renLink.value = '';
+          }
+        }
+
+        function changeBudget(e) {
+          e.preventDefault();
+          if (global.budgetInput.value <= 0) {
+            let message = "Sorry, you're new budget must greater than 0.";
+            let type = 'error';
+            let size = '.9rem'
+            showErrorMessage(message, type, global.budgetForm, global.budgetSubmit, size);
+            global.budgetInput.value = '';
+            return;
+          }
+          let newBudget = document.querySelector('.budgetInput').value;
+          global.budgetInput.value = '';
+          global.socket.emit('change budget', newBudget);
+          global.budget = newBudget;
+          document.querySelector('.budget').textContent = '';
+          document.querySelector('.budget').textContent = '$' + newBudget;
+          if (global.expenseArray.length > 0) {
+            clearOldExpenses();
+            populateExpenses(global.expenseArray);
+          }
+          global.budgetForm.style.display = 'none';
+          global.changeBudget.style.display = 'block';
+        }
+        console.log(global.expenseArray);
+        // Function inserts each expense in a div to dom; as well as a total expenses div at the end
+        // which compares to the budget
+
+        function clearOldExpenses() {
+          let oldEx = global.results.querySelectorAll('.displayExDiv');
+          oldEx.forEach(function(exp) {
+            global.results.removeChild(exp);
+          })
+        }
+
+        function submitExpense(e) {
+          e.preventDefault();
+          let price = document.querySelector('.calcPrice');
+          let name = document.querySelector('.calcName');
+          let splits = document.querySelector('.calcDivideBy');
+          let pays = document.querySelector('.calcPays');
+          let type = document.querySelector('.calcType');
+          if (price.value < 1 || splits.value < 1 || pays.value < 1 || type.value === '') {
+            let type = 'error';
+            let mess = 'Please fill in all inputs';
+            let size = '1.35rem;';
+            showErrorMessage(mess, type, global.calcDiv, global.expenseForm, size);
+            return;
+          } else {
+            global.socket.emit('submit expense', name.value, price.value, pays.value, splits.value, type.value);
+            let oldEx = global.results.querySelectorAll('.displayExDiv');
+            oldEx.forEach(function(exp) {
+              global.results.removeChild(exp);
+            })
+            clearOldExpenses();
+            global.expenseArray.push(new Expense(name.value, price.value, pays.value, splits.value, type.value));
+            name.value = '';
+            price.value = '';
+            splits.value = '';
+            pays.value = '';
+          }
+
+        }
+        function populateExpenses(arr) {
+          let frag = document.createDocumentFragment();
+          let fullExpenses = 0;
+          let counter = 0;
+          arr.forEach(function(a) {
+            // arr.push(new Expense(name.textContent, exCosts[index].textContent, exPays[index].textContent, exSplits[index].textContent, exTypes[index].textContent))
+            let div = document.createElement('div');
+            div.className = 'displayExDiv'
+            let nameDiv = document.createElement('h6');
+            nameDiv.className = 'displayExName'
+            nameDiv.textContent = a.name;
+            div.appendChild(nameDiv);
+            let tots = document.createElement('div');
+            tots.className = 'displayTots'
+            tots.textContent = '$ ' + a.totalCost + ' Total ' + a.type + ' Expense:';
+            tots.style.fontSize = '1.2rem';
+            div.appendChild(tots);
+            extras = document.createElement('div');
+            extras.textContent = a.pays + ' payments, split ' + a.splits + ' ways.';
+            extras.className = 'extras';
+            let link = document.createElement('a');
+            let xnode = document.createTextNode('Clear');
+            link.appendChild(xnode);
+            link.className = 'deleteX'
+            link.href = '#';
+            div.appendChild(extras);
+            div.appendChild(link);
+            frag.appendChild(div);
+            fullExpenses += parseFloat(a.totalCost);
+            counter += 1;
+          })
+          global.results.insertBefore(frag, global.exDelBut);
+          global.totExp = new Expenses(fullExpenses, counter);
+          populateTotalWithBudget();
+        }
+
+        function populateTotalWithBudget() {
+          if (global.totExp.total === 0) {
+            global.results.style.display = 'none';
+            return;
+          }
+          while (global.totResult.firstChild) {
+            global.totResult.removeChild(global.totResult.firstChild)
+          }
+          if (global.totExp.total === 0) {
+            global.results.style.display = 'none';
+            return;
+          }
+          let totFrag = document.createDocumentFragment();
+          let title = document.createElement('h4');
+          title.textContent = 'Total Expenses';
+          let totDiv = document.createElement('div');
+          let theBudget = (global.budget - global.totExp.total).toFixed(2);
+          let onBudget = document.createElement('div');
+          onBudget.appendChild(title);
+          let bNode = document.createElement('p');
+          let span = document.createElement('span');
+          span.textContent = '$' + global.totExp.total.toFixed(2);
+          span.style.fontSize = '1.8rem';
+          onBudget.appendChild(span);
+          let expo;
+          if (global.totExp.count === 1) {
+            expo = 'expense';
+          }else {
+            expo = 'expenses';
+          }
+          if (theBudget >= 0){
+            bNode.textContent = 'Your total expenditure, over ' + global.totExp.count + ' ' + expo + '. You are under Budget!! $' + theBudget + ' under your $' + global.budget + ' budget';
+            onBudget.style.background = 'cadetblue';
+          }else {
+            theBudget = (global.totExp.total - global.budget).toFixed(2);
+            console.log(global.totExp.total + '  ' + global.budget);
+            bNode.textContent = 'Your total expenditure over ' + global.totExp.count + ' ' + expo + ". Oops, you're over budget. $" + theBudget + ' over your $' + global.budget + ' budget';
+            onBudget.style.background = '#ff3333';
+          }
+          onBudget.appendChild(bNode);
+          onBudget.className = 'displayTotNum';
+          totFrag.appendChild(onBudget);
+          global.results.style.display = 'block';
+          global.totResult.style.display = 'block';
+          global.totResult.appendChild(totFrag);
+        }
+
+        function showAllModal(e) {
+          global.allExpModal.style.display = 'block';
+        }
+
+        function showOneModal(e) {
+          if (e.target.className === 'deleteX') {
+            e.preventDefault();
+            global.oneExpModal.style.display = 'block';
+            global.expenseToDelete = e.target.parentElement;
+          }else {
+            return;
+          }
+        }
+
+        function noExpModal(e) {
+          global.allExpModal.style.display = 'none';
+        }
+
+        function noExpModalAll(e) {
+          global.oneExpModal.style.display = 'none';
+        }
+
+        // Uses socket to send a single delete to server, and deletes the expense from dom.
+        function deleteOneExpense(e) {
+          global.socket.emit('delete one expense', global.expenseToDelete.firstChild.textContent)
+          global.oneExpModal.style.display = 'none';
+          let text = global.expenseToDelete.firstChild.textContent;
+          console.log(text);
+          global.expenseArray.forEach(function(exp, index) {
+            if (text === exp.name) {
+              global.expenseArray.splice(index, 1);
+              global.totExp.count -= 1;
+              global.totExp.total -= exp.totalCost;
+              populateTotalWithBudget();
+            }
+          })
+          global.expenseToDelete.remove();
+          console.log(global.expenseArray);
+        }
+        //Deletes all expenses, sends to server over socket, and deletes all expense divs from dom
+        function deleteAllExpenses(e) {
+          e.preventDefault();
+          global.allExpModal.style.display = 'none';
+          while (global.results.firstChild) {
+            global.results.removeChild(global.results.firstChild)
+          }
+          global.socket.emit('delete all expenses');
+          global.expenseArray = [];
+          console.log(global.expenseArray)
+        }
+        // makes sure there are values in all inputs
+
+
+        function showErrorMessage(message, type, parent, before, size) {
+          let div = document.createElement('div');
+          div.className = (type);
+          div.classList += ' alert';
+          div.style.fontSize = (size);
+          div.appendChild(document.createTextNode(message));
+          parent.insertBefore(div, before);
+          setTimeout(function(){
+              document.querySelector('.alert').remove();
+          },5000);
+        }
+
+
+        function newBudget(e) {
+          e.preventDefault();
+          global.budgetForm.style.display = 'block';
+          global.changeBudget.style.display = 'none';
+        }
+
+        // List of group members
+        for (i=0;i<global.mems.length;i++) {
+            global.arr.push(global.mems[i].innerHTML);
+        }
         // Function for submitting chat message, sends message to server
         function sendMessage(e) {
           e.preventDefault();
-          socket.emit('send message', message.value);
-          message.value = ('');
+          global.socket.emit('send message', global.message.value);
+          global.message.value = ('');
         }
         // On connect, adds user to users, sends message saying user connected
-        socket.on('on connect', function(data) {
+        global.socket.on('on connect', function(data) {
             // Create chat element that says user connected.
             let elem = document.createElement('div');
             elem.innerHTML = '<strong style="text-decoration: underline;">'+data.user+'</strong>:  '+data.msg;
             elem.id = 'chat_message';
-            chat.appendChild(elem);
+            global.chat.appendChild(elem);
             elem.scrollIntoView();
             // Empty out the list of members online in html list.
-            while(online.firstChild ){
-                online.removeChild(online.firstChild);
+            while(global.online.firstChild ){
+                global.online.removeChild(online.firstChild);
             }
             // Remove all non unique users
             newUsers = Array.from(new Set(data.users));
@@ -329,24 +812,24 @@
             let fragment = document.createDocumentFragment();
             for(i=0; i < newUsers.length;i++) {
                   let item = document.createElement('li');
-                  item.className = 'onlineMember';
+                  item.classList = 'onlineMember ';
                   let tnode = document.createTextNode(data.users[i]);
                   item.appendChild(tnode);
                   fragment.appendChild(item);
             }
-            online.appendChild(fragment);
+            global.online.appendChild(fragment);
         })
-        // On disconnect, takes user out of users, sends message saying user disconnected
-        socket.on('on disconnect', function(data) {
+        //On disconnect, takes user out of users, sends message saying user disconnected
+        global.socket.on('on disconnect', function(data) {
             // Create chat element that says user disconnected
             let elem = document.createElement('div');
             elem.innerHTML = '<strong style="text-decoration: underline;">'+data.user+'</strong>:  '+data.msg;
             elem.id = 'chat_message';
-            chat.appendChild(elem);
+            global.chat.appendChild(elem);
             elem.scrollIntoView();
             // Clear out all online members from html list
-            while(online.firstChild ){
-                online.removeChild(online.firstChild );
+            while(global.online.firstChild ){
+                global.online.removeChild(online.firstChild );
             }
             // Create all elements for remaining users online
             for(i=0; i < data.users.length;i++){
@@ -354,24 +837,91 @@
                 item.className = 'onlineMember';
                 let tnode = document.createTextNode(data.users[i]);
                 item.appendChild(tnode);
-                online.appendChild(item);
+                global.online.appendChild(item);
             }
         })
-        // Callback Function to display the message
-        socket.on('new message', function(data) {
+
+        global.socket.on('rental saved', function(data) {
+          let message = 'Lodging added!!';
+          let type = 'success';
+          let size = '.9rem';
+          showErrorMessage(message, type, document.querySelector('.renPinnerForm'), document.querySelector('.renPinStart'));
+        })
+
+        global.socket.on('rest saved', function(data) {
+          let message = 'Pin added!!';
+          let type = 'success';
+          let size = '.9rem';
+          showErrorMessage(message, type, document.querySelector('.restPinnerForm'), document.querySelector('.restPinStart'));
+        })
+
+        global.socket.on('trans saved', function(data) {
+          let message = 'Pin added!!';
+          let type = 'success';
+          let size = '.9rem';
+          showErrorMessage(message, type, document.querySelector('.transPinnerForm'), document.querySelector('.transPinStart'));
+        })
+
+        global.socket.on('act saved', function(data) {
+          let message = 'Pin added!!';
+          let type = 'success';
+          let size = '.9rem';
+          showErrorMessage(message, type, document.querySelector('.actPinnerForm'), document.querySelector('.actPinStart'));
+        })
+
+        // Function to display the message
+        global.socket.on('new message', function(data) {
             // Create chat element and append into chat.
             let elem = document.createElement('div');
             elem.innerHTML = '<strong style="text-decoration: underline;">'+data.user+'</strong>:  '+data.msg;
             elem.id = 'chat_message';
-            chat.appendChild(elem);
+            global.chat.appendChild(elem);
             elem.scrollIntoView();
         })
-        if (document.querySelector('.flashMessage') != null){
-            document.querySelector('.flashMessage').style.marginLeft = '24%';
-            document.querySelector('.flashMessage').style.marginRight = '30%';
-            document.querySelector('.flashMessage').style.marginTop = '10%';
+        global.socket.on('expense saved', function(data) {
+          let div = document.createElement('div');
+          div.classList = 'success alert';
+          div.appendChild(document.createTextNode('Expense Added!!'))
+          div.style.fontSize = '1.5rem';
+          global.calcDiv.appendChild(div);
+          setTimeout(function(){
+              document.querySelector('.alert').remove();
+          },5000);
+          populateExpenses(global.expenseArray);
+        })
+        global.socket.on('budget changed', function(data) {
+          let div = document.createElement('div');
+          div.classList = 'success alert';
+          div.appendChild(document.createTextNode('Budget Updated'));
+          global.budgetDiv.appendChild(div);
+          setTimeout(function(){
+               document.querySelector('.alert').remove();
+           },5000);
+        })
+        global.socket.on('allDeleted', function(data) {
+          let div = document.createElement('div');
+          div.classList = 'error alert';
+          div.appendChild(document.createTextNode('All Expenses Deleted!'));
+          global.results.appendChild(div);
+          setTimeout(function(){
+               document.querySelector('.alert').remove();
+           },5000);
+        })
+        global.socket.on('oneDeleted', function(data) {
+          let div = document.createElement('div');
+          div.classList = 'error alert';
+          div.appendChild(document.createTextNode('Expense Deleted!'));
+          global.results.insertBefore(div, global.exDelBut);
+          setTimeout(function(){
+              document.querySelector('.alert').remove();
+          },5000);
+        })
+        if (global.groupPageFlash != null){
+            global.groupPageFlash.style.marginLeft = '24%';
+            global.groupPageFlash.style.marginRight = '30%';
+            global.groupPageFlash.style.marginTop = '10%';
         }
+
     }
   </script>
-
-{% endblock %}
+  {% endblock %}

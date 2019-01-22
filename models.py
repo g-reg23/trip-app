@@ -18,6 +18,7 @@ class User(UserMixin, db.Model):
     registerDate = db.Column(db.DateTime(timezone=True), server_default=func.now())
     e_verified = db.Column(db.SMALLINT, default=0, nullable=False)
 
+
     def getProfile(user):
         return User.query.filter(User.username==user).first()
 
@@ -70,6 +71,7 @@ class Group(db.Model):
     def removeOnlineUser(self, user):
         self.users.remove(user)
 
+
     @staticmethod
     def deleteGroup(group):
         db.session.delete(group)
@@ -85,9 +87,7 @@ class User_Group(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     userId = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
     groupId = db.Column(db.Integer, db.ForeignKey("groups.id", ondelete="CASCADE"))
-    status = db.Column(db.Enum('Pending', 'Accepted'))
     type = db.Column(db.Enum('Admin', 'Member'))
-    groupName = db.Column(db.String(40))
 
     def getUserGroups(userId):
         return User_Group.query.filter(User_Group.userId==userId).all()
@@ -101,6 +101,7 @@ class Pending_Member(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     userId = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
     groupId = db.Column(db.Integer, db.ForeignKey("groups.id", ondelete="CASCADE"))
+    message = db.Column(db.String(100))
     type = db.Column(db.Enum('Request', 'Invite'))
 
     # def getIndividualPend(userId, groupId):
@@ -173,7 +174,9 @@ class Calendar_Note(db.Model):
     groupId = db.Column(db.Integer, db.ForeignKey("groups.id", ondelete="CASCADE"))
     name = db.Column(db.String(30))
     date = db.Column(db.String(40))
+    time = db.Column(db.String(8))
     username = db.Column(db.String(30))
+    event_length = db.Column(db.String(15))
 
     def getNotes(groupId):
         return Calendar_Note.query.filter(Calendar_Note.groupId==groupId)
@@ -185,6 +188,9 @@ class Budget(db.Model):
     userId = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"))
     total = db.Column(db.Integer)
 
+    def getBudget(id):
+        return Budget.query.filter(Budget.userId==id).first()
+
 class Expense(db.Model):
     __tablename__ = 'expenses'
     id = db.Column(db.Integer, primary_key=True)
@@ -193,3 +199,8 @@ class Expense(db.Model):
     name = db.Column(db.String(30))
     cost = db.Column(db.Integer)
     payments = db.Column(db.Integer)
+    type = db.Column(db.Enum('Rental', 'Food/Drink', 'Transportation', 'Activity'))
+    splits = db.Column(db.Integer)
+
+    def getExpenses(groupId, userId):
+        return Expense.query.filter(and_(Expense.groupId==groupId), (Expense.userId==userId)).all()
