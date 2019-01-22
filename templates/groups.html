@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block body %}
   <div class="pageContainer">
-    <h3 class="loginHeader">{{session.username}}'s Groups:</h3>
+    <h3 class="loginHeader">{{current_user.username }}'s Groups:</h3>
     {% if groups %}
       <ul class="groupList">
         {% for group in groups %}
@@ -16,5 +16,6 @@
       <a href="/joinGroup" class="groupButton" alt="Join a group">Join A Group!</a>
     </div>
   </div>
+  <script src="{{url_for('static', filename = 'group.js')}}"></script>
 
 {% endblock %}

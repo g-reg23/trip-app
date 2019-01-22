@@ -2,18 +2,39 @@
 
 {% block body %}
     <div class="pageContainer">
-        <h1 style="text-align: center; margin-bottom: 9%; text-decoration: underline;">{{group.groupName}}<h1>
+        <h1 style="text-align: center; margin-bottom: 9%; text-decoration: underline;">{{group.groupName}}</h1>
+        <div class="groupListDiv">
+          <span class='groupMemsHeader'>Group Members:</span>
+          <div class='groupMemList' style='background:whitesmoke;'>
+            {% for member in mems %}
+            <!-- <p class='memberInfo'>Username:</p> -->
+            <p class='memberListName'><strong>Username:</strong> {{ member }} <button style='float:right;' class='memRemoveButton'>Remove</button></p>
+            <!-- <p class='memberInfo'>Full Name</p> -->
+            <p class='memberListFullName'><strong>Name:</strong> {{ memNames[loop.index0] }}</p>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="removeMemberModal">
+          <h3 class="modalHeader">Remove Group Member</h3>
+          <p class='memberToRemove'></p>
+          <p><strong>Are you sure you would like to remove this group member?</strong></p>
+          <button class='yesNoBut sign-logSubmit yesRemove'>Yes</button>
+          <button class='yesNoBut sign-logSubmit noRemove'>No</button>
+        </div>
         <h1>Requests to Join:</h1>
         {% if displayPends %}
-          <h6>The following users have requested to join the group:</h6>
           <div class="requestProfile">
-            {% for pend in displayPends %}
-              <form class="" action="" method="POST">
-                <p><strong>Username:</strong> {{ pend.username }}</p>
-                <p><strong>Full Name:</strong> {{ pend.firstName }} {{ pend.lastName }}</p>
+            <h6 class='reqHead'>The following users have requested to join the group:</h6>
+            {% for pend in displayPends %}{{index}}
+              <form class="requestForm" method="POST">
+                <p class='reqIndex' style='display:none;'>{{loop.index0}}</p>
+                <p style='display:inline'><strong>Username: </strong></p><p style='display:inline' class='reqUserName'>{{ pend.username }}</p>
+                <p style='display:inline'><strong>Full Name: </strong></p><p class='reqFullName' style='display:inline'>{{ pend.firstName }} {{ pend.lastName }}</p>
                 <p>{{ requestForm.hidden_tag() }}</p>
-                <input type="hidden" value={{ pend.username }} name="username">
-                <p>{{ requestForm.accept(class='sign-logSubmit accept') }}  {{ requestForm.decline(class='sign-logSubmit deny') }}</p>
+                <!-- <input type="hidden" value='{{ loop.index }}' name="username"> -->
+                <p style='font-weight:900;font-size:1.25rem;'>Message:</p>
+                <p class='reqMesses'>{{messages[loop.index0] }}</p>
+                <p><button class='sign-logSubmit accept'>Accept</button><button class='sign-logSubmit deny'>Decline</button></p>
               </form>
             {% endfor %}
           </div>
@@ -49,7 +70,175 @@
             <div>{{ formThree.submit3(class='sign-logSubmit') }}</div>
         </form>
       </div>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
     <script src="{{url_for('static', filename = 'app.js')}}"></script>
+    <script type="text/javascript" charset="utf-8">
+      function GetMemberGlobals() {
+        this.socket = io.connect('http://' + document.domain + ':' + location.port + '/getMems');
+        this.user = '{{ current_user.username }}';
+        this.requests = [];
+        this.members = [];
+        this.memberDiv = document.querySelector('.groupListDiv')
+        this.memberLIs = this.memberDiv.querySelectorAll('.memberListName')
+        this.memberLNs = this.memberDiv.querySelectorAll('.memberListFullName');
+        this.reqProf = document.querySelector('.requestProfile');
+        this.removeModal = document.querySelector('.removeMemberModal');
+        this.noButt = this.removeModal.querySelector('.noRemove');
+        this.yesButt = this.removeModal.querySelector('.yesRemove');
+        // this.removeButton = this.memberDiv.querySelectorAll('memRemoveButton');
+        if ('{{displayPends}}' != '[]') {
+          this.reqForms = this.reqProf.querySelectorAll('.requestForm');
+          this.reqHead = this.reqProf.querySelector('.reqHead');
+          this.accButton = document.querySelectorAll('.accept');
+          this.denyButton = document.querySelectorAll('.deny');
+          this.reqUserNames = this.reqProf.querySelectorAll('.reqUserName');
+          this.reqFullNames = this.reqProf.querySelectorAll('.reqFullName');
+          this.reqMesses = this.reqProf.querySelectorAll('.reqMesses');
+        }
+        this.Request = function(user, name, message) {
+          this.user = user;
+          this.name = name;
+          this.message = message;
+        }
+        this.Member = function(username, name) {
+          this.username = username;
+          this.name = name;
+        }
+        this.requestIndex = 0;
+        this.memberIndex = 0;
+        // this.reqs = '{{ displayPends[0] }}';
+      }
+      GetMemberGlobals.prototype.getAllRequests = function() {
+        var i;
+        for (i=0; i<getMems.reqUserNames.length; i++) {
+          getMems.requests.push(new getMems.Request(getMems.reqUserNames[i].textContent, getMems.reqFullNames[i].textContent, getMems.reqMesses[i].textContent))
+        }
 
+        return getMems.requests;
+      }
+      GetMemberGlobals.prototype.getAllMembers = function() {
+        var i;
+        let fullName;
+        for(i=0;i<getMems.memberLIs.length;i++) {
+          fullName =  getMems.memberLNs[i].textContent.split(' ');
+          getMems.members.push(new getMems.Member(getMems.memberLIs[i].textContent.split(' ')[1], fullName[1] + ' ' + fullName[2]));
+        }
+        return getMems.members;
+      }
+      function loadEventListeners() {
+        if ('{{displayPends}}' != '[]') {
+          getMems.reqProf.addEventListener('click', acceptToGroup);
+          getMems.reqProf.addEventListener('click', denyToGroup);
+        }
+        getMems.memberDiv.addEventListener('click', showRemoveModal);
+        getMems.noButt.addEventListener('click', hideRemoveModal);
+        getMems.yesButt.addEventListener('click', yesRemoveMember);
+      }
+      var getMems = new GetMemberGlobals();
+      if ('{{displayPends}}' != '[]') {
+        getMems.requests = getMems.getAllRequests();
+      }
+      getMems.members = getMems.getAllMembers()
+      loadEventListeners();
 
-{% endblock %}
+      function hideRemoveModal(e) {
+        e.preventDefault();
+        getMems.removeModal.style.display = 'none';
+      }
+
+      function showRemoveModal(e) {
+        if (e.target.classList.contains('memRemoveButton')) {
+          if (e.target.parentElement.textContent.split(' ')[1] === getMems.user) {
+            let message = 'You cannot remove yourself from the group. You are the admin, you can, however, delete the group from your profile/dashboard page.'
+            showErrorMessage(message, 'error', getMems.memberDiv, getMems.memberDiv.querySelector('.groupMemList'), '1.05rem', '70%');
+            return;
+          }else {
+            getMems.removeModal.style.display = 'block';
+            let currentMember;
+            // console.log(e.target.parentElement.textContent.split(' ')[1])
+            getMems.members.forEach(function(member, index) {
+              if (member.username === e.target.parentElement.textContent.split(' ')[1]) {
+                getMems.memberIndex = index;
+                currentMember = member
+              }
+            })
+            console.log(currentMember)
+            memberToRemove = getMems.removeModal.querySelector('.memberToRemove');
+            memberToRemove.textContent = 'User: ' + currentMember.username;
+          }
+        }
+      }
+      function yesRemoveMember(e) {
+        getMems.socket.emit('remove member', getMems.members[getMems.memberIndex].username, getMems.members[getMems.memberIndex].name)
+        getMems.removeModal.style.display = 'none';
+      }
+
+      function acceptToGroup(e) {
+        if (e.target.classList.contains('accept')) {
+          e.preventDefault();
+          getMems.requestIndex = e.target.parentElement.parentElement.firstChild.nextElementSibling.textContent;
+          // console.log(getMems.requestIndex);
+          let currentRequest = getMems.requests[getMems.requestIndex];
+          getMems.socket.emit('accept to group', currentRequest.user);
+        }
+      }
+      function denyToGroup(e) {
+        if (e.target.classList.contains('deny')){
+          e.preventDefault();
+          getMems.requestIndex = e.target.parentElement.parentElement.firstChild.nextElementSibling.textContent;
+          let currentRequest = getMems.requests[getMems.requestIndex];
+          getMems.socket.emit('deny to group', currentRequest.user);
+        }
+      }
+      getMems.socket.on('on connect', function(data) {
+        // console.log(data.user)
+      });
+      getMems.socket.on('accepted', function(data) {
+        console.log(data.user)
+        let message = 'You have accepted ' + data.user
+        showErrorMessage(message, 'success', getMems.reqProf, getMems.reqProf.querySelector('.requestForm'), '1.1rem', '70%');
+        getMems.reqForms[getMems.requestIndex].remove();
+        getMems.requestIndex = 0;
+      })
+      getMems.socket.on('admin no remove', function(data) {
+        let message = 'You cannot remove the admin. Thats you!'
+        showErrorMessage(message, 'success', getMems.memberDiv, getMems.memberDiv.querySelector('.groupMemList', '1.1rem', '70%'))
+      })
+      getMems.socket.on('not member', function(data) {
+        let message = 'The user you tried to remove from the group is not a member of the group.'
+        showErrorMessage(message, 'success', getMems.memberDiv, getMems.memberDiv.querySelector('.groupMemList', '1.1rem', '70%'))
+
+      })
+      getMems.socket.on('member removed', function(data) {
+        let message = 'You have removed ' + data.username + ' from ' + data.group + '.';
+        showErrorMessage(message, 'success', getMems.memberDiv, getMems.memberDiv.querySelector('.groupMemList', '1.1rem', '70%'))
+        let uNames = getMems.memberDiv.querySelectorAll('.memberListName');
+        let fNames = getMems.memberDiv.querySelectorAll('.memberListFullName');
+        uNames[getMems.memberIndex].remove();
+        fNames[getMems.memberIndex].remove();
+        getMems.members.splice(getMems.memberIndex, 1);
+        // getMems.memberIndex = 0;
+        // console.log(uNames[0])
+      })
+      getMems.socket.on('denied', function(data) {
+        console.log('deny-nation!')
+        let message = 'you have denied ' + data.user
+        showErrorMessage(message, 'success', getMems.reqProf, getMems.reqProf.querySelector('.requestForm'), '1.1rem', '60%');
+        getMems.reqForms[getMems.requestIndex].remove();
+        getMems.requestIndex = 0;
+      })
+      function showErrorMessage(message, type, parent, before, size, width) {
+        let div = document.createElement('div');
+        div.className = (type);
+        div.classList += ' alert';
+        div.style.fontSize = (size);
+        div.style.width = (width);
+        div.style.marginLeft = '-2.5%';
+        div.appendChild(document.createTextNode(message));
+        parent.insertBefore(div, before);
+        setTimeout(function(){
+            document.querySelector('.alert').remove();
+        },10000);
+      }
+    </script>
+    {% endblock %}

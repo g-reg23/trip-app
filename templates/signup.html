@@ -2,32 +2,40 @@
 
 {% block body %}
   <div class="pageContainer">
-    <h1 class="loginHeader">Register:</h1>
-      <form method='POST' action=''>
-        <div>{{ form.hidden_tag() }}</div>
-        <div>{{ form.firstName(class="sign-logInput") }}</div>
-        {% for message in form.firstName.errors %}
-          <div class='formError'>  {{ message }} </div>
-        {% endfor %}
-        <div>{{ form.lastName(class="sign-logInput") }}</div>
-        {% for message in form.lastName.errors %}
-          <div class='formError'>  {{ message }} </div>
-        {% endfor %}
-        <div>{{ form.username(class="sign-logInput") }}</div>
-        {% for message in form.username.errors %}
-          <div class='formError'>  {{ message }} </div>
-        {% endfor %}
-        <div>{{ form.email(class="sign-logInput") }}</div>
-        {% for message in form.email.errors %}
-          <div class='formError'>  {{ message }} </div>
-        {% endfor %}
-        <div>{{ form.password(class="sign-logInput") }}</div>
-        {% for message in form.password.errors %}
-          <div class='formError'>  {{ message }} </div>
-        {% endfor %}
-        <div>{{ form.confirm(class="sign-logInput") }}</div>
-        <div>{{ form.submit(class="sign-logSubmit") }}</div>
-      </form>
+    <div class='top-page-div'>
+      <img class="top-page-pic" style='width:94%;' src={{url_for('static', filename = 'images/adventure-alberta-alpine-533658 (1).jpg')}} alt="top-page-pic" />
+      <!-- <h1 class='titleInPic'>The TripLounge</h1> -->
+      <a href='https://www.pexels.com/'>Photo by Pok Rie from Pexels</a>
+    </div>
+    <div>
+      <h1 class="loginHeader">Register:</h1>
+        <form method='POST' action=''>
+          <div>{{ form.hidden_tag() }}</div>
+          <div>{{ form.firstName(class="sign-logInput") }}</div>
+          {% for message in form.firstName.errors %}
+            <div class='formError'>  {{ message }} </div>
+          {% endfor %}
+          <div>{{ form.lastName(class="sign-logInput") }}</div>
+          {% for message in form.lastName.errors %}
+            <div class='formError'>  {{ message }} </div>
+          {% endfor %}
+          <div>{{ form.username(class="sign-logInput") }}</div>
+          {% for message in form.username.errors %}
+            <div class='formError'>  {{ message }} </div>
+          {% endfor %}
+          <div>{{ form.email(class="sign-logInput") }}</div>
+          {% for message in form.email.errors %}
+            <div class='formError'>  {{ message }} </div>
+          {% endfor %}
+          <div>{{ form.password(class="sign-logInput") }}</div>
+          {% for message in form.password.errors %}
+            <div class='formError'>  {{ message }} </div>
+          {% endfor %}
+          <div>{{ form.confirm(class="sign-logInput") }}</div>
+          <div>{{ form.submit(class="sign-logSubmit") }}</div>
+        </form>
+      </div>
     </div>
     <script src="{{url_for('static', filename = 'app.js')}}"></script>
+
 {% endblock %}

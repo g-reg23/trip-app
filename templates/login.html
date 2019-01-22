@@ -2,14 +2,20 @@
 
 {% block body %}
     <div class="pageContainer">
-      <h1 class="loginHeader">Login</h1>
-      <form action="" method="POST">
-          <div>{{ form.hidden_tag() }}</div>
-          <div>{{ form.username(class="sign-logInput") }}</div>
-          <div>{{ form.password(class="sign-logInput") }}</div>
-          <div>{{ form.submit(class="sign-logSubmit") }}</div><br />
-          <div><a href="/reset_password_request">Forgot Password</a></div>
-      </form>
+      <div class='top-page-div'>
+        <img class="top-page-pic" style='width:94%;' src={{url_for('static', filename = 'images/adventure-alberta-alpine-533658 (1).jpg')}} alt="top-page-pic" />
+        <a href='https://www.pexels.com/'>Photo by Pok Rie from Pexels</a>
+      </div>
+      <div>
+        <h1 class="loginHeader">Login</h1>
+        <form action="" method="POST">
+            <div>{{ form.hidden_tag() }}</div>
+            <div>{{ form.username(class="sign-logInput") }}</div>
+            <div>{{ form.password(class="sign-logInput") }}</div>
+            <div>{{ form.submit(class="sign-logSubmit") }}</div><br />
+            <div><a href="/reset_password_request">Forgot Password</a></div>
+        </form>
+      </div>
       <footer>
         <br /><br />
         Not a member?

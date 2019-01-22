@@ -16,7 +16,7 @@
       <p>If you know the group name, but not the password, you can send a group join request to the
       group admin. Add a message so the group admin will know who you are.</p>
       <div>{{ formTwo.hidden_tag() }}</div>
-      <div>{{ formTwo.name(class="sign-logInput") }}</div>
+      <div>{{ formTwo.name2(class="sign-logInput") }}</div>
       <div>{{ formTwo.messageJoin(class="sign-logInput") }}</div>
       <div>{{ formTwo.submit2(class="sign-logSubmit") }}</div>
     </form>
@@ -25,4 +25,5 @@
       <a href="/newGroup" alt="Sign-up">Make one!</a>
     </footer>
   </div>
+  <script src="{{url_for('static', filename = 'app.js')}}"></script>
 {% endblock%}

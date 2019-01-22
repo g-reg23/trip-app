@@ -2,13 +2,28 @@
   <ul class="nav-list">
     <li class="nav-item"><a class="nav-link" href="/">TripSpace</a></li>
     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-    <li class="nav-item"><a class="nav-link" href="/groups">Groups</a></li>
-    {% if session.logged_in %}
+    <li class="nav-item groupNav"><a class="nav-link" href="#"> My Trips:</a>
+      <ul class="navSubList">
+        {% for group in groupIds %}
+          <div><li><a class="subLink nav-link navUser" href="/group/{{ group.id }}">{{ group.groupName }}</a></li></div>
+        {% endfor %}
+        <br />
+        <div><li><a class="subLink nav-link" href="/newGroup">Create A Trip</a></li></div>
+        <div><li><a class="subLink nav-link" href="/joinGroup">Join A Trip</a></li></div>
+      </ul>
+    </li>
+
+    {% if current_user.is_authenticated %}
       <li class="nav-item" style="float: right;"><a class="nav-link" href="/logout">Logout</a></li>
-      <li class="nav-item nav-username" style="float: right;"><a class="nav-link" href="/dashboard">{{ session.username }}</a></li>
+      <li class="nav-item nav-username" style="float: right;"><a class="nav-link" href="/dashboard">{{ current_user.username }}</a></li>
     {% else %}
       <li class="nav-item" style="float: right;"><a class="nav-link" href="/signup">Signup</a></li>
       <li class="nav-item" style="float: right;"><a class="nav-link" href="/login">Login</a></li>
     {% endif %}
   </ul>
+  <!-- <div style='display:none;' class="dropdown-content">
+    <a style='display: block;' href="#">Link 1</a>
+    <a style='display: block;' href="#">Link 2</a>
+    <a style='display: block;' href="#">Link 3</a>
+  </div> -->
 </nav>
