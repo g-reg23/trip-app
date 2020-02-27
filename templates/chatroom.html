@@ -1,0 +1,64 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+  <h1>ChatRoom</h1>
+  <form class='chatExFornm' action='POST'>
+    <input class='sign-logInput chatNum' style='margin-bottom:2%;' type="text" name="" value="" placeholder='Room to Join'>
+    <button class='sign-logSubmit roomSubmit' type='submit'>Join</button>
+  </form>
+  <ul class='chatMess' id='chat_message'></ul>
+  <form class='chatMessForm' action='POST'>
+    <input class='sign-logInput actualMessage' style='margin-top:2%;' placeholder='Message'>
+    <button class='sign-logSubmit messSend' type='submit'>Send</button>
+  </form>
+  <form method='POST' action='' enctype=multipart/form-data>
+    <input type="file" name="file" class='groupImgUploader' />
+    <button type="submit" placeholder='Submit' class='sign-logSubmit'>Submit</button>
+  </form>
+  <script src="{{url_for('static', filename = 'app.js')}}"></script>
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+  <script type="text/javascript" charset="utf-8">
+    let socket = io.connect('http://' + document.domain + ':' + location.port + '/chatroom');
+    // let room= document.querySelector('.id').textContent
+    let roomSubmit = document.querySelector('.roomSubmit');
+    // roomSubmit.addEventListener('click', joinRoom)
+    let chatNum = document.querySelector('.chatNum');
+    let mSend = document.querySelector('.messSend');
+    let message = document.querySelector('.actualMessage');
+    mSend.addEventListener('click', sendsMessage);
+    socket.on('on connect', function(data) {
+      let li = document.createElement('li');
+      li.textContent = data.msg
+      document.querySelector('.chatMess').appendChild(li);
+      console.log(data.msg);
+      // socket.emit('join', room)
+    });
+    // function joinRoom(e) {
+    //   e.preventDefault();
+    //   // let room = chatNum.textContent
+    //   console.log(chatNum.value);
+    //   socket.emit('join', chatNum.value )
+    // }
+    socket.on('room response', function(data) {
+      let li = document.createElement('li');
+      li.textContent = data.msg
+      document.querySelector('.chatMess').appendChild(li);
+      console.log(data.msg)
+    })
+    function sendsMessage(e) {
+      e.preventDefault();
+      socket.emit('send message', message.value)
+    }
+    // function sendRoomMess() {
+    //   socket.emit('send message');
+    // }
+    // socket.on('new message', function(data) {
+    //   console.log(data.msg);
+    // })
+    // sendRoomMess();
+    // socket.on('join_room', function(msg) {
+    //     console.log(msg);
+    // });
+  </script>
+
+{% endblock %}

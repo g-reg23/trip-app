@@ -4,15 +4,17 @@
     <div class="pageContainer">
         <h1 style="text-align: center; margin-bottom: 9%; text-decoration: underline;">{{group.groupName}}</h1>
         <div class="groupListDiv">
-          <span class='groupMemsHeader'>Group Members:</span>
-          <div class='groupMemList' style='background:whitesmoke;'>
-            {% for member in mems %}
-            <!-- <p class='memberInfo'>Username:</p> -->
-            <p class='memberListName'><strong>Username:</strong> {{ member }} <button style='float:right;' class='memRemoveButton'>Remove</button></p>
-            <!-- <p class='memberInfo'>Full Name</p> -->
-            <p class='memberListFullName'><strong>Name:</strong> {{ memNames[loop.index0] }}</p>
-            {% endfor %}
-          </div>
+          {% if current_user.username == group.admin %}
+            <span class='groupMemsHeader'>Group Members:</span>
+            <div class='groupMemList' style='background:whitesmoke;'>
+              {% for member in mems %}
+              <!-- <p class='memberInfo'>Username:</p> -->
+              <p class='memberListName'><strong>Username:</strong> {{ member }} <button style='float:right;' class='memRemoveButton'>Remove</button></p>
+              <!-- <p class='memberInfo'>Full Name</p> -->
+              <p class='memberListFullName'><strong>Name:</strong> {{ memNames[loop.index0] }}</p>
+              {% endfor %}
+            {% endif %}
+            </div>
         </div>
         <div class="removeMemberModal">
           <h3 class="modalHeader">Remove Group Member</h3>
@@ -76,6 +78,7 @@
       function GetMemberGlobals() {
         this.socket = io.connect('http://' + document.domain + ':' + location.port + '/getMems');
         this.user = '{{ current_user.username }}';
+        this.admin = '{{ group.admin }}'
         this.requests = [];
         this.members = [];
         this.memberDiv = document.querySelector('.groupListDiv')
@@ -169,8 +172,12 @@
         }
       }
       function yesRemoveMember(e) {
-        getMems.socket.emit('remove member', getMems.members[getMems.memberIndex].username, getMems.members[getMems.memberIndex].name)
-        getMems.removeModal.style.display = 'none';
+        if (getMems.user === getMems.admin) {
+          let message = 'Sorry, only the admin can make these decisions';
+          showErrorMessage(message, 'success', getMems.memberDiv, getMems.memberDiv.querySelector('.groupMemList', '1.1rem', '70%'))
+        }else
+          getMems.socket.emit('remove member', getMems.members[getMems.memberIndex].username, getMems.members[getMems.memberIndex].name)
+          getMems.removeModal.style.display = 'none';
       }
 
       function acceptToGroup(e) {
@@ -211,7 +218,7 @@
       })
       getMems.socket.on('member removed', function(data) {
         let message = 'You have removed ' + data.username + ' from ' + data.group + '.';
-        showErrorMessage(message, 'success', getMems.memberDiv, getMems.memberDiv.querySelector('.groupMemList', '1.1rem', '70%'))
+        showErrorMessage(message, 'success', getMems.memberDiv, getMems.memberDiv.querySelector('.groupMemList'), '1.1rem', '70%');
         let uNames = getMems.memberDiv.querySelectorAll('.memberListName');
         let fNames = getMems.memberDiv.querySelectorAll('.memberListFullName');
         uNames[getMems.memberIndex].remove();
@@ -226,6 +233,10 @@
         showErrorMessage(message, 'success', getMems.reqProf, getMems.reqProf.querySelector('.requestForm'), '1.1rem', '60%');
         getMems.reqForms[getMems.requestIndex].remove();
         getMems.requestIndex = 0;
+      })
+      getMems.socket.on('user not admin', function(data) {
+        let message = 'Sorry only the admin can make these decisions.'
+        showErrorMessage(message, 'error', getMems.memberDiv, getMems.memberDiv.querySelector('.groupMemList'), '1.1rem', '60%');
       })
       function showErrorMessage(message, type, parent, before, size, width) {
         let div = document.createElement('div');

@@ -10,7 +10,7 @@ from flask_socketio import SocketIO, send, emit, join_room, leave_room
 from threading import Thread
 from forms import *
 from confi import *
-from sqlalchemy import and_, or_, update
+from sqlalchemy import and_, or_, update, inspect
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug import secure_filename
 # from datetime import datetime
@@ -94,7 +94,7 @@ def signup():
                     db.session.delete(email2)
                     db.session.commit()
                 flash('Congrats you are all signed up. We have sent you an email verification link. Please follow the steps in said email in order to verify your account and start using TripLounge.')
-                sendVerificationEmail(form.username.data)
+                sendVerificationEmail(u.username)
                 return redirect(url_for('login'))
             else:
                 flash('Sorry, the password must contain at least 8 characters including 1 lower case, 1 upper case and 1 number digit.')
@@ -508,28 +508,121 @@ def group(id):
             rental = Lodging_Pin(groupId=id, lodgeName=name, price=price, rooms=rooms, description=description, link=link, creator=current_user.username)
             db.session.add(rental)
             db.session.commit()
-            emit('rental saved', room=room)
+            emit('rental saved', {'name': name, 'price': price, 'rooms': rooms, 'description': description, 'link': link, 'creator': current_user.username, 'id': rental.id}, room=room)
 
         @socketio.on('rest submit', namespace='/chat')
         def handle_my_custom_event(name, description, type, link):
             rental = Rest_Pin(groupId=id, restName=name, description=description, types=type, link=link, creator=current_user.username)
             db.session.add(rental)
             db.session.commit()
-            emit('rest saved', room=room)
+            emit('rest saved', {'name': name, 'description': description, 'type': type, 'link': link, 'user': rental.creator, 'id': rental.id}, room=room)
 
         @socketio.on('trans submit', namespace='/chat')
         def handle_my_custom_event(name, price, description, type, link):
-            trans = Transpo_Pin(groupId=id, transpoName=name, description=description, types=type, link=link, creator=current_user.username)
+            # if type == 'Rental Car':
+            #     type = 'Car'
+            trans = Transpo_Pin(groupId=id, transpoName=name, price=price, description=description, types=type, link=link, creator=current_user.username)
             db.session.add(trans)
             db.session.commit()
-            emit('trans saved', room=room)
+            emit('trans saved', {'name': name, 'price': price, 'description': description, 'type': type, 'link': link, 'user': trans.creator, 'id': trans.id}, room=room)
 
         @socketio.on('act submit', namespace='/chat')
         def handle_my_custom_event(name, price, description, type, link):
             rental = Activity_Pin(groupId=id, activityName=name, price=price, description=description, types=type, link=link, creator=current_user.username)
             db.session.add(rental)
             db.session.commit()
-            emit('act saved', room=room)
+            emit('act saved', {'name': name, 'price': price, 'description': description, 'type': type, 'link': link, 'id': rental.id}, room=room)
+
+        @socketio.on('edit lodging', namespace='/chat')
+        def handle_my_custom_event(old_name, new_name, rooms, price, description, link, pin_id):
+            lod_check = Lodging_Pin.query.filter(Lodging_Pin.id==pin_id).first()
+            if lod_check is not None:
+                # lodging = Lodging_Pin.query.filter(and_(Lodging_Pin.creator==current_user.username), (Lodging_Pin.lodgeName==old_name)).update(dict(lodgeName=new_name, rooms=rooms, price=price, description=description, link=link)
+                if lod_check.creator == current_user.username:
+                    # lod_check.update(dict(lodgeName=new_name, rooms=rooms, price=price, description=description, link=link))
+                    lodging = Lodging_Pin.query.filter(Lodging_Pin.id==pin_id).update(dict(lodgeName=new_name, rooms=rooms, price=price, description=description, link=link))
+                    db.session.commit();
+                    emit('lodging edited', {'newName': new_name, 'rooms': rooms, 'price': price, 'description': description, 'link': link, 'id': pin_id}, room=room)
+                else:
+                    emit('not lodge pin creator', {'id': pin_id}, room=room)
+            else:
+                emit('lodging no id', {'id': pin_id}, room=room)
+
+        @socketio.on('delete lodging', namespace='/chat')
+        def handle_my_custom_event(pin_id):
+            lodging = Lodging_Pin.query.filter(Lodging_Pin.id==pin_id).first()
+            if lodging.creator == current_user.username:
+                db.session.delete(lodging)
+                db.session.commit()
+                emit('lodging deleted', {'id': pin_id}, room=room)
+            else:
+                emit('not lodge pin creator', {'id': pin_id}, room=room)
+
+        @socketio.on('edit restaurant', namespace='/chat')
+        def handle_my_custom_event(name, type, description, link, pinId):
+            rest_check = Rest_Pin.query.filter(Rest_Pin.id==pinId).first()
+            if rest_check is not None:
+                if rest_check.creator == current_user.username:
+                    rest = Rest_Pin.query.filter(Rest_Pin.id==pinId).update(dict(restName=name, types=type, description=description, link=link))
+                    db.session.commit()
+                    emit('restaurant edited', {'newName': name, 'type': type, 'description': description, 'link': link, 'id': pinId}, room=room)
+                else:
+                    emit('not rest pin creator', {'id': pinId}, room=room)
+
+        @socketio.on('delete restaurant', namespace='/chat')
+        def handle_my_custom_event(name, pin_id):
+            rest = Rest_Pin.query.filter(Rest_Pin.id==pin_id).first();
+            if rest is not None:
+                if rest.creator == current_user.username:
+                    db.session.delete(rest)
+                    db.session.commit()
+                    emit('restaurant deleted', {'name': name, 'id': pin_id})
+                else:
+                    emit('not rest pin creator', {'id': pin_id}, room=room)
+
+        @socketio.on('edit trans pin', namespace='/chat')
+        def handle_my_custom_event(name, price, link, description, type, pin_id):
+            trans_check = Transpo_Pin.query.filter(Transpo_Pin.id==pin_id).first()
+            if trans_check is not None:
+                if trans_check.creator == current_user.username:
+                    trans = Transpo_Pin.query.filter(Transpo_Pin.id==pin_id).update(dict(transpoName=name, price=price, link=link, description=description, types=type))
+                    db.session.commit()
+                    emit('transpo edited', {'newName': name, 'price': price, 'link': link, 'description': description, 'type': type, 'id': pin_id}, room=room)
+                else:
+                    emit('not transpo pin creator', {'id': pin_id}, room=room)
+
+        @socketio.on('delete trans pin', namespace='/chat')
+        def handle_my_custom_event(pin_id, name):
+            trans = Transpo_Pin.query.filter(Transpo_Pin.id==pin_id).first()
+            if trans is not None:
+                if trans.creator == current_user.username:
+                    db.session.delete(trans)
+                    db.session.commit()
+                    emit('trans pin deleted', {'name': name, 'id': pin_id}, room=room)
+                else:
+                    emit('not transpo pin creator', {'id': pin_id}, room=room)
+
+        @socketio.on('edit act pin', namespace='/chat')
+        def handle_my_custom_event(name, price, type, description, link, pin_id):
+            act_check = Activity_Pin.query.filter(Activity_Pin.id==pin_id).first()
+            if act_check is not None:
+                if act_check.creator == current_user.username:
+                    act = Activity_Pin.query.filter(Activity_Pin.id==pin_id).update(dict(activityName=name, price=price, types=type, description=description))
+                    db.session.commit()
+                    emit('act pin edited', {'newName': name, 'newPrice': price, 'newType': type, 'newDescription': description, 'newLink': link, 'id': pin_id}, room=room)
+                else:
+                    emit('not act pin creator', {'id': pin_id}, room=room)
+
+        @socketio.on('delete act pin', namespace='/chat')
+        def handle_my_custom_event(name, pin_id):
+            act = Activity_Pin.query.filter(Activity_Pin.id==pin_id).first()
+            if act.creator == current_user.username:
+                db.session.delete(act)
+                db.session.commit()
+                emit('act pin deleted', {'name': name, 'id': pin_id}, room=room)
+            else:
+                emit('not act pin creator', {'id': pin_id}, room=room)
+
 
         @socketio.on('send message', namespace='/chat')
         def handle_my_custom_event(msg):
@@ -625,10 +718,12 @@ def groupInviteChoice(id):
 @login_required
 def groupGetMembers(id):
     # Get the group info and list of all members
-    group = Group.getGroupInfo(id)
+    group, members = Group.getGroupInfo(id), []
     groupIds = getAllGroups()
-    if group.admin == current_user.username:
-        members = User_Group.getMembers(id)
+    members = members = User_Group.getMembers(id)
+    memberIds = [member.userId for member in members]
+    app.logger.info(members)
+    if current_user.id in memberIds:
         mems = [User.getProfileById(x.userId).username for x in members]
         memNames = [User.getProfileById(x.userId).firstName + ' ' + User.getProfileById(x.userId).lastName for x in members]
         app.logger.info(memNames)
@@ -663,27 +758,35 @@ def groupGetMembers(id):
         formTwo = InviteGroupByUsernameForm(request.form)
         # Form to look up users by email and send a request to join the group
         formThree = InviteGroupByEmailForm(request.form)
-        if requestForm.accept.data == True and requestForm.validate():
+        # if requestForm.accept.data == True and requestForm.validate():
             # requestForm.accept.data = False
-            user = User.getProfile(requestForm.username.data)
-            displayPends = [x for x in displayPends if x.id!=user.id]
-            pender = Pending_Member.query.filter(and_(Pending_Member.groupId==group.id), (Pending_Member.userId==user.id)).first()
-            db.session.delete(pender)
-            db.session.commit()
-            u_g = User_Group(groupId=id, userId=user.id, type='Member')
-            db.session.add(u_g)
-            db.session.commit()
-            flash(requestForm.username.data + " has been added to the group!!")
-            return redirect(url_for('groupGetMembers', id=id))
-
-        if requestForm.decline.data == True and requestForm.validate_on_submit():
-            user = User.getProfile(requestForm.username.data)
-            pender = Pending_Member.query.filter(and_(Pending_Member.groupId==group.id), (Pending_Member.userId==user.id)).first()
-            displayPends = [x for x in displayPends if x.id!=user.id]
-            db.session.delete(pender)
-            db.session.commit()
-            flash("User " + requestForm.username.data + " request to join has been declined")
-            return redirect(url_for('groupGetMembers', id=id))
+        #     if current_user.username == group.admin:
+        #         user = User.getProfile(requestForm.username.data)
+        #         displayPends = [x for x in displayPends if x.id!=user.id]
+        #         pender = Pending_Member.query.filter(and_(Pending_Member.groupId==group.id), (Pending_Member.userId==user.id)).first()
+        #         db.session.delete(pender)
+        #         db.session.commit()
+        #         u_g = User_Group(groupId=id, userId=user.id, type='Member')
+        #         db.session.add(u_g)
+        #         db.session.commit()
+        #         flash(requestForm.username.data + " has been added to the group!!")
+        #         return redirect(url_for('groupGetMembers', id=id))
+        #     else:
+        #         flash('You are not the admin. You cannot make these decisions.')
+        #         return redirect(url_for('groupGetMembers', id=id))
+        #
+        # if requestForm.decline.data == True and requestForm.validate_on_submit():
+        #     if current_user.username == group.admin:
+        #         user = User.getProfile(requestForm.username.data)
+        #         pender = Pending_Member.query.filter(and_(Pending_Member.groupId==group.id), (Pending_Member.userId==user.id)).first()
+        #         displayPends = [x for x in displayPends if x.id!=user.id]
+        #         db.session.delete(pender)
+        #         db.session.commit()
+        #         flash("User " + requestForm.username.data + " request to join has been declined")
+        #         return redirect(url_for('groupGetMembers', id=id))
+        #     else:
+        #         flash('You are not the admin. You cannot make these decisions.')
+        #         return redirect(url_for('groupGetMembers', id=id))
         if formOne.submit1.data and formOne.validate():
             email = User.query.filter(User.email==formOne.email1.data).first()
             if email is None:
@@ -762,6 +865,7 @@ def groupGetMembers(id):
             emit('on connect', room=room)
         @socketio.on('accept to group', namespace='/getMems')
         def handle_my_custom_event(username):
+            # if current_user.username == group.admin:
             new_user = User.getProfile(username)
             unpend = Pending_Member.query.filter(and_(Pending_Member.userId==new_user.id), (Pending_Member.groupId==id)).first()
             db.session.delete(unpend)
@@ -770,6 +874,8 @@ def groupGetMembers(id):
             db.session.add(u_g)
             db.session.commit()
             emit('accepted', {'user': username}, room=room)
+            # else:
+                # emit('user not admin', room=room)
 
         @socketio.on('deny to group', namespace='/getMems')
         def handle_my_custom_event(username):
@@ -780,24 +886,27 @@ def groupGetMembers(id):
             emit('denied',{'user': username}, room=room)
         @socketio.on('remove member', namespace='/getMems')
         def handle_my_custom_event(username, name):
-            app.logger.info(username)
-            user = User.getProfile(username)
-            if user is not None:
-                check_relation = User_Group.query.filter(and_(User_Group.userId==user.id), (User_Group.groupId==id)).first()
-                if check_relation:
-                    if check_relation.type == 'Admin':
-                        emit('admin no remove', room=room)
+            if current_user.username == group.admin:
+                app.logger.info(username)
+                user = User.getProfile(username)
+                if user is not None:
+                    check_relation = User_Group.query.filter(and_(User_Group.userId==user.id), (User_Group.groupId==id)).first()
+                    if check_relation:
+                        if check_relation.type == 'Admin':
+                            emit('admin no remove', room=room)
+                        else:
+                            db.session.delete(check_relation)
+                            db.session.commit()
+                            emit('member removed', {'username': username, 'group':group.groupName}, room=room)
                     else:
-                        db.session.delete(check_relation)
-                        db.session.commit()
-                        emit('member removed', {'username': username, 'group':group.groupName}, room=room)
+                        emit('not member', room=room)
                 else:
-                    emit('not member', room=room)
-            else:
                 # flash('Sorry that user does not have an account with us, and therefore cannot be in the group. What had happened was...')
-                emit('not a user', room=room)
+                    emit('not a user', room=room)
+            else:
+                emit('user not admin', room=room)
     else:
-        flash('You are not that groups admin!!!')
+        flash('You are not in that group!!!')
         return redirect(url_for('dashboard'))
 
     return render_template('get_members.html', messages=messages, groupIds=groupIds, pends=pends, requestForm=requestForm, displayPends=displayPends, invitePends=invitePends, formOne=formOne, formTwo=formTwo, formThree=formThree, group=group, mems=mems, memNames=memNames)
@@ -819,13 +928,16 @@ def groupCalendarDay(id):
         fullStartDate, fullEndDate = str(group.startDate), str(group.endDate)
         # fullStartDate, fullEndDate = fullStartDate[::-1], fullEndDate[::-1]
         startMonth, endMonth = fullStartDate[5:7], fullEndDate[5:7]
-
+        # notesArr = []
+        # for note in notes:
+        #     notesArr.append(json.dumps(note))
+        app.logger.info(listNotes[0])
         eventForm = CalendarEventForm(request.form)
         room = id
         @socketio.on('connect', namespace='/calendar')
         def connect():
             join_room(room)
-            emit('on connect', {'name': group.groupName, 'id': group.id}, room=room)
+            emit('on connect', {'name': group.groupName, 'id': group.id, 'notes': listNotes}, room=room)
 
         @socketio.on('store note', namespace='/calendar')
         def handle_my_custom_event(name, time, date, length):
@@ -1169,5 +1281,5 @@ def internalerror(error):
 
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0',debug=True)
-    # socketio.run(app, debug=True)
+    # socketio.run(app, host='0.0.0.0',debug=True)
+    socketio.run(app, debug=True)

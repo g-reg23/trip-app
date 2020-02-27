@@ -1,0 +1,502 @@
+{% extends 'layout.html' %}
+{% block body %}
+  <div class='weekDiv' style='display: block'>
+    <table class='weekTable' border="1" cellpadding="5" cellspacing="1" style='table-layout: fixed;'>
+      <thead>
+      <tr class='stickyHeader'>
+          <th class='weekHead weekTableHour'>Week</th>
+          <th class='weekHead weekHeadTitle'>Sunday</th>
+          <th class='weekHead weekHeadTitle'>Monday</th>
+          <th class='weekHead weekHeadTitle'>Tuesday</th>
+          <th class='weekHead weekHeadTitle'>Wednesday</th>
+          <th class='weekHead weekHeadTitle'>Thursday</th>
+          <th class='weekHead weekHeadTitle'>Friday</th>
+          <th class='weekHead weekHeadTitle'>Saturday</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr id='00'>
+          <td class='weekCell weekTableHour'>12:00 AM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr id='30'>
+          <td class='weekCell weekTableHour'>12:30 AM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='10'>
+          <td class='weekCell weekTableHour'>1:00 AM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='130'>
+          <td class='weekCell weekTableHour'>1:30 AM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='20'>
+          <td class='weekCell weekTableHour'>2:00 AM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='230'>
+          <td class='weekCell weekTableHour'>2:30 AM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='30'>
+          <td class='weekCell weekTableHour'>3:00 AM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='330'>
+          <td class='weekCell weekTableHour'>3:30 AM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='40'>
+          <td class='weekCell weekTableHour'>4:00 AM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='430'>
+          <td class='weekCell weekTableHour'>4:30 AM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='50'>
+          <td class='weekCell weekTableHour'>5:00 AM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='530'>
+          <td class='weekCell weekTableHour'>5:30 AM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='600'>
+          <td class='weekCell weekTableHour'>6:00 AM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='630'>
+          <td class='weekCell weekTableHour'>6:30 AM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='70'>
+          <td class='weekCell weekTableHour'>7:00 AM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='730'>
+          <td class='weekCell weekTableHour'>7:30 AM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='80'>
+          <td class='weekCell weekTableHour'>8:00 AM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='830'>
+          <td class='weekCell weekTableHour'>8:30 AM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='90'>
+          <td class='weekCell weekTableHour'>9:00 AM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='930'>
+          <td class='weekCell weekTableHour'>9:30 AM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='100'>
+          <td class='weekCell weekTableHour'>10:00 AM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='1030'>
+          <td class='weekCell weekTableHour'>10:30 AM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='110'>
+          <td class='weekCell weekTableHour'>11:00 AM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='1130'>
+          <td class='weekCell weekTableHour'>11:30 AM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='120'>
+          <td class='weekCell weekTableHour'>12:00 PM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='1230'>
+          <td class='weekCell weekTableHour'>12:30 PM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='130'>
+          <td class='weekCell weekTableHour'>1:00 PM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='1330'>
+          <td class='weekCell weekTableHour'>11:30 PM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='140'>
+          <td class='weekCell weekTableHour'>2:00 PM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='1430'>
+          <td class='weekCell weekTableHour'>2:30 PM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='150'>
+          <td class='weekCell weekTableHour'>3:00 PM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='1530'>
+          <td class='weekCell weekTableHour'>3:30 PM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='160'>
+          <td class='weekCell weekTableHour'>4:00 PM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='1630'>
+          <td class='weekCell weekTableHour'>4:30 PM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='170'>
+          <td class='weekCell weekTableHour'>5:00 PM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='1730'>
+          <td class='weekCell weekTableHour'>5:30 PM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='180'>
+          <td class='weekCell weekTableHour'>6:00 PM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='1830'>
+          <td class='weekCell weekTableHour'>6:00 PM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='190'>
+          <td class='weekCell weekTableHour'>7:00 PM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='1930'>
+          <td class='weekCell weekTableHour'>7:30 PM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='200'>
+          <td class='weekCell weekTableHour'>8:00 PM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='2030'>
+          <td class='weekCell weekTableHour'>8:30 PM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='210'>
+          <td class='weekCell weekTableHour'>9:00 PM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='2130'>
+          <td class='weekCell weekTableHour'>9:30 PM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='220'>
+          <td class='weekCell weekTableHour'>10:00 PM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='2230'>
+          <td class='weekCell weekTableHour'>10:30 PM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='230'>
+          <td class='weekCell weekTableHour'>11:00 PM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+        <tr class='2330'>
+          <td class='weekCell weekTableHour'>11:30 PM</td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+          <td class='weekCell'></td>
+        </tr>
+      </tbody>
+  </table>
+  </div>
+
+{% endblock %}

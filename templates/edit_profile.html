@@ -6,11 +6,12 @@
     <p class="editProfileInfo">Sorry you cannot change your username.</p>
     <form method='POST' action=''>
       <div>{{ form.hidden_tag() }}</div>
-      <div><strong><strong> Current first name:</strong> {{ profile.firstName }}</strong></div>{{ form.firstName(class="sign-logInput") }}
-      <div> <strong><strong>Current last name:</strong> {{ profile.lastName }}</strong></div>{{ form.lastName(class="sign-logInput") }}
-      <div> <strong><strong>Current email:</strong> {{ profile.email }}</strong></div>{{ form.email(class="sign-logInput") }}
+      <div><strong><strong> Current first name:</strong> {{ current_user.firstName }}</strong></div>{{ form.firstName(class="sign-logInput") }}
+      <div> <strong><strong>Current last name:</strong> {{ current_user.lastName }}</strong></div>{{ form.lastName(class="sign-logInput") }}
+      <div> <strong><strong>Current email:</strong> {{ current_user.email }}</strong></div>{{ form.email(class="sign-logInput") }}
       <div>{{ form.password(class="sign-logInput") }}</div>
       <div>{{ form.submit(class="sign-logSubmit") }}</div>
     </form>
   </div>
+  <script src="{{url_for('static', filename = 'app.js')}}"></script>
 {% endblock %}

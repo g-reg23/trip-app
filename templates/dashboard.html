@@ -27,14 +27,16 @@
           <th>Leave Group</th>
           <th>Add</th>
           <th>Admin</th>
+          <th>Dates</th>
         </tr>
         {% for group in groupIds %}
         <tr class='groupTableRow'>
           <td class='groupNameTable'><a class='memGroupNameLink' href='/group/{{group.id}}'>{{ group.groupName }}</a></td>
           <td class='groupIdTable'>{{ group.id }}</td>
           <td><a class='leaveGroupButton' href='#'><div class='hidGroupName' style='display:none;'>{{group.groupName}}</div>Leave Group</a></td>
-          <td><a href="/group/{{ group.groupId }}/get_members">Invite Members</a></td>
+          <td><a href="/group/{{ group.id }}/get_members">Invite Members</a></td>
           <td class='groupTypeATable'>{{group.admin}}</td>
+          <td><a href='/group/{{group.id}}/calendar'>Calendar</a></td>
         </tr>
         {% endfor %}
       </table>
@@ -105,7 +107,7 @@
           <th>Delete Group</th>
         </tr>
       {% for admin in admins %}
-        <tr>
+        <tr class='adGroupTableRow'>
           <td><a href='/group/{{admin.id}}' class='adGNames'>{{ admin.groupName }}</a></td>
           <td>{{ admin.id }}</td>
           <td><a href="/group/{{ admin.id }}/get_members">Add Members</a></td>
@@ -511,6 +513,11 @@
           dash.adminDeleteModal.style.display = 'block';
           let groupName = dash.adminDeleteModal.querySelector('.groupAdDelName');
           groupName.textContent = (e.target.firstChild.textContent);
+          dash.adminGroups.forEach(function(group, index) {
+            if(group.name === groupName.textContent) {
+              dash.adTableIndex = index;
+            }
+          })
         } else {
           return;
         }
@@ -679,13 +686,14 @@
 
       dash.socket.on('group deleted', function(data) {
         console.log('group deleted')
-        let message = data.name + ' was successfully deleted. The page will reload in 5 seconds.';
+        let message = data.name + ' was successfully deleted.';
         showErrorMessage(message, 'error', document.querySelector('.adminTableDiv'), dash.adminTable, '1rem', '60%');
-        // let adGroups = document.querySelectorAll('adGroupTableRow');
-        // adGroups[dash.adTableIndex].remove();
-        setTimeout(function(){
-            location.reload();
-        },5000);
+        let adGroups = document.querySelectorAll('.adGroupTableRow');
+        adGroups[dash.adTableIndex].remove();
+
+        // setTimeout(function(){
+        //     location.reload();
+        // },5000);
       })
       function showErrorMessage(message, type, parent, before, size, width) {
         let div = document.createElement('div');

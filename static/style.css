@@ -205,6 +205,7 @@ th {
   font-weight: 500;
 }
 .sign-logSubmit {
+  margin-top: 5%;
   border-radius: .5rem;
   background: #2c5ba5;
   padding: .75% 1%;
@@ -428,12 +429,6 @@ table, .chat ::-webkit-scrollbar {
 .noteForm {
   margin-top: 30%;
 }
-.weekMonthTitle {
-  position: absolute;
-  left: 27.5%;
-  font-size: 1.75rem;
-  top: 14%;
-}
 .dayNoteDate {
   position: absolute;
   top: 2%;
@@ -470,7 +465,7 @@ table, .chat ::-webkit-scrollbar {
   position: absolute;
   top: 0;
 }
-.modal, .expenseAllModal, .expenseOneModal, .noteModal, .deleteAccountModal, .editAccountModal, .editGroupModal, .editNoteModal, .pendModal, .removeMemberModal {
+.modal, .expenseAllModal, .expenseOneModal, .noteModal, .deleteAccountModal, .editAccountModal, .editGroupModal, .editNoteModal, .pendModal, .removeMemberModal, .editLodPinModal, .editRestPinModal, .editTransPinModal, .editActPinModal, .deleteLodPinModal, .deleteRestPinModal, .deleteTransPinModal, .deleteActPinModal{
   display: none;
   position: fixed;
   width: 60%;
@@ -658,15 +653,18 @@ table, .chat ::-webkit-scrollbar {
 .prevButton, .prevWeekButton{
   position: absolute;
   left: 12%;
-  top:18%;
+  top:15%;
 }
 .nextButton, .nextWeekButton {
   position: absolute;
-  left: 85%;
-  top:18%;
+  left: 47%;
+  top:15%;
 }
 .prevWeekButton, .nextWeekButton {
-  top: 14%;
+  top: 13%;
+}
+.nextWeekButton {
+  left:45%;
 }
 .blankDay {
   border: 1px solid black;
@@ -674,16 +672,32 @@ table, .chat ::-webkit-scrollbar {
 }
 .dayTitle {
   position: fixed;
-  top: 15%;
-  left: 38%;
-  font-size: 2rem;
+  top: 14%;
+  left: 17.5%;
+  font-size: 1.65rem;
 }
-
+.gPageCalButton {
+  font-size: 2rem;
+  margin-top: 2.5%;
+}
+.weekMonthTitle {
+  position: absolute;
+  left: 17%;
+  font-size: 1.5rem;
+  top: 14%;
+}
+.pinEdButton {
+  width: 14%;
+  border-radius: .5rem;
+  background: #2c5ba5;
+  color: whitesmoke;
+  padding: 1% 1.15%;
+}
 .calTitle {
   position: fixed;
-  top: 19%;
+  top: 15%;
   font-size: 1.65rem;
-  left: 30%;
+  left: 20%;
 }
 .calForm {
   overflow-wrap: break-word;
@@ -718,6 +732,9 @@ table, .chat ::-webkit-scrollbar {
   font-size: .7rem;
 }
 /* Groups page */
+.cancelDeleteLodModal, .submitDeleteLodModal {
+  padding: 1% 2.5%
+}
 .groupList {
   margin: 2% 4%;
   list-style-type: none;
@@ -749,6 +766,24 @@ table, .chat ::-webkit-scrollbar {
   background: #CDFEAA;
   text-decoration: underline;
   color: #000099;
+}
+.calendarDiv {
+  display: flex;
+  justify-content: space-around;
+}
+.groupViewButton {
+  position: absolute;
+  right: 1%;
+  top: 14%;
+  background: whitesmoke;
+  border-radius: .5rem;
+  background: whitesmoke;
+  border-radius: .5rem;
+  width: 13%;
+  padding: .25% 1.5%;
+  /* text-decoration: none; */
+  color: black;
+  font-weight: 900;
 }
 .noButton {
   padding: .5% 2%;
@@ -799,7 +834,9 @@ table, .chat ::-webkit-scrollbar {
   margin: 1%;
   padding: 1.5%;
 }
-
+.pinHeader {
+  color: darksalmon;
+}
 .chat {
   /* background: linear-gradient(#004466, #66ccff); */
   background:black;
@@ -1218,8 +1255,8 @@ table, .chat ::-webkit-scrollbar {
   }
   .calTitle {
     font-size: 2rem;
-    left: 33.5%;
-    top: 18%;
+    /* left: 33.5%;
+    top: 18%; */
   }
 }
 @media only screen and (min-width: 53rem) {

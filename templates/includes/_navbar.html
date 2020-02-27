@@ -14,8 +14,8 @@
           </li>
         </ul>
         <ul class=navbar-nav mr-auto navbar-right>
-          {% if session.logged_in %}
-            <li class="nav-item"><a class="nav-link" href="/dashboard">{{session.username}}</a></li>
+          {% if current_user.is_authenticated %}
+            <li class="nav-item"><a class="nav-link" href="/dashboard">{{current_user.username}}</a></li>
             <li class="nav-item">
               <a class="nav-link" onMouseOver="this.style.color='black'" href="/logout">Log out</a>
             </li>

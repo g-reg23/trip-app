@@ -14,6 +14,7 @@
       <div class='listUserName' style='display: none'>{{ note.username }}</div>
       <div class='listLength' style='display: none'>{{ note.event_length }}</div>
       <div class='listTime' style='display: none'>{{ note.time }}</div>
+      <div class='listId' style='display: none'>{{ note.id }}</div>
     {% endfor %}
     <div id="show_calendar" class='calendarClass'>&nbsp;</div>
     <div class='hiddenMonth' style='display: none;'></div>
@@ -56,7 +57,7 @@
       <option value="2029">2029</option>
     </select>
     <!-- <div class='groupButton' style='width:15%; display:inline-block;'>Day View</div> -->
-
+    <a class='groupViewButton' href='/group/{{group.id}}'>Group View</a>
     <div class='dayDiv'>
       <table class='dayTable' border="0" cellpadding="5" cellspacing="0">
       <tr id='0000'>
@@ -1054,6 +1055,7 @@
     <!-- <script src="{{url_for('static', filename = 'calendar.js')}}"></script> -->
   <script type="text/javascript" charset="utf-8">
     {
+        notes = [];
         function CalApp() {
           this.socket = io.connect('http://' + document.domain + ':' + location.port + '/calendar');
           this.user = '{{ current_user.username }}';
@@ -1081,14 +1083,17 @@
           this.usernames = document.querySelectorAll('.listUserName');
           this.lengths = document.querySelectorAll('.listLength');
           this.times = document.querySelectorAll('.listTime');
+          this.ids = document.querySelectorAll('.listId');
           this.noteIndex = 0;
+          this.jsonNotes = [];
 
-          this.Note = function(date, name, user, length, time) {
+          this.Note = function(date, name, user, length, time, id) {
             this.name = name;
             this.date = date;
             this.user = user;
             this.length = length;
             this.time = time;
+            this.id = id;
           }
           this.notes = [];
           // this.dates.forEach(function(date, index) {
@@ -1128,8 +1133,8 @@
 
         CalApp.prototype.getNotes = function() {
           app.dates.forEach(function(date, index) {
-            app.note = new app.Note(new Date(date.textContent), app.names[index].textContent, app.usernames[index].textContent, app.lengths[index].textContent, app.times[index].textContent);
-            app.notes.push(app.note);
+            note = new app.Note(new Date(date.textContent), app.names[index].textContent, app.usernames[index].textContent, app.lengths[index].textContent, app.times[index].textContent, app.ids[index].textContent);
+            app.notes.push(note);
           })
           return app.notes;
         }
@@ -1165,7 +1170,7 @@
         var app = new CalApp();
         app.notes = app.getNotes();
         app.loadEventListeners();
-        console.log(app.notes)
+        console.log(app.jsonNotes)
         // console.log('hi')
         // console.log(app.firstDayString);
 
@@ -1282,7 +1287,7 @@
                 calendarTable.appendChild(row);
             }
             app.calendarClass.appendChild(calendarTable);
-            app.loadMonthNotes();
+            // app.loadMonthNotes();
         }
         // let app = new CalApp();
         window.onload = function() {
@@ -1421,12 +1426,15 @@
           })
         }
 
-        CalApp.prototype.loadMonthNotes = function() {
+        CalApp.prototype.loadMonthNotes = function(noteArr) {
           let arr = [];
           let nameArr = [];
-          app.notes.forEach(function(note, index) {
-            if (new Date(note.date).getMonth()  === app.month && note.date.getFullYear() === parseInt(app.yearSelected.value)) {
-              arr.push(note.date.getDate())
+          // console.log(app.jsonNotes);
+
+          noteArr.forEach(function(note, index) {
+            let noter = new Date(note.date);
+            if (noter.getMonth()  === app.month && noter.getFullYear() === parseInt(app.yearSelected.value)) {
+              arr.push(noter.getDate())
               nameArr.push(note.name);
             }
           })
@@ -1986,35 +1994,21 @@
         }
         // console.log(notes);
         app.socket.on('on connect', function(data) {
-          // let calendar = document.querySelector('.buttonDiv');
+
           let alert = document.querySelector('.noteFlash')
           let mess = 'You are now connected to ' + data.name + " calendar!";
-          // let div = document.createElement('div');
           alert.textContent = mess;
-          // div.style.fontSize = '.85rem';
-          // div.classList = 'flashMessage noteFlash';
-          // div.style.left = '49%';
-          // div.style.marginTop = '32%';
-          // div.style.width = '18%';
-          // calendar.appendChild(div);
-          // app.page.appendChild(div);
-          // div.style.marginTop = '27.5%'
-          // setTimeout(function(){
-          //     document.querySelector('.noteFlash').remove();
-          // },7000);
+          console.log(data.notes);
+          data.notes.forEach(function(note) {
+            newNote = (new app.Note(new Date(note.date), note.name, note.username, note.event_length, note.time, note.id));
+            app.jsonNotes.push(newNote);
+          })
+          // console.log(notes)
+          app.loadMonthNotes(data.notes);
         })
-
         app.socket.on('not note creator', function(data) {
-          // let calendar = document.querySelector('.calendar');
           let alert = document.querySelector('.noteFlash');
           alert.textContent = 'Only the note creator can edit or delete a note!'
-          // calendar.removeChild(alert);
-          // let div = document.createElement('div');
-          // div.classList = 'flashMessage noteFlash'
-          // div.textContent = 'Only the note creator may edit or delete a calendar note.';
-          // div.style.left = '49%';
-          // div.style.marginTop = '28%';
-          // div.style.width = '18%';
           div.style.fontSize = '.95rem';
           calendar.appendChild(div);
         })
@@ -2033,10 +2027,7 @@
           // let calendar = document.querySelector('.calendar');
           let alert = document.querySelector('.noteFlash');
 
-          // let div = document.createElement('div');
-          // div.classList = 'flashMessage noteFlash'
-          // div.textContent = 'Note Edited!';
-          // div.style.fontSize = '.9rem';
+
           app.notes[app.noteIndex].name = data.name;
           app.notes[app.noteIndex].time = data.time;
           app.notes[app.noteIndex].length = data.length;

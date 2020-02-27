@@ -5,6 +5,7 @@
     <div class="calInfo">
       <h5 class="calStart">{{ fullStartDate }}</h5>
       <h5 class="calEnd">{{ fullEndDate }}</h5>
+      <p class='calUser'>{{ current_user.username}}</p>
       <h7 class='calDay'></h7>
     </div>
     <p>&nbsp;</p>
@@ -12,6 +13,7 @@
       <div class='listName' style='display: none'>{{ note.name }}</div>
       <div class='listDate' style='display: none'>{{ note.date }}</div>
       <div class='listUserName' style='display: none'>{{ note.username }}</div>
+      <div class='listLength' style='display: none'>{{ note.event_length }}</div>
     {% endfor %}
     <div id="show_calendar" class='calendarClass'>&nbsp;</div>
     <div class='hiddenMonth' style='display: none;'></div>
@@ -52,345 +54,345 @@
     <!-- <div class='groupButton' style='width:15%; display:inline-block;'>Day View</div> -->
 
     <div class='dayDiv'>
-      <table class='dayTable' border="1" cellpadding="5" cellspacing="5" style='table-layout: fixed;'>
-      <tr>
-        <th height='100' width='75' class='dayCalRow' style='float:left; display:inline-block;'>12:00 AM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <table class='dayTable' border="0" cellpadding="5" cellspacing="0" style='table-layout: fixed;'>
+      <tr class='00'>
+        <th height='75' width='75' class='dayCalRow' style='float:left; display:inline-block;'>12:00 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='0'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>12:30 AM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='030'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>12:30 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='1'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>1:00 AM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='10'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>1:00 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='2'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>1:30 AM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='130'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>1:30 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='3'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>2:00 AM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='20'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>2:00 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='4'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>2:30 AM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='230'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>2:30 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='5'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>3:00 AM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='30'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>3:00 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='6'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>3:30 AM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='330'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>3:30 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='7'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>4:00 AM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='40'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>4:00 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='8'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>4:30 AM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='430'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>4:30 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='9'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>5:00 AM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='50'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>5:00 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='10'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>5:30 AM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='530'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>5:30 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='11'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>6:00 AM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='60'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>6:00 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='12'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>6:30 AM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='630'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>6:30 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='13'>Add Event</button>
         </td>
         <!-- <td height='100' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' id='startTime' style='float:left; display:inline-block;'>7:00 AM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='70'>
+        <th height='75' class='dayCalRow' width='75' id='startTime' style='float:left; display:inline-block;'>7:00 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='14'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>7:30 AM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id=730>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>7:30 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='15'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>8:00 AM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='80'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>8:00 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='16'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>8:30 AM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='830'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>8:30 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='17'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>9:00 AM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='90'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>9:00 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='18'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>9:30 AM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='930'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>9:30 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='19'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>10:00 AM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='100'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>10:00 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='20'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>10:30 AM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='1030'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>10:30 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='21'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>11:00 AM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='110'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>11:00 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='22'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>11:30 AM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='1130'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>11:30 AM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='23'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>12:00 PM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='120'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>12:00 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='24'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>12:30 PM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='1230'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>12:30 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='25'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>1:00 PM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='130'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>1:00 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='26'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>1:30 PM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='1330'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>1:30 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='27'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>2:00 PM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='140'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>2:00 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='28'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>2:30 PM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='1430'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>2:30 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='29'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>3:00 PM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='150'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>3:00 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='30'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>3:30 PM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='1530'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>3:30 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='31'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>4:00 PM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='160'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>4:00 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='32'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>4:30 PM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='1630'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>4:30 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='33'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>5:00 PM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='170'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>5:00 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='34'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>5:30 PM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='1730'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>5:30 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='35'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>6:00 PM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='180'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>6:00 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='36'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>6:30 PM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='1830'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>6:30 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='37'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>7:00 PM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='190'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>7:00 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='38'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>7:30 PM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='1930'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>7:30 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='39'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>8:00 PM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='200'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>8:00 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='40'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>8:30 PM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='2030'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>8:30 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='41'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>9:00 PM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='210'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>9:00 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='42'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>9:30 PM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='2130'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>9:30 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='43'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>10:00 PM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='220'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>10:00 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='44'>Add Event</button>
         </td>
 
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>10:30 PM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='2230'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>10:30 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='45'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>11:00 PM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='230'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>11:00 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='46'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      <tr>
-        <th height='100' class='dayCalRow' width='75' style='float:left; display:inline-block;'>11:30 PM</th>
-        <td height='100' style='display:inline-block;' class='dayCalTextArea'>
-          <button class='sign-logSubmit dayNoteButton'>Add Event</button>
+      <tr id='2330'>
+        <th height='75' class='dayCalRow' width='75' style='float:left; display:inline-block;'>11:30 PM</th>
+        <td height='75' style='display:inline-block;' class='dayCalTextArea'>
+          <button class='sign-logSubmit dayNoteButton' id='47'>Add Event</button>
         </td>
         <!-- <td height='100' width='350' class='dayCalRow' style='display:inline-block;'></td> -->
       </tr>
-      </table>
+    </table>
     </div>
     <div class="modal">
       <form method='POST' class="noteForm" name='modalForm'>
@@ -453,17 +455,27 @@
           <option value='23:00:00'>11:00 PM</option>
           <option value='23:30:00'>11:30 PM</option>
         </select>
+        <select class='sign-logInput noteLength' value='inputLength' name='inputLength' type='time' style='display:block;'>
+          <option value='1 hour'>Short(1 hour or less)</option>
+          <option value='3 hours'>Medium(3 hours or less)</option>
+          <option value='6 hours'>Long(6 hours or less )</option>
+          <option value='Rest of the Day'>All Day</option>
+        </select>
         <button class='sign-logSubmit submitNote'>Submit</button>
         <button class='sign-logSubmit cancelNote'>Cancel</button>
       </form>
     </div>
+    <script src="{{url_for('static', filename = 'app.js')}}"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
     <!-- <script src="{{url_for('static', filename = 'calendar.js')}}"></script> -->
     <script type="text/javascript" charset="utf-8">
     {
+        function CalApp() {
         let socket = io.connect('http://' + document.domain + ':' + location.port + '/calendar');
         const startDate = document.querySelector('.calStart');
+        const endDate = document.querySelector('.calEnd');
         const firstDayTrip = new Date(startDate.textContent).getDate() + 1;
+        const lastDayTrip = new Date(endDate.textContent).getDate() + 1;
         const yearTripStart = new Date(startDate.textContent).getFullYear;
         const prevButton = document.querySelector('.prevButton');
         const nextButton = document.querySelector('.nextButton');
@@ -474,12 +486,28 @@
         const yearSelected = document.querySelector('.yearSelect');
         const names = document.querySelectorAll('.listName');
         const dates = document.querySelectorAll('.listDate');
+        const usernames = document.querySelectorAll('.listUserName');
+        const lengths = document.querySelectorAll('.listLength');
+
+        function Note(date, name, user, length) {
+          this.name = name;
+          this.date = date;
+          this.user = user;
+          this.length = length;
+        }
+        let notes = [];
+        dates.forEach(function(date, index) {
+          let note = new Note(new Date(date.textContent), names[index].textContent, usernames[index].textContent, lengths[index].textContent);
+          notes.push(note);
+        })
         // Today is first day of trip
         let today = new Date(startDate.textContent);
+        let lastDay = new Date(endDate.textContent);
         //firstMonth is the month that contains first day of trip, month is the global that
         // defines the current month being displayed
         let firstMonth = today.getMonth();
         let firstDate = today.getDate();
+        let lastMonth = lastDay.getMonth();
         let month = today.getMonth();
         let year = today.getFullYear();
         Date.prototype.getMonths = function() {
@@ -621,6 +649,65 @@
             monthSelect.appendChild(fragment);
             monthSelect.selectedIndex = month;
         }
+        function loadDayNotes(date) {
+          let hours = document.querySelectorAll('.dayCalTextArea');
+          hours.forEach(function(hour) {
+	           hour.style.background = 'cadetblue';
+             let children = hour.children;
+             for (i=0;i<children.length;i++) {
+               if (i>0) {
+                 console.log(children[i]);
+               }
+             }
+            })
+          notes.forEach(function(note, index) {
+            if (note.date.getDate() === date.getDate() && note.date.getMonth() === date.getMonth() && note.date.getFullYear() === date.getFullYear()) {
+              let time = note.date.getHours().toString() + note.date.getMinutes().toString();
+              let timeSlot = document.getElementById(time);
+              let textArea = timeSlot.querySelector('.dayCalTextArea');
+              textArea.style.background = 'black';
+              let div = document.createElement('div');
+              let node = document.createTextNode(note.name + ': (' + note.length + ')');
+              var br = document.createElement("br");
+              div.appendChild(node);
+              div.appendChild(br);
+              let newNode = document.createTextNode('Posted by: ' + note.user);
+              div.appendChild(newNode)
+              let counter;
+              switch (note.length) {
+                case '1 hour':
+                  counter = 1;
+                  break;
+                case '3 hours':
+                  counter = 5;
+                  break;
+                case '6 hours':
+                  counter = 11;
+                  break;
+                default:
+                  counter = 48;
+              }
+
+              newSlot = timeSlot.nextElementSibling;
+              for (i=0;i<counter;i++) {
+                let textArea = newSlot.querySelector('.dayCalTextArea')
+                textArea.style.background = 'black';
+                let div = document.createElement('div');
+                let node = document.createTextNode(note.name);
+                div.appendChild(node);
+                textArea.appendChild(div);
+                div.className = 'dayViewText'
+                newSlot = newSlot.nextElementSibling;
+                if (newSlot === null) {
+                  break;
+                }
+              }
+              div.className = 'dayViewText'
+              textArea.appendChild(div);
+              timeSlot.scrollIntoView()
+            }
+          })
+        }
         function loadMonthNotes() {
           let arr = [];
           let nameArr = [];
@@ -633,22 +720,29 @@
           let fragment = document.createDocumentFragment();
           let days = document.querySelectorAll('.daySpan');
           days.forEach(function(day, index) {
-            if (parseInt(day.textContent) === firstDayTrip && month ===firstMonth && yearTripStart === parseInt(yearSelected.value)) {
+            // if (parseInt(day.textContent) === firstDayTrip && month === firstMonth && yearTripStart === parseInt(yearelected.value)) {
+            if (firstDayTrip === parseInt(day.textContent) && firstMonth === month && new Date(startDate.textContent).getFullYear() === parseInt(yearSelected.value)) {
               let div = document.createElement('div');
               div.className = 'dayText';
               let node = document.createTextNode('First Day of Trip!!');
+              div.appendChild(node);
+              fragment.appendChild(div);
+            } else if (lastDayTrip === parseInt(day.textContent) && lastMonth === month && new Date(endDate.textContent).getFullYear() === parseInt(yearSelected.value)){
+              let div = document.createElement('div');
+              div.className = 'dayText';
+              let node = document.createTextNode('Last Day of Trip!!');
               div.appendChild(node);
               fragment.appendChild(div);
             }
             if (arr.includes(parseInt(day.textContent))) {
               arr.forEach(function(item, index) {
                 if (item === parseInt(day.textContent)) {
-                  if (fragment.children.length < 2) {
+                  if (fragment.children.length < 1) {
                     let divy = document.createElement('div');
                     divy.className = 'dayText';
                     let node = document.createTextNode(nameArr[index]);
                     divy.appendChild(node);
-                    fragment.appendChild(divy);
+                    fragment.appendChild(divy)
                   }else {
                     let more = document.createElement('a');
                     more.textContent = '-More Notes-';
@@ -726,6 +820,13 @@
         function addADayNote(e){
           if (e.target.classList.contains('dayNoteButton')) {
             modal.style.display = 'block';
+            let index = e.target.id;
+            let timeOpt = modal.querySelector('.noteTime');
+            timeOpt.selectedIndex= index
+            modal.querySelector('.noteLength').selectedIndex = 0;
+            let firstOfMonth = new Date(monthSelect.value);
+            let dayTitle = document.querySelector('.dayNoteDate')
+            dayTitle.value = document.querySelector('.dayTitle').textContent;
           }else {
             return;
           }
@@ -751,17 +852,19 @@
             // let dayCalendar = document.querySelector('.dayTable');
             dayDiv.appendChild(calSpan);
             document.querySelector('#startTime').scrollIntoView();
-            loadIndDayNotes();
-        }else {
+            loadDayNotes(new Date(fullDate.getMonths()[dateNumber] + ' ' + date + ', ' + fullDate.getFullYear()));
+          }else {
             return;
-        }
-        e.preventDefault();
-
+          }
+          e.preventDefault();
         }
 
         function addNote(e) {
           if (e.target.classList.contains('monthNoteButton')){
             modal.style.display = 'block';
+            let timeOpt = modal.querySelector('.noteTime');
+            modal.querySelector('.noteLength').selectedIndex = 0;
+            timeOpt.selectedIndex = 21;
             let firstOfMonth = new Date(monthSelect.value);
             // let box = document.querySelector('.modal');
             let currentMonth = firstOfMonth.getMonths()[firstOfMonth.getMonth()];
@@ -775,6 +878,7 @@
 
         function submitANote(e) {
           let name = document.querySelector('.calNoteName');
+          let length = document.querySelector('.noteLength');
           let time = document.querySelector('.noteTime');
           let date = document.querySelector('.dayNoteDate');
           if (name.value.length < 3 || name.value.length >30) {
@@ -789,12 +893,19 @@
             name.value = '';
           }else {
             e.preventDefault();
-            socket.emit('store note', name.value, time.value, date.value);
-            name.value = ('');
+            socket.emit('store note', name.value, time.value, date.value, length.value);
             modal.style.display = 'none';
+            notes.push(new Note(new Date(date.value + ' ' + time.value), name.value, document.querySelector('.calUser').textContent, length.value))
+            name.value = ('');
+            console.log(notes);
+            if (dayDiv.style.display === 'block') {
+              let thisDate = dayDiv.querySelector('.dayTitle').textContent
+              loadDayNotes(new Date(thisDate));
+              // loadDayNotes(new Date(da);
+            }
           }
         }
-
+        // console.log(notes);
         // socket.on('on connect', function(data) {
         //   // console.log(data.notes);
         //   loadNotesMonthView(data.notes);
@@ -875,13 +986,6 @@
             document.querySelector('.yearSelect').value = nextYear - 1;
         }
 
-        function loadIndDayNotes() {
-          let arr = [];
-          dates.forEach(function() {
-
-          })
-        }
-
         function dayNote(e) {
             let date = e.target.firstChild.textContent;
             if (e.target.className === 'calDay' && e.target.className != 'monthNoteButton') {
@@ -901,7 +1005,7 @@
                 // let dayCalendar = document.querySelector('.dayTable');
                 dayDiv.appendChild(calSpan);
                 document.querySelector('#startTime').scrollIntoView();
-                loadIndDayNotes();
+                loadDayNotes(new Date(fullDate.getMonths()[dateNumber] + ' ' + date + ', ' + fullDate.getFullYear()))
             }else {
                 return;
             }

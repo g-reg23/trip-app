@@ -141,7 +141,7 @@ class Transpo_Pin(db.Model):
     transpoName = db.Column(db.String(40))
     price = db.Column(db.Integer)
     description = db.Column(db.Text)
-    types = db.Column(db.Enum('Flight', 'Train', 'Bus', 'Car', 'Other'))
+    types = db.Column(db.Enum('Flight', 'Train', 'Bus', 'Rental Car', 'Other'))
     link = db.Column(db.String(512))
     creator = db.Column(db.String(40))
 

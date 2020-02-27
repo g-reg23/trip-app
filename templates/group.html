@@ -6,8 +6,10 @@
         <h1 style="text-decoration: underline;">{{ group.groupName }}</h1>
           <p class='groupHeadDesc'>{{ group.description }}</p>
           <p>Group Creator: <strong>{{ group.admin }}</strong></p>
-          <p><a href="/group/{{group.id}}/calendar" class="noPinLink">Calendar</a></p>
           <p class='userNameHid'>{{ current_user.username }}</p>
+      </div>
+      <div class="calendarDiv">
+        <a href='/group/{{group.id}}/calendar' class='gPageCalButton' style='color: dodgerblue'>Group Calendar</a>
       </div>
       <br /><br />
       <!--<div class="picDiv">
@@ -40,16 +42,26 @@
           {% endfor %}
         </ul>
       </div>
+      <h2 align="center" class="pinTitle" text-decoration="underline">Lodgings:</h2><br />
       <div class="renPinRow pinRow">
-        <h2 align="center" class="pinTitle" text-decoration="underline">Lodgings:</h2><br />
         {% if renPins %}
           {% for pin in renPins %}
-            <div class="pinList">
-              <h3 class='pinHeader'><large><a target="_blank" href="{{ pin.link }}" style='color:darksalmon'>{{ pin.lodgeName }}</a></large></h3>
-              <p class='pinP'> {{ pin.rooms }} Bedrooms, ${{ pin.price }} per night.</p>
-              <p class='pinP'> {{ pin.description }}</p>
+            <div class="pinList lodPins">
+              <h3 class='pinHeader'><large><a target="_blank" class='lodPinNames' href="{{ pin.link }}" style='color:darksalmon'>{{ pin.lodgeName }}</a></large></h3>
+              <p class='pinP lodPinDispRooms'> {{ pin.rooms }} Bedrooms.</p>
+              <p class='lodPinRooms' style='display: none;'>{{pin.rooms}}</p>
+              <p class='pinP lodPinDispPrices'>${{ pin.price }} per night.</p>
+              <p class='lodPinPrices' style='display: none;'>{{pin.price}}</p>
+              <p class='pinP lodPinDescs'> {{ pin.description }}</p>
               <p class='pinP'>Posted by: <strong>{{ pin.creator }}</strong></p>
-              <a class="pinLinkP" target="_blank" href="{{ pin.link }}">View at site</a>
+              <p><a class="pinLinkP" target="_blank" href="{{ pin.link }}">View at site</a></p>
+              <p class='lodPinLinks' style='display: none;'>{{pin.link}}</p>
+              <p class='lodPinIds' style='display:none;'>{{pin.id}}</p>
+              <p class='lodPinCreators' syle='display:none;'>{{ pin.creator }}</p>
+              {% if pin.creator == current_user.username %}
+                <button class='lodPinEdit pinEdButton'>Edit</button>
+                <button class='lodPinDelete pinEdButton'>Delete</button>
+              {% endif %}
               <br />
               <!-- {% if user == group.admin or user == pin.creator %}
                 <p><a href="/edit_rental_pin/{{ id }}/{{ pin.lodgeName }}" class="pinLink">Edit Pin</a>   <a  href="/delete_rental_pin/{{ id }}/{{ pin.lodgeName }}" class="pinLink">  Delete Pin</a></p>
@@ -59,17 +71,48 @@
         {% else %}
           <div class="noPinDiv"><a class="noPinLink" href="#rentalPin">You can pin rental here!</a></div>
         {% endif %}
+        <span class='endLodDiv'></span>
       </div><br />
+      <div class="editLodPinModal">
+        <button class='cornerX lodEditX'>X</button>
+        <h3 style='margin-top: -2%;'>Edit Pin</h3>
+        <h5 class='lodPinTitle'></h5>
+        <input type="text" class='lodPinEditNameValue sign-logInput' placeholder='Name'>
+        <input type="number" class='lodPinEditPriceValue sign-logInput' placeholder='Price'>
+        <input type='number' class='lodPinEditRoomsValue sign-logInput' placeholder='Rooms'>
+        <input type="text" class='lodPinEditLinkValue sign-logInput' placeholder='Link'>
+        <textarea class='lodPinEditDescValue sign-logInput' style='height: 2.25rem;' placeholder='Description'></textarea>
+        <div class="modalButtonRow">
+          <button class='sign-logSubmit submitEditLodModal'>Submit</button>
+          <button class='sign-logSubmit cancelEditLodModal'>Cancel</button>
+        </div>
+      </div>
+      <div class="deleteLodPinModal">
+        <button class='cornerX lodDeleteX'>X</button>
+        <h4>Are you sure want to delete this pin?</h4>
+        <h5 class='deleteLodPinTitle'></h5>
+        <div class="modalButtonRow">
+          <button class='sign-logSubmit submitDeleteLodModal'>Delete</button>
+          <button class='sign-logSubmit cancelDeleteLodModal'>Cancel</button>
+        </div>
+      </div>
       <div class="restPinRow pinRow">
         <h2 align="center" class="pinTitle" text-decoration="underline">Restaurants and Clubs:</h2><br />
         {% if restPins %}
           {% for pinTwo in restPins %}
-            <div class="pinList">
-              <h3 class='pinHeader'><large><a target="_blank" href="{{ pinTwo.link }}"  style='color:darksalmon'>{{ pinTwo.restName }}</a></large></h3>
-              <p class='pinP'> {{pinTwo.types}}</p>
-              <p class='pinP'> {{ pinTwo.description }}</p>
+            <div class="pinList restPins">
+              <h3 class='pinHeader restPinNames'><large><a target="_blank" href="{{ pinTwo.link }}"  style='color:darksalmon'>{{ pinTwo.restName }}</a></large></h3>
+              <p class='pinP restPinTypes'>{{pinTwo.types}}</p>
+              <p class='pinP restPinDescriptions'> {{ pinTwo.description }}</p>
               <p class='pinLinkP'><a class="pinLink" target="_blank" href="{{ pinTwo.link }}">View at site</a></p>
+              <p class='restPinLinks' style='display: none;'>{{pinTwo.link}}</p>
+              <p class='restPinIds' style='display:none;'>{{pinTwo.id}}</p>
+              <p class='restPinCreators' style='display:none;'>{{pinTwo.creator}}</p>
               <p>Posted by: <strong>{{ pinTwo.creator }}</strong></p>
+              {% if pinTwo.creator == current_user.username %}
+                <button class='restPinEdit pinEdButton'>Edit</button>
+                <button class='restPinDelete pinEdButton'>Delete</button>
+              {% endif %}
               <br />
               <!-- {% if user == group.admin or user == pinTwo.creator %}
                 <p><a href="/edit_restaurant_pin/{{ id }}/{{ pinTwo.restName }}" class="pinLink">Edit Pin</a>   <a  href="/delete_restaurant_pin/{{ id }}/{{ pinTwo.restName }}" class="pinLink">  Delete Pin</a></p>
@@ -80,17 +123,50 @@
           <div class="noPinDiv"><a class="noPinLink" href="#restPin">How about pinning a restaurant or nightclub!</a></div><br />
         {% endif %}
       </div>
+      <div class="editRestPinModal">
+        <button class='cornerX restEditX'>X</button>
+        <h3 style='margin-top: -2%;'>Edit Pin</h3>
+        <h5 class='restPinTitle'></h5>
+        <input type="text" class='restPinEditNameValue sign-logInput' placeholder='Name'>
+        <select class="restPinEditTypeValue sign-logInput" name="type" placeholder='Type'>
+          <option value="Restaurant">Restaurant</option>
+          <option value="Nightclub">Nightclub</option>
+        </select>
+        <input type="text" class='restPinEditLinkValue sign-logInput' placeholder='Link'>
+        <input class='restPinEditDescValue sign-logInput' style='height: 2.25rem;' placeholder='Description'>
+        <div class="modalButtonRow">
+          <button class='sign-logSubmit submitEditRestModal'>Submit</button>
+          <button class='sign-logSubmit cancelEditRestModal'>Cancel</button>
+        </div>
+      </div>
+      <div class="deleteRestPinModal">
+        <button class='cornerX restDeleteX'>X</button>
+        <h4>Are you sure want to delete this pin?</h4>
+        <h5 class='deleteRestPinTitle'></h5>
+        <div class="modalButtonRow">
+          <button class='sign-logSubmit submitDeleteRestModal'>Delete</button>
+          <button class='sign-logSubmit cancelDeleteRestModal'>Cancel</button>
+        </div>
+      </div>
       <div class="transPinRow pinRow">
         <h2 align="center" class="pinTitle" text-decoration="underline">Transportation:</h2><br />
         {% if transpoPins %}
           {% for pinThree in transpoPins %}
-            <div class="pinList">
-              <h3 class='pinHeader'><large><a target="_blank" href="{{ pinThree.link }}"  style='color:darksalmon'>{{ pinThree.transpoName }}</a></large></h3>
-              <p class='pinP'>${{ pinThree.price }}</p>
-              <p class='pinP'>{{ pinThree.description }}</p>
-              <p class='pinP'>{{ pinThree.types }}</p>
+            <div class="pinList transPins">
+              <h3 class='pinHeader transPinNames'><large><a target="_blank" href="{{ pinThree.link }}"  style='color:darksalmon'>{{ pinThree.transpoName }}</a></large></h3>
+              <p class='pinP transPinPriceDisp'>${{ pinThree.price }}</p>
+              <p class='transPinPrice' style='display:none;'>{{pinThree.price}}</p>
+              <p class='pinP transPinDescs'>{{ pinThree.description }}</p>
+              <p class='pinP transPinTypes'>{{ pinThree.types }}</p>
               <p class='pinLinkP'><a class="pinLink" target="_blank" href="{{ pinThree.link }}">View at site</a></p>
+              <p class='transPinLinks' style='display: none;'>{{pinThree.link}}</p>
+              <p class='transPinIds' style='display:none;'>{{pinThree.id}}</p>
               <p>Posted by: <strong>{{ pinThree.creator }}</strong></p>
+              <p class='transPinCreators' style='display:none;'>{{ pinThree.creator }}</p>
+              {% if pinThree.creator == current_user.username %}
+                <button class='transPinEdit pinEdButton'>Edit</button>
+                <button class='transPinDelete pinEdButton'>Delete</button>
+              {% endif %}
               <br />
               <!-- {% if user == group.admin or user == pinThree.creator %}
                 <p><a href="/edit_transportation_pin/{{ id }}/{{ pinThree.transpoName }}" class="pinLink">Edit Pin</a>   <a  href="/delete_transportation_pin/{{ id }}/{{ pinThree.transpoName }}" class="pinLink">  Delete Pin</a></p>
@@ -101,17 +177,54 @@
           <div class="noPinDiv"><a class="noPinLink" href="#transpoPin">You can pin differrent transportation too!</a></div><br />
         {% endif %}
       </div>
+      <div class="editTransPinModal">
+        <button class='cornerX transEditX'>X</button>
+        <h3 style='margin-top: -2%;'>Edit Pin</h3>
+        <h5 class='transPinTitle'></h5>
+        <input type="text" class='transPinEditNameValue sign-logInput' placeholder='Name'>
+        <input type='number' class='transPinEditPriceValue sign-logInput' placeholder='Price'>
+        <select class="transPinEditTypeValue sign-logInput" name="type" placeholder='Type'>
+          <option value="Flight">Flight</option>
+          <option value="Train">Train</option>
+          <option value='Bus'>Bus</option>
+          <option value='Rental Car'>Rental Car</option>
+          <option value='Other'>Other</option>
+        </select>
+        <input type="text" class='transPinEditLinkValue sign-logInput' placeholder='Link'>
+        <input class='transPinEditDescValue sign-logInput' style='height: 2.25rem;' placeholder='Description'>
+        <div class="modalButtonRow">
+          <button class='sign-logSubmit submitEditTransModal'>Submit</button>
+          <button class='sign-logSubmit cancelEditTransModal'>Cancel</button>
+        </div>
+      </div>
+      <div class="deleteTransPinModal">
+        <button class='cornerX transDeleteX'>X</button>
+        <h4>Are you sure want to delete this pin?</h4>
+        <h5 class='deleteTransPinTitle'></h5>
+        <div class="modalButtonRow">
+          <button class='sign-logSubmit submitDeleteTransModal'>Delete</button>
+          <button class='sign-logSubmit cancelDeleteTransModal'>Cancel</button>
+        </div>
+      </div>
       <div class="actPinRow pinRow">
         <h2 align="center" class="pinTitle" text-decoration="underline">Activities and Events:</h2><br />
         {% if activityPins %}
           {% for pinFour in activityPins %}
-            <div class="pinList">
-              <h3 class='pinHeader'><large><a target="_blank" href="{{ pinFour.link }}" style='color:darksalmon'>{{ pinFour.activityName }}</a></large></h3>
-              <p class='pinP'>${{ pinFour.price }}</p>
-              <p class='pinP'>{{ pinFour.types }} activity</p>
-              <p class='pinP'>{{ pinFour.description }}</p>
+            <div class="pinList actPins">
+              <h3 class='pinHeader actPinNames'><large><a target="_blank" href="{{ pinFour.link }}" style='color:darksalmon'>{{ pinFour.activityName }}</a></large></h3>
+              <p class='actPinPriceDisplay pinP'>${{ pinFour.price }}</p>
+              <p class='actPinPrice' style='display:none;'>{{ pinFour.price }}</p>
+              <p class='pinP actPinTypes'>{{ pinFour.types }}</p>
+              <p class='pinP actPinDescriptions'>{{ pinFour.description }}</p>
               <p class=pinLinkP><a class="pinLink" target="_blank" href="{{ pinFour.link }}">View at site</a></p>
+              <p class='actPinLinks' style='display:none;'>{{ pinFour.link }}</p>
+              <p class='actPinCreators'>{{ pinFour.creator }}</p>
+              <p class='actPinIds' style='display: none;'>{{ pinFour.id }}</p>
               <p>Posted by: <strong>{{ pinFour.creator }}</strong></p>
+              {% if pinFour.creator == current_user.username %}
+                <button class='actPinEdit pinEdButton'>Edit</button>
+                <button class='actPinDelete pinEdButton'>Delete</button>
+              {% endif %}
               <br />
               <!-- {% if user == group.admin or user == pinFour.creator %}
                 <p><a href="/edit_activity_pin/{{ id }}/{{ pinFour.activityName }}" class="pinLink">Edit Pin</a>   <a  href="/delete_activity_pin/{{ id }}/{{ pinFour.activityName }}" class="pinLink">  Delete Pin</a></p>
@@ -121,6 +234,32 @@
         {% else %}
           <div class="noPinDiv"><a class="noPinLink" href="#activityPin"  style='color:darksalmon'>This area could use an activity pin or two!</a></div><br />
         {% endif %}
+        <div class="editActPinModal">
+          <button class='cornerX actEditX'>X</button>
+          <h3 style='margin-top: -2%;'>Edit Pin</h3>
+          <h5 class='actPinTitle'></h5>
+          <input type="text" class='actPinEditNameValue sign-logInput' placeholder='Name'>
+          <input type='number' class='actPinEditPriceValue sign-logInput' placeholder='Price'>
+          <select class="actPinEditTypeValue sign-logInput" name="type" placeholder='Type'>
+            <option value="Indoor">Indoor</option>
+            <option value="Outdoor">Outdoor</option>
+          </select>
+          <input type="text" class='actPinEditLinkValue sign-logInput' placeholder='Link'>
+          <input class='actPinEditDescValue sign-logInput' style='height: 2.25rem;' placeholder='Description'>
+          <div class="modalButtonRow">
+            <button class='sign-logSubmit submitEditActModal'>Submit</button>
+            <button class='sign-logSubmit cancelEditActModal'>Cancel</button>
+          </div>
+        </div>
+        <div class="deleteActPinModal">
+          <button class='cornerX actDeleteX'>X</button>
+          <h4>Are you sure want to delete this pin?</h4>
+          <h5 class='deleteActPinTitle'></h5>
+          <div class="modalButtonRow">
+            <button class='sign-logSubmit submitDeleteActModal'>Delete</button>
+            <button class='sign-logSubmit cancelDeleteActModal'>Cancel</button>
+          </div>
+        </div>
       </div>
       <div class='budgetDiv'>
         <h3 class='finTitle'>Trip Budget</h3>
@@ -320,6 +459,126 @@
           this.budgetDiv = document.querySelector('.budgetDiv');
           this.budgetInput = document.querySelector('.budgetInput');
           this.pinInputs = document.querySelectorAll('.pinInput');
+          this.Lodging = function(name, price, rooms, description, link, creator, pinId) {
+            this.name = name;
+            this.price = price;
+            this.rooms = rooms;
+            this.description = description;
+            this.link = link;
+            this.creator = creator;
+            this.id = pinId;
+          }
+          this.Restaurant = function(name, type, description, link, creator, id) {
+            this.name = name;
+            this.type = type;
+            this.description = description;
+            this.link = link;
+            this.creator = creator;
+            this.id = id;
+          }
+          this.Transport = function(name, price, type, desc, link, creator, id) {
+            this.name = name;
+            this.price = price;
+            this.type = type
+            this.description = desc;
+            this.link = link;
+            this.creator = creator;
+            this.id = id;
+          }
+          this.Activity = function(name, price, type, desc, link, creator, id){
+            this.name = name;
+            this.price = price;
+            this.type = type;
+            this.description = desc;
+            this.link = link;
+            this.creator = creator;
+            this.id = id;
+          }
+          this.lodgings = [];
+          this.restaurants = [];
+          this.transpos = [];
+          this.activities = [];
+          this.lodPins = document.querySelectorAll('.lodPins');
+          this.lodPinNames = document.querySelectorAll('.lodPinNames');
+          this.lodPinPrices = document.querySelectorAll('.lodPinPrices');
+          this.lodPinRooms = document.querySelectorAll('.lodPinRooms');
+          this.lodPinDescs = document.querySelectorAll('.lodPinDescs');
+          this.lodPinLinks = document.querySelectorAll('.lodPinLinks');
+          this.lodPinIds = document.querySelectorAll('.lodPinIds');
+          this.lodPinCreators = document.querySelectorAll('.lodPinCreators')
+          this.restPins = document.querySelectorAll('.restPins');
+          this.restPinNames = document.querySelectorAll('.restPinNames');
+          this.restPinTypes = document.querySelectorAll('.restPinTypes');
+          this.restPinDescriptions = document.querySelectorAll('.restPinDescriptions');
+          this.restPinLinks = document.querySelectorAll('.restPinLinks')
+          this.restPinIds = document.querySelectorAll('.restPinIds');
+          this.restPinCreators = document.querySelectorAll('.restPinCreators');
+          this.editLodPinModal = document.querySelector('.editLodPinModal');
+          this.transPins = document.querySelectorAll('.transPins');
+          this.transPinNames = document.querySelectorAll('.transPinNames');
+          this.transPinPrice = document.querySelectorAll('.transPinPrice');
+          this.transPinTypes = document.querySelectorAll('.transPinTypes');
+          this.transPinDescs = document.querySelectorAll('.transPinDescs');
+          this.transPinLinks = document.querySelectorAll('.transPinLinks');
+          this.transPinCreators = document.querySelectorAll('.transPinCreators');
+          this.transPinIds = document.querySelectorAll('.transPinIds');
+          this.actPins = document.querySelectorAll('.actPins')
+          this.actPinNames = document.querySelectorAll('.actPinNames');
+          this.actPinPrice = document.querySelectorAll('.actPinPrice');
+          this.actPinTypes = document.querySelectorAll('.actPinTypes');
+          this.actPinLinks = document.querySelectorAll('.actPinLinks');
+          this.actPinCreators = document.querySelectorAll('.actPinCreators');
+          this.actPinIds = document.querySelectorAll('.actPinIds');
+          this.actPinDescriptions = document.querySelectorAll('.actPinDescriptions');
+          this.lodgingIndex = 0;
+          this.restIndex = 0;
+          this.transIndex = 0;
+          this.actIndex = 0;
+          this.editLodInputName = document.querySelector('.lodPinEditNameValue');
+          this.editLodInputRooms = document.querySelector('.lodPinEditRoomsValue');
+          this.editLodInputPrice = document.querySelector('.lodPinEditPriceValue');
+          this.editLodInputDesc = document.querySelector('.lodPinEditDescValue');
+          this.editLodInputLink = document.querySelector('.lodPinEditLinkValue');
+        }
+        Globals.prototype.getLodgings = function() {
+          if (global.lodPins.length > 0) {
+            global.lodPins.forEach(function(pin, index) {
+              global.lodgings.push(new global.Lodging(global.lodPinNames[index].textContent, parseInt(global.lodPinPrices[index].textContent), global.lodPinRooms[index].textContent, global.lodPinDescs[index].textContent, global.lodPinLinks[index].textContent, global.lodPinCreators[index].textContent, parseInt(global.lodPinIds[index].textContent)))
+            })
+          }else {
+            return;
+          }
+          return global.lodgings;
+        }
+        Globals.prototype.getRestaurants = function() {
+          if (global.restPins.length > 0) {
+            global.restPins.forEach(function(pin, index) {
+              global.restaurants.push(new global.Restaurant(global.restPinNames[index].textContent, global.restPinTypes[index].textContent, global.restPinDescriptions[index].textContent, global.restPinLinks[index].textContent, global.restPinCreators[index].textContent, parseInt(global.restPinIds[index].textContent)))
+            })
+          }else {
+            return
+          }
+          return global.restaurants;
+        }
+        Globals.prototype.getTranspos = function() {
+          if (global.transPins.length > 0) {
+            global.transPins.forEach(function(pin, index) {
+              global.transpos.push(new global.Transport(global.transPinNames[index].textContent, parseInt(global.transPinPrice[index].textContent), global.transPinTypes[index].textContent, global.transPinDescs[index].textContent, global.transPinLinks[index].textContent, global.transPinCreators[index].textContent, parseInt(global.transPinIds[index].textContent)))
+            })
+          } else {
+            return
+          }
+          return global.transpos
+        }
+        Globals.prototype.getActivities = function() {
+          if (global.actPins.length > 0) {
+            global.actPins.forEach(function(pin, index) {
+              global.activities.push(new global.Activity(global.actPinNames[index].textContent, parseInt(global.actPinPrice[index].textContent), global.actPinTypes[index].textContent, global.actPinDescriptions[index].textContent, global.actPinLinks[index].textContent, global.actPinCreators[index].textContent, parseInt(global.actPinIds[index].textContent)))
+            })
+          } else {
+            return;
+          }
+          return global.activities
         }
         Globals.prototype.exes = function(){
           let arr = [];
@@ -332,6 +591,12 @@
           return arr;
         }
         var global = new Globals();
+        global.lodgings = global.getLodgings();
+        global.restaurants = global.getRestaurants();
+        global.transports = global.getTranspos();
+        global.activities = global.getActivities()
+        // console.log(global.lodgings);
+        // console.log(global.lodgings);
         global.pinInputs.forEach(function(input) {
           if(input.classList.contains('selectorPin')) {
             input.selectedIndex = 0;
@@ -370,6 +635,38 @@
           document.querySelector('.restSub').addEventListener('click', restSubmit);
           document.querySelector('.transSub').addEventListener('click', transSubmit);
           document.querySelector('.actSub').addEventListener('click', actSubmit);
+          document.querySelector('.renPinRow').addEventListener('click', showEditLodPinModal);
+          global.editLodPinModal.querySelector('.lodEditX').addEventListener('click', hideEditLodPinModal);
+          global.editLodPinModal.querySelector('.cancelEditLodModal').addEventListener('click', hideEditLodPinModal);
+          global.editLodPinModal.querySelector('.submitEditLodModal').addEventListener('click', subEditLodModal);
+          document.querySelector('.renPinRow').addEventListener('click', showDeleteLodPinModal);
+          document.querySelector('.lodDeleteX').addEventListener('click', hideDeleteLodPinModal);
+          document.querySelector('.cancelDeleteLodModal').addEventListener('click', hideDeleteLodPinModal);
+          document.querySelector('.submitDeleteLodModal').addEventListener('click', submitDeleteLodModal);
+          document.querySelector('.restPinRow').addEventListener('click', showEditRestPinModal);
+          document.querySelector('.restEditX').addEventListener('click', hideEditRestPinModal);
+          document.querySelector('.cancelEditRestModal').addEventListener('click', hideEditRestPinModal);
+          document.querySelector('.submitEditRestModal').addEventListener('click', submitEditRestModal);
+          document.querySelector('.restPinRow').addEventListener('click', showDeleteRestModal);
+          document.querySelector('.restDeleteX').addEventListener('click', hideDeleteRestPinModal);
+          document.querySelector('.cancelDeleteRestModal').addEventListener('click', hideDeleteRestPinModal);
+          document.querySelector('.submitDeleteRestModal').addEventListener('click', submitDeleteRestPin);
+          document.querySelector('.transPinRow').addEventListener('click', showEditTransPinModal);
+          document.querySelector('.transPinRow').addEventListener('click', showDeleteTransModal);
+          document.querySelector('.transDeleteX').addEventListener('click', hideDeleteTransModal);
+          document.querySelector('.cancelDeleteTransModal').addEventListener('click', hideDeleteTransModal);
+          document.querySelector('.transEditX').addEventListener('click', hideEditTransPinModal);
+          document.querySelector('.cancelEditTransModal').addEventListener('click', hideEditTransPinModal);
+          document.querySelector('.submitDeleteTransModal').addEventListener('click', submitDeleteTransPin)
+          document.querySelector('.submitEditTransModal').addEventListener('click', submitEditTransPin);
+          document.querySelector('.actPinRow').addEventListener('click', showEditActPin);
+          document.querySelector('.actEditX').addEventListener('click', hideEditActPin);
+          document.querySelector('.cancelEditActModal').addEventListener('click', hideEditActPin);
+          document.querySelector('.actPinRow').addEventListener('click', showDeleteActPinModal);
+          document.querySelector('.actDeleteX').addEventListener('click', hideDeleteActPinModal);
+          document.querySelector('.cancelDeleteActModal').addEventListener('click', hideDeleteActPinModal);
+          document.querySelector('.submitDeleteActModal').addEventListener('click', submitDeleteActPin);
+          document.querySelector('.submitEditActModal').addEventListener('click', submitEditActModal);
         }
         loadEventListeners();
 
@@ -377,6 +674,219 @@
         global.expenseArray = global.exes()
         if (global.expenseArray.length > 0) {
           populateExpenses(global.expenseArray);
+        }
+        function submitEditActModal(e) {
+          // console.log(e.target.parentElement.parentElement.firstChild.nextElementSibling.nextElementSibling.nextElementSibling.textContent);
+          let currentIndex = global.activities.findIndex(act => act.name === e.target.parentElement.parentElement.firstChild.nextElementSibling.nextElementSibling.nextElementSibling.textContent)
+          global.socket.emit('edit act pin', document.querySelector('.actPinEditNameValue').value, document.querySelector('.actPinEditPriceValue').value, document.querySelector('.actPinEditTypeValue').value, document.querySelector('.actPinEditDescValue').value, document.querySelector('.actPinEditLinkValue').value, global.activities[currentIndex].id)
+          document.querySelector('.editActPinModal').style.display = 'none';
+        }
+        function submitDeleteActPin(e) {
+          // console.log(e.target.parentElement.parentElement.firstChild.nextElementSibling.nextElementSibling.nextElementSibling.textContent)
+          let currentIndex = global.activities.findIndex(act => act.name === e.target.parentElement.parentElement.firstChild.nextElementSibling.nextElementSibling.nextElementSibling.textContent)
+          global.socket.emit('delete act pin', global.activities[currentIndex].name, global.activities[currentIndex].id)
+          document.querySelector('.deleteActPinModal').style.display = 'none';
+        }
+        function hideDeleteActPinModal(e) {
+          document.querySelector('.deleteActPinModal').style.display = 'none';
+        }
+        function showDeleteActPinModal(e) {
+          if (e.target.classList.contains('actPinDelete')) {
+            document.querySelector('.deleteActPinModal').style.display = 'block';
+            let currentIndex = global.activities.findIndex(act => act.name === e.target.parentElement.firstChild.nextElementSibling.textContent)
+            let currentAct = global.activities[currentIndex];
+            // global.activities.forEach(function(act, index) {
+            //   if (act.name === e.target.parentElement.firstChild.nextElementSibling.textContent) {
+            //     currentAct = act;
+            //     global.actIndex = index;
+            //   }
+            // })
+            document.querySelector('.deleteActPinTitle').textContent = currentAct.name;
+          }
+        }
+        function showEditActPin(e) {
+          if (e.target.classList.contains('actPinEdit')) {
+            document.querySelector('.editActPinModal').style.display = 'block';
+            // console.log(e.target.parentElement.firstChild.nextElementSibling.textContent)
+            let currentIndex = global.activities.findIndex(act => act.name === e.target.parentElement.firstChild.nextElementSibling.textContent);
+            global.actIndex = currentIndex
+            let currentAct = global.activities[currentIndex];
+            document.querySelector('.actPinTitle').textContent = currentAct.name;
+            document.querySelector('.actPinEditNameValue').value = currentAct.name;
+            document.querySelector('.actPinEditPriceValue').value = currentAct.price;
+            // document.querySelector('actPinEditTypeValue').value = currentAct.type;
+            document.querySelector('.actPinEditDescValue').value = currentAct.description;
+            document.querySelector('.actPinEditLinkValue').value = currentAct.link;
+          }
+        }
+        function hideEditActPin(e) {
+          document.querySelector('.editActPinModal').style.display = 'none';
+        }
+        function submitEditTransPin(e) {
+          global.socket.emit('edit trans pin', document.querySelector('.transPinEditNameValue').value, document.querySelector('.transPinEditPriceValue').value, document.querySelector('.transPinEditLinkValue').value, document.querySelector('.transPinEditDescValue').value, document.querySelector('.transPinEditTypeValue').value, global.transpos[global.transIndex].id)
+          document.querySelector('.editTransPinModal').style.display = 'none';
+        }
+        function submitDeleteTransPin(e) {
+          global.socket.emit('delete trans pin', global.transpos[global.transIndex].id, global.transpos[global.transIndex].name);
+          document.querySelector('.deleteTransPinModal').style.display = 'none';
+        }
+        function hideDeleteTransModal(e) {
+          document.querySelector('.deleteTransPinModal').style.display = 'none';
+        }
+        function hideEditTransPinModal(e) {
+          document.querySelector('.editTransPinModal').style.display = 'none';
+        }
+        function showDeleteTransModal(e) {
+          if (e.target.classList.contains('transPinDelete')) {
+            document.querySelector('.deleteTransPinModal').style.display = 'block';
+            let currentTrans;
+            global.transpos.forEach(function(trans, index) {
+              if (trans.name === e.target.parentElement.firstChild.nextElementSibling.textContent) {
+                currentTrans = trans;
+                global.transIndex = index;
+              }
+            })
+            document.querySelector('.deleteTransPinTitle').textContent = currentTrans.name;
+          }
+        }
+        function showEditTransPinModal(e) {
+          if (e.target.classList.contains('transPinEdit')) {
+            document.querySelector('.editTransPinModal').style.display = 'block';
+            let currentTrans;
+            global.transpos.forEach(function(trans, index) {
+              if (trans.name === e.target.parentElement.firstChild.nextElementSibling.textContent) {
+                currentTrans = trans;
+                global.transIndex = index;
+              }
+            })
+            document.querySelector('.transPinTitle').textContent = currentTrans.name;
+            document.querySelector('.transPinEditNameValue').value = currentTrans.name;
+            document.querySelector('.transPinEditPriceValue').value = currentTrans.price;
+            document.querySelector('.transPinEditDescValue').value = currentTrans.description;
+            document.querySelector('.transPinEditLinkValue').value = currentTrans.link;
+            switch (currentTrans.type) {
+              case 'Flight':
+                document.querySelector('.transPinEditTypeValue').selectedIndex = '0';
+                break;
+              case 'Train':
+                document.querySelector('.transPinEditTypeValue').selectedIndex = '1';
+                break;
+              case 'Bus':
+                document.querySelector('.transPinEditTypeValue').selectedIndex = '2';
+                break;
+              case 'Car':
+                document.querySelector('.transPinEditTypeValue').selectedIndex = '3'
+                break;
+              case 'Other':
+                document.querySelector('.transPinEditTypeValue').selectedIndex = '4';
+                break;
+            }
+          }
+        }
+        function submitDeleteRestPin(e) {
+          global.socket.emit('delete restaurant', global.restaurants[global.restIndex].name, global.restaurants[global.restIndex].id);
+          document.querySelector('.deleteRestPinModal').style.display = 'none';
+        }
+        function submitEditRestModal(e) {
+          global.socket.emit('edit restaurant', document.querySelector('.restPinEditNameValue').value, document.querySelector('.restPinEditTypeValue').value, document.querySelector('.restPinEditDescValue').value, document.querySelector('.restPinEditLinkValue').value, global.restaurants[global.restIndex].id)
+          document.querySelector('.editRestPinModal').style.display = 'none';
+        }
+        function hideEditRestPinModal(e) {
+          document.querySelector('.editRestPinModal').style.display = 'none';
+        }
+        function showEditRestPinModal(e) {
+          if (e.target.classList.contains('restPinEdit')) {
+            document.querySelector('.editRestPinModal').style.display = 'block';
+            // console.log(e.target.parentElement.firstChild.nextElementSibling.textContent)
+            let currentRest;
+            global.restaurants.forEach(function(rest, index) {
+              if (rest.name === e.target.parentElement.firstChild.nextElementSibling.textContent) {
+                currentRest = rest;
+                global.restIndex = index;
+              }
+            })
+            document.querySelector('.restPinTitle').textContent = currentRest.name;
+            document.querySelector('.restPinEditNameValue').value = currentRest.name;
+            if (currentRest.type === 'Nightclub') {
+              document.querySelector('.restPinEditTypeValue').selectedIndex = '1';
+            } else {
+              document.querySelector('.restPinEditTypeValue').selectedIndex = '0';
+            }
+            document.querySelector('.restPinEditLinkValue').value = currentRest.link;
+            document.querySelector('.restPinEditDescValue').value = currentRest.description;
+
+          }
+        }
+        function submitDeleteLodModal(e) {
+          console.log(global.lodgings[global.lodgingIndex].id);
+          global.socket.emit('delete lodging', global.lodgings[global.lodgingIndex].id)
+          document.querySelector('.deleteLodPinModal').style.display = 'none';
+        }
+        function hideDeleteLodPinModal(e) {
+          document.querySelector('.deleteLodPinModal').style.display = 'none';
+        }
+        function hideDeleteRestPinModal(e) {
+          document.querySelector('.deleteRestPinModal').style.display = 'none';
+        }
+        function showDeleteRestModal(e) {
+          if (e.target.classList.contains('restPinDelete')) {
+            // console.log(e.target.parentElement.firstChild.nextElementSibling.textContent)
+            document.querySelector('.deleteRestPinModal').style.display = 'block';
+            let currentRest;
+            global.restaurants.forEach(function(rest, index) {
+              if (rest.name === e.target.parentElement.firstChild.nextElementSibling.textContent) {
+                currentRest = rest;
+                global.restIndex = index;
+              }
+            })
+            document.querySelector('.deleteRestPinTitle').textContent = currentRest.name;
+          }
+        }
+        function showDeleteLodPinModal(e) {
+          if (e.target.classList.contains('lodPinDelete')) {
+            document.querySelector('.deleteLodPinModal').style.display = 'block';
+            // console.log(e.target.parentElement.firstChild.nextElementSibling.textContent)
+            let currentLodging;
+            global.lodgings.forEach(function(lodging, index) {
+              if (lodging.name === e.target.parentElement.firstChild.nextElementSibling.textContent) {
+                currentLodging = lodging;
+                global.lodgingIndex = index;
+              }
+            })
+            document.querySelector('.deleteLodPinTitle').textContent = currentLodging.name;
+          }else {
+            return;
+          }
+        }
+        function subEditLodModal(e) {
+          console.log(global.lodgings[global.lodgingIndex].id)
+          global.socket.emit('edit lodging', global.editLodPinModal.querySelector('.lodPinTitle').textContent, global.editLodInputName.value, global.editLodInputRooms.value, global.editLodInputPrice.value, global.editLodInputDesc.value, global.editLodInputLink.value, global.lodgings[global.lodgingIndex].id);
+          document.querySelector('.editLodPinModal').style.display = 'none';
+        }
+        function hideEditLodPinModal(e) {
+          document.querySelector('.editLodPinModal').style.display = 'none';
+        }
+        function showEditLodPinModal(e) {
+          if (e.target.classList.contains('lodPinEdit')) {
+            console.log(e.target.parentElement.firstChild.nextElementSibling.textContent);
+            document.querySelector('.editLodPinModal').style.display = 'block';
+            let currentLodging;
+            global.lodgings.forEach(function(lodging, index) {
+              if (lodging.name == e.target.parentElement.firstChild.nextElementSibling.textContent) {
+                global.lodgingIndex = index;
+                currentLodging = lodging;
+              }
+            })
+            console.log(currentLodging)
+            global.editLodPinModal.querySelector('.lodPinTitle').textContent = currentLodging.name;
+            global.editLodPinModal.querySelector('.lodPinEditNameValue').value = currentLodging.name;
+            global.editLodPinModal.querySelector('.lodPinEditPriceValue').value = currentLodging.price;
+            global.editLodPinModal.querySelector('.lodPinEditRoomsValue').value = currentLodging.rooms;
+            global.editLodPinModal.querySelector('.lodPinEditDescValue').value = currentLodging.description;
+            global.editLodPinModal.querySelector('.lodPinEditLinkValue').value = currentLodging.link;
+          } else {
+            return;
+          }
         }
 
         function actSubmit(e) {
@@ -387,7 +897,7 @@
           let actDescript = document.querySelector('.actDescript');
           let actLink = document.querySelector('.actLink');
           let type = parseInt(actPrice.value);
-          console.log(typeof type)
+          // console.log(typeof type)
           let message;
           if ((actName.value === '') || (actPrice.value < 0) || (actDescript.value === '') || (actLink.value === '')) {
             showErrorMessage('Please Fill in All Inputs', 'error', document.querySelector('.actPinnerForm'), document.querySelector('.actPinStart'));
@@ -408,31 +918,7 @@
               showErrorMessage(message, 'error', document.querySelector('.actPinnerForm'), document.querySelector('.actPinStart'));
               return;
             }
-            // if (actLink.value.length < )
             global.socket.emit('act submit', actName.value, actPrice.value, actDescript.value, actType.value, actLink.value);
-            let frag = document.createDocumentFragment();
-            let div = document.createElement('div');
-            div.className = 'pinList'
-            let h3 = document.createElement('h3')
-            h3.textContent = actName.value;
-            div.appendChild(h3);
-            let p2 = document.createElement('p');
-            let p3 = document.createElement('p');
-            let p4 = document.createElement('p');
-            let p5 = document.createElement('p');
-            p2.textContent = '$' + actPrice.value;
-            p3.textContent = actDescript.value;
-            p4.textContent = actType.value
-            p5.textContent = 'Posted by: ' + global.username;
-            div.appendChild(p2);
-            div.appendChild(p3);
-            div.appendChild(p4);
-            let anchor = document.createElement('A');
-            anchor.href = actLink.value;
-            anchor.textContent = 'View at site';
-            div.appendChild(anchor);
-            frag.appendChild(div);
-            document.querySelector('.actPinRow').appendChild(frag);
             actName.value = '';
             actDescript.value = '';
             actType.value = '';
@@ -452,29 +938,6 @@
             showErrorMessage('Please Fill in All Inputs', 'error', document.querySelector('.transPinnerForm'), document.querySelector('.transPinStart'));
           } else {
             global.socket.emit('trans submit', transName.value, transPrice.value, transDescript.value, transType.value, transLink.value);
-            let frag = document.createDocumentFragment();
-            let div = document.createElement('div');
-            div.className = 'pinList'
-            let h3 = document.createElement('h3')
-            h3.textContent = transName.value;
-            div.appendChild(h3);
-            let p2 = document.createElement('p');
-            let p3 = document.createElement('p');
-            let p4 = document.createElement('p');
-            let p5 = document.createElement('p');
-            p2.textContent = '$' + transPrice.value;
-            p3.textContent = transDescript.value;
-            p4.textContent = transType.value
-            p5.textContent = 'Posted by: '; + global.username;
-            div.appendChild(p2);
-            div.appendChild(p3);
-            div.appendChild(p4);
-            let anchor = document.createElement('A');
-            anchor.href = transLink.value;
-            anchor.textContent = 'View at site';
-            div.appendChild(anchor);
-            frag.appendChild(div);
-            document.querySelector('.transPinRow').appendChild(frag);
             transName.value = '';
             transDescript.value = '';
             transType.value = '';
@@ -496,27 +959,6 @@
             showErrorMessage(message, type, document.querySelector('.restPinnerForm'), document.querySelector('.restPinStart'));
           } else {
             global.socket.emit('rest submit', restName.value, restDescript.value, restType.value, restLink.value);
-            let frag = document.createDocumentFragment();
-            let div = document.createElement('div');
-            div.className = 'pinList'
-            let h3 = document.createElement('h3')
-            h3.textContent = restName.value;
-            div.appendChild(h3);
-            let p1 = document.createElement('p');
-            let p2 = document.createElement('p');
-            let p3 = document.createElement('p')
-            p1.textContent = restType.value;
-            p2.textContent = restDescript.value;
-            p3.textContent = 'Posted by: ' + global.username;
-            div.appendChild(p1);
-            div.appendChild(p2);
-            div.appendChild(p3);
-            let anchor = document.createElement('A');
-            anchor.href = restLink.value;
-            anchor.textContent = 'View at site';
-            div.appendChild(anchor);
-            frag.appendChild(div);
-            document.querySelector('.restPinRow').appendChild(frag);
             restName.value = '';
             restDescript.value = '';
             restType.value = '';
@@ -538,27 +980,6 @@
             showErrorMessage(message, type, document.querySelector('.renPinnerForm'), document.querySelector('.pinStart'));
           } else {
             global.socket.emit('rental submit', renName.value, renPrice.value, renRooms.value, renDescript.value, renLink.value);
-            let frag = document.createDocumentFragment();
-            let div = document.createElement('div');
-            div.className = 'pinList'
-            let h3 = document.createElement('h3')
-            h3.textContent = renName.value;
-            div.appendChild(h3);
-            let p1 = document.createElement('p');
-            let p2 = document.createElement('p');
-            let p3 = document.createElement('p')
-            p1.textContent = renRooms.value + ' bedrooms, $' + renPrice.value + ' per night';
-            p2.textContent = renDescript.value;
-            p3.textContent = 'Posted by: ' + global.username;
-            div.appendChild(p1);
-            div.appendChild(p2);
-            div.appendChild(p3);
-            let anchor = document.createElement('A');
-            anchor.href = renLink.value;
-            anchor.textContent = 'View at site';
-            div.appendChild(anchor);
-            frag.appendChild(div);
-            document.querySelector('.renPinRow').appendChild(frag);
             renName.value = '';
             renDescript.value = '';
             renPrice.value = '';
@@ -590,7 +1011,6 @@
           global.budgetForm.style.display = 'none';
           global.changeBudget.style.display = 'block';
         }
-        console.log(global.expenseArray);
         // Function inserts each expense in a div to dom; as well as a total expenses div at the end
         // which compares to the budget
 
@@ -749,7 +1169,6 @@
             }
           })
           global.expenseToDelete.remove();
-          console.log(global.expenseArray);
         }
         //Deletes all expenses, sends to server over socket, and deletes all expense divs from dom
         function deleteAllExpenses(e) {
@@ -760,7 +1179,6 @@
           }
           global.socket.emit('delete all expenses');
           global.expenseArray = [];
-          console.log(global.expenseArray)
         }
         // makes sure there are values in all inputs
 
@@ -772,6 +1190,7 @@
           div.style.fontSize = (size);
           div.appendChild(document.createTextNode(message));
           parent.insertBefore(div, before);
+          div.scrollIntoView();
           setTimeout(function(){
               document.querySelector('.alert').remove();
           },5000);
@@ -842,10 +1261,50 @@
         })
 
         global.socket.on('rental saved', function(data) {
+          console.log('hi')
           let message = 'Lodging added!!';
           let type = 'success';
           let size = '.9rem';
-          showErrorMessage(message, type, document.querySelector('.renPinnerForm'), document.querySelector('.renPinStart'));
+          showErrorMessage(message, type, document.querySelector('.renPinRow'), document.querySelector('.renPinRow').querySelector('.pinList'), '1rem');
+          global.lodgings.push(new global.Lodging(data.name, data.price, data.rooms, data.description, data.link, data.creator, data.id))
+          console.log(global.lodgings);
+          let frag = document.createDocumentFragment();
+          let div = document.createElement('div');
+          div.className = 'pinList'
+          let h3 = document.createElement('h3')
+          h3.textContent = data.name
+          h3.classList = 'pinHeader restPinNames'
+          div.appendChild(h3);
+          let p1 = document.createElement('p');
+          let p2 = document.createElement('p');
+          let p3 = document.createElement('p');
+          let p4 = document.createElement('p');
+          p1.textContent = data.rooms + ' bedrooms.';
+          p2.textContent = '$' + data.price + ' per night';
+          p3.textContent = data.description;
+          p4.textContent = 'Posted by: ' + data.creator;
+          p1.classList = 'pinP';
+          p2.classList = 'pinP';
+          p3.classList = 'pinP';
+          p4.classList = 'pinP';
+          div.appendChild(p1);
+          div.appendChild(p2);
+          div.appendChild(p3);
+          div.appendChild(p4);
+          let anchor = document.createElement('A');
+          anchor.href = data.link;
+          anchor.textContent = 'View at site';
+          let div2 = document.createElement('div');
+          console.log(global.username + ': ' + data.creator);
+          if (global.username === data.creator)
+          console.log('hi');
+          if (global.username === data.creator) {
+            let p5 = document.createElement('p');
+            p5.textContent = 'Please refresh the page to edit this pin.'
+            div.appendChild(p5);
+          }
+          frag.appendChild(div);
+          document.querySelector('.renPinRow').appendChild(frag);
         })
 
         global.socket.on('rest saved', function(data) {
@@ -853,6 +1312,33 @@
           let type = 'success';
           let size = '.9rem';
           showErrorMessage(message, type, document.querySelector('.restPinnerForm'), document.querySelector('.restPinStart'));
+          let frag = document.createDocumentFragment();
+          let div = document.createElement('div');
+          div.className = 'pinList';
+          let h3 = document.createElement('h3');
+          h3.textContent = data.name;
+          h3.classList = 'pinHeader restPinNames';
+          div.appendChild(h3);
+          let p1 = document.createElement('p');
+          let p2 = document.createElement('p');
+          let p3 = document.createElement('p')
+          p1.textContent = data.type;
+          p2.textContent = data.description;
+          p3.textContent = 'Posted by: ' + data.user;
+          p1.classList = 'pinP';
+          p2.classList = 'pinP'
+          p3.classList = 'pinP'
+          div.appendChild(p1);
+          div.appendChild(p2);
+          div.appendChild(p3);
+          let anchor = document.createElement('A');
+          anchor.href = data.link;
+          anchor.textContent = 'View at site';
+          div.appendChild(anchor);
+          frag.appendChild(div);
+          document.querySelector('.restPinRow').appendChild(frag);
+          global.restaurants.push(new global.Restaurant(data.name, data.type, data.description, data.link, data.user, data.id));
+          console.log(global.restaurants);
         })
 
         global.socket.on('trans saved', function(data) {
@@ -860,6 +1346,31 @@
           let type = 'success';
           let size = '.9rem';
           showErrorMessage(message, type, document.querySelector('.transPinnerForm'), document.querySelector('.transPinStart'));
+          let frag = document.createDocumentFragment();
+          let div = document.createElement('div');
+          div.className = 'pinList'
+          let h3 = document.createElement('h3')
+          h3.textContent = data.name;
+          div.appendChild(h3);
+          let p2 = document.createElement('p');
+          let p3 = document.createElement('p');
+          let p4 = document.createElement('p');
+          let p5 = document.createElement('p');
+          p2.textContent = '$' + data.price;
+          p3.textContent = data.description;
+          p4.textContent = data.type;
+          p5.textContent = 'Posted by: '; + data.user;
+          div.appendChild(p2);
+          div.appendChild(p3);
+          div.appendChild(p4);
+          let anchor = document.createElement('A');
+          anchor.href = data.link;
+          anchor.textContent = 'View at site';
+          div.appendChild(anchor);
+          frag.appendChild(div);
+          document.querySelector('.transPinRow').appendChild(frag);
+          global.transpos.push(new global.Transport(data.name, data.price, data.type, data.description, data.link, data.user, data.id))
+          console.log(global.transpos);
         })
 
         global.socket.on('act saved', function(data) {
@@ -867,6 +1378,176 @@
           let type = 'success';
           let size = '.9rem';
           showErrorMessage(message, type, document.querySelector('.actPinnerForm'), document.querySelector('.actPinStart'));
+          let frag = document.createDocumentFragment();
+          let div = document.createElement('div');
+          div.className = 'pinList'
+          let h3 = document.createElement('h3')
+          h3.textContent = data.name;
+          div.appendChild(h3);
+          let p2 = document.createElement('p');
+          let p3 = document.createElement('p');
+          let p4 = document.createElement('p');
+          let p5 = document.createElement('p');
+          p2.textContent = '$' + data.price;
+          p3.textContent = data.description;
+          p4.textContent = data.type
+          p5.textContent = 'Posted by: ' + global.username;
+          div.appendChild(p2);
+          div.appendChild(p3);
+          div.appendChild(p4);
+          let anchor = document.createElement('A');
+          anchor.href = data.link;
+          anchor.textContent = 'View at site';
+          div.appendChild(anchor);
+          frag.appendChild(div);
+          document.querySelector('.actPinRow').appendChild(frag);
+          global.activities.push(new global.Activity(data.name, data.price, data.type, data.description, data.link, global.username, data.id))
+          console.log(global.activities);
+        })
+
+        global.socket.on('lodging edited', function(data) {
+          // console.log(data.id)
+          let message = 'Lodging Edited!'
+          let currentIndex = global.lodgings.findIndex(lodging => lodging.id === data.id);
+          let newLodge = global.lodgings[currentIndex];
+          document.querySelectorAll('.lodPinNames')[currentIndex].textContent = data.newName;
+          document.querySelectorAll('.lodPinNames')[currentIndex].href = data.link;
+          document.querySelectorAll('.lodPinDispRooms')[currentIndex].textContent = data.rooms + ' Bedrooms';
+          document.querySelectorAll('.lodPinDispPrices')[currentIndex].textContent = '$' + data.price + ' per night.'
+          global.lodPinDescs[currentIndex].textContent = data.description;
+          global.lodPinLinks[currentIndex].textContent = data.link;
+          newLodge.name = data.newName;
+          newLodge.rooms = data.rooms;
+          newLodge.price = data.price;
+          newLodge.description = data.description;
+          newLodge.link = data.link;
+          global.lodgings[currentIndex] = newLodge;
+          console.log(currentIndex);
+          console.log(global.lodgings);
+          // document.querySelectorAll('.renPinRow')[global.lodgingIndex].querySelector('.pinLinkP').href = data.link;
+          showErrorMessage(message, 'success', document.querySelector('.renPinRow'), document.querySelector('.renPinRow').querySelectorAll('.pinList')[currentIndex], '1rem');
+        })
+        global.socket.on('lodging deleted', function(data) {
+          let currentIndex = global.lodgings.findIndex(lodging => lodging.id === data.id);
+          global.lodgings.splice(currentIndex, 1);
+          document.querySelectorAll('.lodPins')[currentIndex].remove();
+          let message = 'Lodging Deleted';
+          showErrorMessage(message, 'success', document.querySelector('.renPinRow'), document.querySelector('.renPinRow').querySelectorAll('.pinList')[currentIndex], '1rem');
+        })
+
+        global.socket.on('not lodge pin creator', function(data) {
+          let currentIndex = global.lodgings.findIndex(lodging => lodging.id === data.id);
+          let message = 'Sorry, you cannot edit or delete that pin, you are not the creator.';
+          showErrorMessage(message, 'error', document.querySelector('.renPinRow'), document.querySelector('.renPinRow').querySelectorAll('.pinList')[currentIndex], '1rem');
+        })
+
+        global.socket.on('restaurant edited', function(data) {
+          let message = 'Restaurant Edited';
+          showErrorMessage(message, 'success', document.querySelector('.restPinRow'), document.querySelector('.restPinRow').querySelector('.pinList'), '1rem');
+          let currentIndex = global.restaurants.findIndex(rest => rest.id === data.id);
+          let newRest = global.restaurants[currentIndex];
+          console.log(currentIndex);
+          document.querySelectorAll('.restPinNames')[currentIndex].textContent = data.newName;
+          document.querySelectorAll('.restPinNames')[currentIndex].href = data.link;
+          document.querySelectorAll('.restPinLinks')[currentIndex].textContent = data.link;
+          document.querySelectorAll('.restPinDescriptions')[currentIndex].textContent = data.description;
+          document.querySelectorAll('.restPinTypes')[currentIndex].textContent = data.type;
+          newRest.name = data.newName;
+          newRest.link = data.link;
+          newRest.description = data.description;
+          newRest.type = data.type;
+          global.restaurants[currentIndex] = newRest;
+          document.querySelectorAll('.restPins')[currentIndex].querySelector('.pinLinkP').href = data.link;
+          console.log(global.restaurants);
+        })
+
+        global.socket.on('restaurant deleted', function(data) {
+          let currentIndex = global.restaurants.findIndex(rest => rest.id === data.id);
+          document.querySelectorAll('.restPins')[currentIndex].remove();
+          global.restaurants.splice(currentIndex, 1);
+          let message = 'Restaurant Deleted';
+          showErrorMessage(message, 'success', document.querySelector('.restPinRow'), document.querySelector('.restPinRow').querySelectorAll('.pinList')[currentIndex], '1rem');
+        })
+
+        global.socket.on('not rest pin creator', function(data) {
+          let currentIndex = global.restaurants.findIndex(rest => rest.id === data.id);
+          let message = 'Sorry, you cannot edit or delete that pin, you are not the creator.';
+          showErrorMessage(message, 'error', document.querySelector('.restPinRow'), document.querySelector('.restPinRow').querySelectorAll('.pinList')[currentIndex], '1rem');
+        })
+
+        global.socket.on('transpo edited', function(data) {
+          let currentIndex = global.transpos.findIndex(trans => trans.id === data.id);
+          let newTranspo = global.transpos[currentIndex];
+          document.querySelectorAll('.transPinNames')[currentIndex].textContent = data.newName;
+          document.querySelectorAll('.transPinNames')[currentIndex].href = data.link;
+          document.querySelectorAll('.transPinPrice')[currentIndex].textContent = data.price;
+          document.querySelectorAll('.transPinPriceDisp')[currentIndex].textContent = '$' + data.price;
+          document.querySelectorAll('.transPinLinks')[currentIndex].textContent = data.link;
+          document.querySelectorAll('.transPinDescs')[currentIndex].textContent = data.description;
+          document.querySelectorAll('.transPinTypes')[currentIndex].textContent = data.type;
+          newTranspo.name = data.newName;
+          newTranspo.price = data.price;
+          newTranspo.link = data.link;
+          newTranspo.description = data.description;
+          newTranspo.type = data.type;
+          global.transpos[currentIndex] = newTranspo;
+          console.log(global.transpos);
+          let message = 'Transportation Edited';
+          showErrorMessage(message, 'success', document.querySelector('.transPinRow'), document.querySelector('.transPinRow').querySelector('.pinList'), '1rem')
+        })
+
+        global.socket.on('trans pin deleted', function(data) {
+          let message = 'Transportion Deleted';
+          showErrorMessage(message, 'success', document.querySelector('.transPinRow'), document.querySelector('.transPinRow').querySelector('.pinList'), '1rem');
+          let currentIndex = global.transpos.findIndex(trans => trans.id === data.id);
+          document.querySelectorAll('.transPins')[currentIndex].remove();
+          global.transpos.splice(currentIndex, 1);
+          console.log(global.transpos);
+        })
+
+        global.socket.on('not transpo pin creator', function(data) {
+          let currentIndex = global.transpos.findIndex(trans => trans.id === data.id);
+          let message = 'Sorry, you cannot  edit or delete that pin, you are not the creator.';
+          showErrorMessage(message, 'error', document.querySelector('.transPinRow'), document.querySelector('.transPinRow').querySelectorAll('.pinList')[currentIndex], '1rem');
+        })
+
+        global.socket.on('act pin edited', function(data) {
+          let message = 'Activity Edited';
+          showErrorMessage(message, 'success', document.querySelector('.actPinRow'), document.querySelector('.actPinRow').querySelector('.pinList'), '1rem');
+          let currentIndex = global.activities.findIndex(act => act.id === data.id);
+          let newAct = global.activities[currentIndex]
+          newAct.name = data.newName;
+          newAct.type = data.newType;
+          newAct.description = data.newDescription;
+          newAct.link = data.newLink;
+          newAct.price = data.newPrice;
+          global.activities[currentIndex] = newAct;
+          document.querySelectorAll('.actPinNames')[currentIndex].textContent = data.newName;
+          document.querySelectorAll('.actPinPriceDisplay')[currentIndex].textContent = '$' + data.newPrice;
+          document.querySelectorAll('.actPinTypes')[currentIndex].textContent = data.newType;
+          document.querySelectorAll('.actPinDescriptions')[currentIndex].textContent = data.newDescription;
+          document.querySelectorAll('.actPinLinks')[currentIndex].textContent = data.newLink;
+        })
+
+        global.socket.on('act pin deleted', function(data) {
+          let message = 'Activity Deleted';
+          showErrorMessage(message, 'success', document.querySelector('.actPinRow'), document.querySelector('.actPinRow').querySelector('.pinList'), '1rem');
+          let currentIndex = global.activities.findIndex(act => act.id === data.id);
+          let newAct = global.activities[currentIndex];
+          document.querySelectorAll('.actPins')[currentIndex].remove();
+          global.activities.splice(currentIndex, 1);
+          console.log(global.activities);
+        })
+
+        global.socket.on('not act pin creator', function(data) {
+          let currentIndex;
+          global.activities.forEach(function(act, index) {
+            if (act.id == data.id) {
+              currentIndex = index;
+            }
+          })
+          let message = 'Sorry, you cannot edit or delete that pin, you are not the creator.'
+          showErrorMessage(message, 'error', document.querySelector('.actPinRow'), document.querySelector('.actPinRow').querySelectorAll('.pinList')[currentIndex], '1rem')
         })
 
         // Function to display the message
